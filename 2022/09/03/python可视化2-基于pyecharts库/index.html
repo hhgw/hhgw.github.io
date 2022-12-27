@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>python可视化2——基于pyecharts库 | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">python可视化2——基于pyecharts库</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2022-09-03&nbsp;&nbsp;20:07:12</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/python%E5%8F%AF%E8%A7%86%E5%8C%96/">python可视化</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="python可视化2——基于pyecharts库"><a href="#python可视化2——基于pyecharts库" class="headerlink" title="python可视化2——基于pyecharts库"></a>python可视化2——基于pyecharts库</h1><blockquote>
+<p>Echarts 是百度开源的一个数据可视化JS 库。 </p>
+<p>pyecharts 是一个用于生成 Echarts 图表的类库，是 Echarts 与 Python 的对接。<br>·参考网站<a target="_blank" rel="noopener" href="https://pyecharts.org/#/zh-cn/intro">https://pyecharts.org/#/zh-cn/intro</a> 具体功能还需参考介绍文件。</p>
+<p>pyecharts库的安装:pip install pyecharts </p>
+<p>·安装pyecharts指定版本:python -m pip install pyecharts&#x3D;&#x3D;1.6.2</p>
+<p>·v1版本只支持python3.6+</p>
+</blockquote>
+<h3 id="例1-1-成绩柱状图"><a href="#例1-1-成绩柱状图" class="headerlink" title="例1-1 成绩柱状图"></a>例1-1 成绩柱状图</h3><p>先给一个例子</p>
+<img src="/img/python可视化2/001.png" alt="001" style="zoom:100%;" />
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"><span class="keyword">from</span> pyecharts.<span class="built_in">globals</span> <span class="keyword">import</span> ThemeType</span><br><span class="line"></span><br><span class="line">bar=Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT)) <span class="comment">#设置柱状图的显示风格</span></span><br><span class="line"></span><br><span class="line">bar.add_xaxis([<span class="string">&#x27;语文&#x27;</span>,<span class="string">&#x27;数学&#x27;</span>,<span class="string">&#x27;英语&#x27;</span>,<span class="string">&#x27;计算机&#x27;</span>,<span class="string">&#x27;物理&#x27;</span>,<span class="string">&#x27;化学&#x27;</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;宋丽英&#x27;</span>,[<span class="number">86</span>,<span class="number">64</span>,<span class="number">85</span>,<span class="number">85</span>,<span class="number">90</span>,<span class="number">55</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;王大伟&#x27;</span>,[<span class="number">92</span>,<span class="number">99</span>,<span class="number">95</span>,<span class="number">94</span>,<span class="number">92</span>,<span class="number">94</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;张  珍&#x27;</span>,[<span class="number">98</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">98</span>,<span class="number">87</span>,<span class="number">96</span>])</span><br><span class="line"></span><br><span class="line">bar.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&#x27;学生成绩表&#x27;</span>))</span><br><span class="line">bar.render(<span class="string">&#x27;testBar.html&#x27;</span>) <span class="comment"># 输出到指定的文件，若为空，则默认为render.html</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输出为一个html文件，打开后如下：</p>
+<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/002.png" alt="002"></p>
+<hr>
+<p>—-注意到—-</p>
+<h4 id="InitOpts：初始化配置项"><a href="#InitOpts：初始化配置项" class="headerlink" title="InitOpts：初始化配置项"></a><a target="_blank" rel="noopener" href="https://pyecharts.org/#/zh-cn/global_options?id=initopts%EF%BC%9A%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E9%A1%B9">InitOpts：初始化配置项</a></h4><blockquote>
+<p>class InitOpts(</p>
+<p>​	# 图表画布宽度，css 长度单位。</p>
+<p>​    width: str &#x3D; “900px”,</p>
+<p>​	</p>
+<p>​	 # 图表画布高度，css 长度单位。</p>
+<p>​    height: str &#x3D; “500px”,</p>
+<p>​	</p>
+<p>​	# 图表 ID，图表唯一标识，用于在多图表时区分。</p>
+<p>​    chart_id: Optional[str] &#x3D; None,</p>
+<p>​	</p>
+<p>​	 # 渲染风格，可选 “canvas”, “svg”    </p>
+<p>​    renderer: str &#x3D; RenderType.CANVAS,</p>
+<p>​	</p>
+<p>​	# 网页标题</p>
+<p>​    page_title: str &#x3D; “Awesome-pyecharts”,</p>
+<p>​	</p>
+<p>​	# 图表主题；</p>
+<p>​	# pyecharts 提供了 10+ 种内置主题，开发者也可以定制自己喜欢的主题，开发文档的进阶话题-定制主题有相关介绍。</p>
+<p>​	# 内置主题包括【LIGHT DART CHALK ESSOS INFOGRAPHIC MACARONS PURPLE_PASSION ROMANTIC SHINE VINTAGE WALDEN WESTEROS WONDERLAND 】 </p>
+<p>​    theme: str &#x3D; “white”,</p>
+<p>​	</p>
+<p>​	# 图表背景颜色</p>
+<p>​    bg_color: Optional[str] &#x3D; None,</p>
+<p>​	</p>
+<p>​	# 远程 js host，如不设置默认为 <a target="_blank" rel="noopener" href="https://assets.pyecharts.org/assets/">https://assets.pyecharts.org/assets/</a>“</p>
+<p>​    js_host: str &#x3D; “”,</p>
+<p>​	</p>
+<p>​	 # 画图动画初始化配置，参考 <code>global_options.AnimationOpts</code></p>
+<p>​    animation_opts: Union[AnimationOpts, dict] &#x3D; AnimationOpts(),<br>)</p>
+</blockquote>
+<h3 id="例1-2-添加图例和数据标记"><a href="#例1-2-添加图例和数据标记" class="headerlink" title="例1-2 添加图例和数据标记"></a>例1-2 添加图例和数据标记</h3><h4 id="题外话："><a href="#题外话：" class="headerlink" title="题外话："></a>题外话：</h4><blockquote>
+<p>python – 定义函数 def 后面的 -&gt;，：表示的含义</p>
+<p>-&gt; 常常出现在python函数定义的函数名后面，为函数添加元数据,描述函数返回的类型。</p>
+<p>: 表示参数的类型建议符<br>示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x:<span class="built_in">int</span>, y:<span class="built_in">int</span></span>) -&gt;<span class="built_in">bool</span>:</span><br><span class="line">	<span class="keyword">if</span>(x&gt;y):</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		retur <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+
+<p>这里，表明了函数的参数传入为int类型，输出的类型为bool类型。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"></span><br><span class="line">attr=[<span class="string">&quot;服装&quot;</span>,<span class="string">&quot;玩具&quot;</span>,<span class="string">&quot;电器&quot;</span>,<span class="string">&quot;首饰&quot;</span>]</span><br><span class="line">v1=[<span class="number">1000</span>,<span class="number">2300</span>,<span class="number">500</span>,<span class="number">5020</span>]</span><br><span class="line">v2=[<span class="number">1200</span>,<span class="number">2500</span>,<span class="number">620</span>,<span class="number">2030</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar1</span>() -&gt; Bar:     <span class="comment"># 链式书写</span></span><br><span class="line">    c=(</span><br><span class="line">        Bar()</span><br><span class="line">        .add_xaxis(attr)           <span class="comment"># 设置分类轴</span></span><br><span class="line">        .add_yaxis(<span class="string">&#x27;商家A&#x27;</span>,v1)      <span class="comment"># 设置数值轴</span></span><br><span class="line">        .add_yaxis(<span class="string">&#x27;商家B&#x27;</span>,v2)</span><br><span class="line">        .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&#x27;商品销售&#x27;</span>))</span><br><span class="line">        .set_series_opts(</span><br><span class="line">            label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">            markpoint_opts=opts.MarkPointOpts(</span><br><span class="line">                data=[</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;max&#x27;</span>,name=<span class="string">&#x27;最大值&#x27;</span>),</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;min&#x27;</span>,name=<span class="string">&#x27;最小值&#x27;</span>),</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;average&#x27;</span>,name=<span class="string">&#x27;平均值&#x27;</span>),</span><br><span class="line">                ]</span><br><span class="line">            ),</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line">bar1().render()</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/003.png" alt="003"></p>
+<p>将鼠标移动到图标上可以显示详细信息：</p>
+<p> <a href="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/li1_2.html">li1_2.html</a> </p>
+<h3 id="输出图片格式的两种方法"><a href="#输出图片格式的两种方法" class="headerlink" title="输出图片格式的两种方法"></a>输出图片格式的两种方法</h3><h4 id="chromedrive"><a href="#chromedrive" class="headerlink" title="chromedrive"></a>chromedrive</h4><p>一般截图就好了，如果要批量输出或者自动化输出图片格式，需要用<strong>pyecharts-snapshot</strong>插件。还需要配合Chrome浏览器对应的<strong>chromedriver</strong>。（爬虫我记得也用到了这个)</p>
+<blockquote>
+<ol>
+<li>安装 pyecharts-snapshot</li>
+</ol>
+<p><code>pip install pyecharts-snapshot</code> </p>
+<p><code>pip install snapshot-selenium</code></p>
+<ol start="2">
+<li><p>安装对应的chrome浏览器对应的<strong>Chromedriver</strong>(版本必须对应当前浏览器的版本) 下载地址:</p>
+<p><code>http://chromedriver.storage.googleapis.com/index.html?path=80.0.3987.16/</code></p>
+<p><code>http://chromedriver.storage.googleapis.com/index.html</code></p>
+</li>
+</ol>
+<p>再将其解压到指定路径，将该路径添加到用户的环境变量path路径下，否则报错：</p>
+<p><code>&#39;chromedriver&#39; executable needs to be in PATH.</code></p>
+<ol start="3">
+<li>导入库</li>
+</ol>
+<p><code>from pyecharts.render import make_snapshot</code> </p>
+<p><code>from snapshot_selenium import snapshot</code></p>
+<ol start="4">
+<li>设置输出为图片格式</li>
+</ol>
+<p>make_snapshot(snapshot, bar1().render(),”filename.png”)</p>
+</blockquote>
+<blockquote>
+<h4 id="mac添加Chromedriver"><a href="#mac添加Chromedriver" class="headerlink" title="mac添加Chromedriver"></a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/sevenwind/p/14701254.html">mac添加Chromedriver</a></h4><h5 id="1-下载对应版本的驱动器"><a href="#1-下载对应版本的驱动器" class="headerlink" title="1.下载对应版本的驱动器"></a>1.下载对应版本的驱动器</h5><p><a target="_blank" rel="noopener" href="http://chromedriver.storage.googleapis.com/index.html">http://chromedriver.storage.googleapis.com/index.html</a></p>
+<h5 id="2-驱动器放在python的安装目录下"><a href="#2-驱动器放在python的安装目录下" class="headerlink" title="2.驱动器放在python的安装目录下"></a>2.驱动器放在python的安装目录下</h5><p>a.找到python的安装路径，一般是&#x2F;usr&#x2F;local&#x2F;bin&#x2F;python3</p>
+<p>终端输入which python，可以查出路径</p>
+<p>Mac下&#x2F;usr&#x2F;local目录默认是对于Finder是隐藏，如果需要到&#x2F;usr&#x2F;local下去，打开Finder，然后使用command+shift+G，在弹出的目录中填写路径就可以了</p>
+<p>b.把驱动器放在同目录下</p>
+<h5 id="3-配置环境变量"><a href="#3-配置环境变量" class="headerlink" title="3.配置环境变量"></a>3.配置环境变量</h5><p>打开终端</p>
+<p>输入vi .&#x2F;.bash_profile回车</p>
+<p>输入i进入编辑模式</p>
+<p>添加环境变量export PATH&#x3D;$PATH:&#x2F;usr&#x2F;local&#x2F;bin&#x2F;chromedriver</p>
+<p>点击“esc键，退出insert模式”, 然后输入“:wq!”,回车，保存成功</p>
+<p>输入“source .&#x2F;.bash_profile”，让环境变量生效</p>
+<p>输入”echo $PATH”,查看环境变量，发现添加成功</p>
+<h5 id="4-赋予权限"><a href="#4-赋予权限" class="headerlink" title="4.赋予权限"></a>4.赋予权限</h5><p>sudo chmod u+x,o+x &#x2F;usr&#x2F;local&#x2F;bin&#x2F;chromedriver</p>
+</blockquote>
+<p>在例1-2结尾添加：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.render <span class="keyword">import</span> make_snapshot</span><br><span class="line"><span class="keyword">from</span> snapshot_selenium <span class="keyword">import</span> snapshot</span><br><span class="line"></span><br><span class="line">make_snapshot(snapshot, bar1().render(),<span class="string">&quot;li1_2.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/li1_2.png" alt="li1_2"></p>
+<h4 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h4><p>还有第二种方法，大致流程（win）如下（我没有试过）：</p>
+<blockquote>
+<p>第一步:下载并安装Node.js</p>
+<p>下载链接:<a target="_blank" rel="noopener" href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a></p>
+<p>第二步:启动Node.js command prompt，安装phantomjs</p>
+<p>c:\user\hhgw&gt;</p>
+<p>npm install -g phantomjs-prebuilt</p>
+<p>npm install phantomjs-prebuilt –phantomjs_cdnurl&#x3D;<a target="_blank" rel="noopener" href="https://bitbucket.org/ariya/phantomjs/downloads">https://bitbucket.org/ariya/phantomjs/downloads</a></p>
+<p>第三步:安装 pyecharts-snapshot</p>
+<p>pip install pyecharts-snapshot</p>
+<p>pip install snapshot-phantomjs</p>
+<p>第四步:设置输出为图片格式</p>
+<p>make_snapshot(snapshot, bar1().render(), “testBar1-3.png”)</p>
+</blockquote>
+<h3 id="例2-折线图"><a href="#例2-折线图" class="headerlink" title="例2 折线图"></a>例2 折线图</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Line</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line">attr= [<span class="string">&#x27;语文&#x27;</span>,<span class="string">&#x27;数学&#x27;</span>,<span class="string">&#x27;英语&#x27;</span>,<span class="string">&#x27;物理&#x27;</span>,<span class="string">&#x27;化学&#x27;</span>,<span class="string">&#x27;生物&#x27;</span>]</span><br><span class="line">v1 = [<span class="number">85</span>,<span class="number">90</span>,<span class="number">96</span>,<span class="number">70</span>,<span class="number">75</span>,<span class="number">90</span>]; v2 = [<span class="number">90</span>,<span class="number">95</span>,<span class="number">98</span>,<span class="number">90</span>,<span class="number">88</span>,<span class="number">89</span>] </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">line1</span>()-&gt;Line:</span><br><span class="line">    c=( </span><br><span class="line">        Line( )</span><br><span class="line">        .add_xaxis(attr)</span><br><span class="line">        .add_yaxis(<span class="string">&quot;丁丁&quot;</span>,v1)</span><br><span class="line">        .add_yaxis(<span class="string">&quot;当当&quot;</span>,v2) </span><br><span class="line">        .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;折线示意图&quot;</span>)) </span><br><span class="line">        .set_series_opts(</span><br><span class="line">            label_opts=opts.LabelOpts(is_show=<span class="literal">True</span>), </span><br><span class="line">            markpoint_opts=opts.MarkPointOpts(</span><br><span class="line">                data=[ </span><br><span class="line">                    opts.MarkLineItem(type_=<span class="string">&quot;average&quot;</span>,name=<span class="string">&quot;AVE&quot;</span>), </span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&quot;max&quot;</span>,name=<span class="string">&quot;MAX&quot;</span>), </span><br><span class="line">                    opts.MarkLineItem(type_=<span class="string">&quot;min&quot;</span>,name=<span class="string">&quot;MIN&quot;</span>),]), ))</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line">line1( ).render(<span class="string">&#x27;折线图.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<p> <a href="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/%E6%8A%98%E7%BA%BF%E5%9B%BE.html">折线图.html</a> </p>
+<p>例3-1 饼图</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                    
+                        <a href="/tags/python%E5%8F%AF%E8%A7%86%E5%8C%96/"># python可视化</a>
+                    
+                        <a href="/tags/pyecharts/"># pyecharts</a>
+                    
+                        <a href="/tags/echarts/"># echarts</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2022/08/26/iphone%E7%BB%95ID%E9%94%81/">iPhone绕ID锁及激活</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

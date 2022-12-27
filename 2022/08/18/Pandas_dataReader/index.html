@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>pandas-datareader一些用法备忘 | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">pandas-datareader一些用法备忘</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2022-08-18&nbsp;&nbsp;12:01:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/Pandas/">Pandas</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="pandas-datareader一些用法备忘"><a href="#pandas-datareader一些用法备忘" class="headerlink" title="pandas-datareader一些用法备忘"></a>pandas-datareader一些用法备忘</h1><h3 id="pandas-datareader介绍"><a href="#pandas-datareader介绍" class="headerlink" title="pandas-datareader介绍"></a>pandas-datareader介绍</h3><p>Pandas库提供了专门从财经网站获取金融数据的API接口，可作为量化交易股票数据获取的另一种途径</p>
+<h3 id="DataReader方法介绍"><a href="#DataReader方法介绍" class="headerlink" title="DataReader方法介绍"></a>DataReader方法介绍</h3><p>查看Pandas的操作文档可以发现，第一个参数为股票代码，苹果公司的代码为”AAPL”，国内股市采用的输入方式“股票代码”+“对应股市”，上证股票在股票代码后面加上“.SS”，深圳股票在股票代码后面加上“.SZ”。DataReader可从多个金融网站获取到股票数据，如“Yahoo! Finance” 、“Google Finance”等，这里以Yahoo为例。第三、四个参数为股票数据的起始时间断。返回的数据格式为DataFrame。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> pandas_datareader <span class="keyword">import</span> data</span><br><span class="line"></span><br><span class="line">start_date = <span class="string">&quot;2018-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-起始时间</span></span><br><span class="line">end_date = <span class="string">&quot;2021-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-结束时间</span></span><br><span class="line"></span><br><span class="line">stock = data.DataReader(</span><br><span class="line">    <span class="string">&quot;000001.SS&quot;</span>, <span class="string">&quot;yahoo&quot;</span>, start_date, end_date</span><br><span class="line">) </span><br><span class="line"><span class="built_in">print</span>(stock.head(<span class="number">5</span>))</span><br><span class="line"><span class="built_in">print</span>(stock.tail(<span class="number">5</span>), <span class="string">&quot;\n&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(stock.index)</span><br><span class="line"><span class="built_in">print</span>(stock.columns)</span><br><span class="line"><span class="built_in">print</span>(stock.shape)</span><br></pre></td></tr></table></figure>
+
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">                   High          Low         Open        Close  Volume    Adj Close</span><br><span class="line">Date                                                                               </span><br><span class="line">2018-04-02  3192.340088  3159.986084  3169.779053  3163.178955  177700  3163.178955</span><br><span class="line">2018-04-03  3144.332031  3119.132080  3130.012939  3136.633057  152200  3136.633057</span><br><span class="line">2018-04-04  3163.340088  3128.866943  3147.049072  3131.111084  147000  3131.111084</span><br><span class="line">2018-04-09  3146.093018  3110.302979  3125.441895  3138.293945  139600  3138.293945</span><br><span class="line">2018-04-10  3190.648926  3139.081055  3144.257080  3190.322021  168200  3190.322021</span><br><span class="line">                   High          Low         Open        Close  Volume    Adj Close</span><br><span class="line">Date                                                                               </span><br><span class="line">2021-03-26  3423.222900  3373.316895  3373.316895  3418.326904  274600  3418.326904</span><br><span class="line">2021-03-29  3449.833984  3409.886963  3429.632080  3435.300049  284800  3435.300049</span><br><span class="line">2021-03-30  3457.629883  3423.320068  3432.530029  3456.679932  285400  3456.679932</span><br><span class="line">2021-03-31  3452.209961  3420.830078  3452.209961  3441.909912  283000  3441.909912</span><br><span class="line">2021-04-01  3470.030029  3438.830078  3444.810059  3466.330078  275200  3466.330078 </span><br><span class="line"></span><br><span class="line">DatetimeIndex([&#x27;2018-04-02&#x27;, &#x27;2018-04-03&#x27;, &#x27;2018-04-04&#x27;, &#x27;2018-04-09&#x27;,</span><br><span class="line">               &#x27;2018-04-10&#x27;, &#x27;2018-04-11&#x27;, &#x27;2018-04-12&#x27;, &#x27;2018-04-13&#x27;,</span><br><span class="line">               &#x27;2018-04-16&#x27;, &#x27;2018-04-17&#x27;,</span><br><span class="line">               ...</span><br><span class="line">               &#x27;2021-03-19&#x27;, &#x27;2021-03-22&#x27;, &#x27;2021-03-23&#x27;, &#x27;2021-03-24&#x27;,</span><br><span class="line">               &#x27;2021-03-25&#x27;, &#x27;2021-03-26&#x27;, &#x27;2021-03-29&#x27;, &#x27;2021-03-30&#x27;,</span><br><span class="line">               &#x27;2021-03-31&#x27;, &#x27;2021-04-01&#x27;],</span><br><span class="line">              dtype=&#x27;datetime64[ns]&#x27;, name=&#x27;Date&#x27;, length=728, freq=None)</span><br><span class="line">Index([&#x27;High&#x27;, &#x27;Low&#x27;, &#x27;Open&#x27;, &#x27;Close&#x27;, &#x27;Volume&#x27;, &#x27;Adj Close&#x27;], dtype=&#x27;object&#x27;)</span><br><span class="line">(728, 6)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h3><p>1、打印DataFrame数据前5行和尾部倒数5行<br>2、打印DataFrame数据索引和列名，索引为时间序列，列信息为开盘价、最高价、最低价、收盘价、复权收盘价、成交量</p>
+<p>print stock.index<br>print stock.columns<br>3、打印DataFrame数据形状</p>
+<p>print(stock.shape)</p>
+<p>4、DataFrame数据每组的统计情况，如最小值、最大值、均值、标准差等</p>
+<p>print stock.describe()<br>5、DataFrame数据中增加涨&#x2F;跌幅列，涨&#x2F;跌&#x3D;（当日Close-上一日Close）&#x2F;上一日Close*100%</p>
+<p>（1）添加一列change，存储当日股票价格与前一日收盘价格相比的涨跌数值，即当日Close价格与上一日Close的差值，4月1日这天无上一日数据，因此出现缺失</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">change = stock.Close.diff()</span><br><span class="line">stock[<span class="string">&#x27;Change&#x27;</span>] = change</span><br><span class="line"><span class="built_in">print</span>(stock.head(<span class="number">5</span>))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">                   High          Low         Open        Close  Volume    Adj Close     Change</span></span><br><span class="line"><span class="string">Date                                                                                          </span></span><br><span class="line"><span class="string">2020-04-01  2773.364014  2731.079102  2743.541016  2734.521973  217300  2734.521973        NaN</span></span><br><span class="line"><span class="string">2020-04-02  2780.637939  2719.904053  2720.228027  2780.637939  217900  2780.637939  46.115967</span></span><br><span class="line"><span class="string">2020-04-03  2780.586914  2754.072998  2773.575928  2763.987061  200800  2763.987061 -16.650879</span></span><br><span class="line"><span class="string">2020-04-07  2823.277100  2801.839111  2806.968018  2820.762939  270200  2820.762939  56.775879</span></span><br><span class="line"><span class="string">2020-04-08  2823.214111  2800.295898  2805.916992  2815.368896  243500  2815.368896  -5.394043</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>（2）对缺失的数据用涨跌值的均值就地替代NaN。</p>
+<p>change.fillna(change.mean(),inplace&#x3D;True)<br>（3）计算涨跌幅度有两种方法，pct_change()算法的思想即是第二项开始向前做减法后再除以第一项，计算得到涨跌幅序列。</p>
+<p>stock[‘pct_change’] &#x3D; (stock[‘Change’] &#x2F;stock[‘Close’].shift(1))#<br>stock[‘pct_change1’] &#x3D; stock.Close.pct_change()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                   High          Low         Open        Close  Volume    Adj Close     Change  pct_change  pct_change1</span><br><span class="line">Date                                                                                                                   </span><br><span class="line">2020-04-01  2773.364014  2731.079102  2743.541016  2734.521973  217300  2734.521973        NaN         NaN          NaN</span><br><span class="line">2020-04-02  2780.637939  2719.904053  2720.228027  2780.637939  217900  2780.637939  46.115967    0.016864     0.016864</span><br><span class="line">2020-04-03  2780.586914  2754.072998  2773.575928  2763.987061  200800  2763.987061 -16.650879   -0.005988    -0.005988</span><br><span class="line">2020-04-07  2823.277100  2801.839111  2806.968018  2820.762939  270200  2820.762939  56.775879    0.020541     0.020541</span><br><span class="line">2020-04-08  2823.214111  2800.295898  2805.916992  2815.368896  243500  2815.368896  -5.394043   -0.001912    -0.001912</span><br></pre></td></tr></table></figure>
+
+
+<p>7、DataFrame数据中增加跳空缺口数值序列，这里定义的缺口为上涨趋势和下跌趋势中的突破缺口，上涨趋势中今天的最低价高于昨天收盘价为向上跳空，下跌趋势中昨天收盘价高于今天最高价为向下跳空。遍历每个交易日后将符合跳空缺口条件的交易日增加缺口数值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> pandas_datareader <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">start_date = <span class="string">&quot;2020-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-起始时间</span></span><br><span class="line">end_date = <span class="string">&quot;2021-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-结束时间</span></span><br><span class="line"></span><br><span class="line">stock = data.DataReader(<span class="string">&quot;000001.SS&quot;</span>, <span class="string">&quot;yahoo&quot;</span>, start_date, end_date)</span><br><span class="line">change = stock.Close.diff()</span><br><span class="line">change.fillna(change.mean(), inplace=<span class="literal">True</span>)</span><br><span class="line">stock[<span class="string">&quot;Change&quot;</span>] = change</span><br><span class="line">stock[<span class="string">&quot;pct_change&quot;</span>] = stock[<span class="string">&quot;Change&quot;</span>] / stock[<span class="string">&quot;Close&quot;</span>].shift(<span class="number">1</span>)</span><br><span class="line">stock[<span class="string">&quot;pct_change1&quot;</span>] = stock.Close.pct_change()</span><br><span class="line"><span class="comment"># print(stock.head(5))</span></span><br><span class="line"></span><br><span class="line">jump_pd = pd.DataFrame()</span><br><span class="line"><span class="keyword">for</span> kl_index <span class="keyword">in</span> np.arange(<span class="number">1</span>, stock.shape[<span class="number">0</span>]):</span><br><span class="line">    today = stock.iloc[kl_index]</span><br><span class="line">    yesday = stock.iloc[kl_index - <span class="number">1</span>]</span><br><span class="line">    today[<span class="string">&quot;preCloae&quot;</span>] = yesday.Close</span><br><span class="line">    <span class="keyword">if</span> today[<span class="string">&quot;pct_change&quot;</span>] &gt; <span class="number">0</span> <span class="keyword">and</span> (today.Low - today[<span class="string">&quot;preCloae&quot;</span>]) &gt; <span class="number">0</span>:</span><br><span class="line">        today[<span class="string">&quot;jump_power&quot;</span>] = today.Low - today[<span class="string">&quot;preCloae&quot;</span>]</span><br><span class="line">    <span class="keyword">elif</span> today[<span class="string">&quot;pct_change&quot;</span>] &lt; <span class="number">0</span> <span class="keyword">and</span> (today.High - today[<span class="string">&quot;preCloae&quot;</span>]) &lt; <span class="number">0</span>:</span><br><span class="line">        today[<span class="string">&quot;jump_power&quot;</span>] = today.High - today[<span class="string">&quot;preCloae&quot;</span>]</span><br><span class="line">    jump_pd = jump_pd.append(today)</span><br><span class="line">stock[<span class="string">&quot;jump_power&quot;</span>] = jump_pd[<span class="string">&quot;jump_power&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(stock.loc[<span class="string">&quot;2020-04-01&quot;</span>:<span class="string">&quot;2021-04-01&quot;</span>])  <span class="comment"># 默认打印全部列</span></span><br><span class="line"><span class="comment"># 这里有个问题：A value is trying to be set on a copy of a slice from a DataFrame不过不影响</span></span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">                   High          Low         Open        Close  Volume    Adj Close     Change  pct_change  pct_change1  jump_power</span><br><span class="line">Date                                                                                                                               </span><br><span class="line">2020-04-01  2773.364014  2731.079102  2743.541016  2734.521973  217300  2734.521973   3.011556         NaN          NaN         NaN</span><br><span class="line">2020-04-02  2780.637939  2719.904053  2720.228027  2780.637939  217900  2780.637939  46.115967    0.016864     0.016864         NaN</span><br><span class="line">2020-04-03  2780.586914  2754.072998  2773.575928  2763.987061  200800  2763.987061 -16.650879   -0.005988    -0.005988   -0.051025</span><br><span class="line">2020-04-07  2823.277100  2801.839111  2806.968018  2820.762939  270200  2820.762939  56.775879    0.020541     0.020541   37.852051</span><br><span class="line">2020-04-08  2823.214111  2800.295898  2805.916992  2815.368896  243500  2815.368896  -5.394043   -0.001912    -0.001912         NaN</span><br><span class="line">...                 ...          ...          ...          ...     ...          ...        ...         ...          ...         ...</span><br><span class="line">2021-03-26  3423.222900  3373.316895  3373.316895  3418.326904  274600  3418.326904  54.736816    0.016273     0.016273    9.726807</span><br><span class="line">2021-03-29  3449.833984  3409.886963  3429.632080  3435.300049  284800  3435.300049  16.973145    0.004965     0.004965         NaN</span><br><span class="line">2021-03-30  3457.629883  3423.320068  3432.530029  3456.679932  285400  3456.679932  21.379883    0.006224     0.006224         NaN</span><br><span class="line">2021-03-31  3452.209961  3420.830078  3452.209961  3441.909912  283000  3441.909912 -14.770020   -0.004273    -0.004273   -4.469971</span><br><span class="line">2021-04-01  3470.030029  3438.830078  3444.810059  3466.330078  275200  3466.330078  24.420166    0.007095     0.007095         NaN</span><br><span class="line"></span><br><span class="line">[244 rows x 10 columns]</span><br></pre></td></tr></table></figure>
+
+
+<p>8、DataFrame数据保留两位小数显示</p>
+<p>format &#x3D; lambda x: ‘%.2f’ % x<br>stock &#x3D; stock.applymap(format)<br>print stock.loc[“2017-04-26”:”2017-06-15”]#默认打印全部列</p>
+<h3 id="股价数据的可视化"><a href="#股价数据的可视化" class="headerlink" title="股价数据的可视化"></a>股价数据的可视化</h3><p>Matplotlib是使用Python进行绘图里非常方便的库。这次 plot使用的数据是 Adj Close栏的数据。这是所说的已调整收盘价。</p>
+<p>如下仅仅需要两行写就可以简单的将股价作为时间序列数据画出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">from</span> pandas_datareader <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">start_date = <span class="string">&quot;2020-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-起始时间</span></span><br><span class="line">end_date = <span class="string">&quot;2021-04-01&quot;</span>  <span class="comment"># 获取数据的时间段-结束时间</span></span><br><span class="line"></span><br><span class="line">stock = data.DataReader(<span class="string">&quot;000001.SS&quot;</span>, <span class="string">&quot;yahoo&quot;</span>, start_date, end_date)</span><br><span class="line"></span><br><span class="line">stock[<span class="string">&#x27;Adj Close&#x27;</span>].plot(legend=<span class="literal">True</span>, figsize=(<span class="number">10</span>,<span class="number">4</span>))</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/img/Pandas_dataReader/img001.png" alt="img"></p>
+<p>实例操作：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Hellolijunshy/article/details/82527643">Python提取雅虎财经数据，并做数据分析和可视化</a></p>
+<p>以csv格式存放</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> pandas_datareader.data <span class="keyword">as</span> web</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">df_csvsave = web.DataReader(<span class="string">&quot;000001.SS&quot;</span>,<span class="string">&quot;yahoo&quot;</span>,datetime.datetime(<span class="number">2019</span>,<span class="number">1</span>,<span class="number">1</span>),datetime.date.today())</span><br><span class="line"><span class="built_in">print</span> (df_csvsave)</span><br><span class="line">df_csvsave.to_csv(<span class="string">r&#x27;C:\Users\15461\Desktop\table.csv&#x27;</span>,columns=df_csvsave.columns,index=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/Pandas/"># Pandas</a>
+                    
+                        <a href="/tags/DataFrame/"># DataFrame</a>
+                    
+                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                    
+                        <a href="/tags/Pandas-DataReader/"># Pandas/DataReader</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/08/18/Matplotlib_pyplot/">Matplotlib.pyplot基本用法</a>
+            
+            
+            <a class="next" rel="next" href="/2022/08/18/DataFrame%E7%9B%B8%E5%85%B3%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">DataFrame相关常用操作</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
