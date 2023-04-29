@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>Numpy基础 | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Numpy基础</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2022-08-18&nbsp;&nbsp;13:40:50</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/numpy/">numpy</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>&lt;基础向&gt;整理自讲义</p>
+<h2 id="矩阵类库numpy-的方法"><a href="#矩阵类库numpy-的方法" class="headerlink" title="矩阵类库numpy 的方法"></a>矩阵类库numpy 的方法</h2><blockquote>
+<p>Zeros，生成元素为0的矩阵</p>
+<p>B&#x3D;np.zeros((2,3))  # 给定元组</p>
+</blockquote>
+<blockquote>
+<p>ones生成元素为1 的矩阵</p>
+<p>x&#x3D;np.ones((2,3))</p>
+</blockquote>
+<blockquote>
+<p>eye生成单位矩阵</p>
+<p>X&#x3D;np.eye(5)</p>
+<p>生成一个5*5的单位阵</p>
+</blockquote>
+<blockquote>
+<p>np.random.standard_normal((n,m))</p>
+<p>生成n行m列，服从正太分布的随机数矩阵</p>
+<p>如：</p>
+<p>x&#x3D;np.random.standard_normal((4,4))</p>
+<p>np.random.random() 产生0~1随机数</p>
+<p>np.random.random(n) 产生n个0~1随机数</p>
+<p>np.random.random((n,m)) 产生n*m个0~1随机数,二维数组形式</p>
+<p>np.random.choice(a,size&#x3D;n)，从数组a中随机采n个样本</p>
+</blockquote>
+<h2 id="文件与矩阵"><a href="#文件与矩阵" class="headerlink" title="文件与矩阵"></a>文件与矩阵</h2><blockquote>
+<p>读文件到矩阵</p>
+<p>Z&#x3D;np.loadtxt (“c:\python33\S-093790.txt”)</p>
+<p>Z就是一个矩阵；默认文件中列以空格间隔</p>
+</blockquote>
+<h2 id="矩阵的格式化文件保存"><a href="#矩阵的格式化文件保存" class="headerlink" title="矩阵的格式化文件保存"></a>矩阵的格式化文件保存</h2><blockquote>
+<p>np.savetxt(fname, X, fmt&#x3D;’格式串’, delimiter&#x3D;’\t’, newline&#x3D;’\r\n’)</p>
+<p>·fname为文件名，如 c:\abc.txt</p>
+<p>·X输出矩阵</p>
+<p>·fmt为数据格式，如 %10.3f</p>
+<p>·delimiter是列分隔符</p>
+<p>·newline为换行符，一般使用\r\n。</p>
+</blockquote>
+<blockquote>
+<p>下面语句将矩阵y保存到磁盘文件111.txt中。数据格式为宽度5位，保留2位小数。</p>
+<p>np.savetxt(“d:\111.txt”,y,fmt&#x3D;’%5.2f’, delimiter&#x3D;’\t’, newline&#x3D;’\r\n’)</p>
+</blockquote>
+<blockquote>
+<p>import numpy as np</p>
+<p>x&#x3D;np.random.standard_normal((4,4))</p>
+<p>np.savetxt(“d:\111.txt”,x,fmt&#x3D;’%5.2f’, delimiter&#x3D;’\t’, newline&#x3D;’\r\n’)</p>
+<p># 偷懒写法</p>
+<p>np.savetxt(“d:\111.txt”,x,fmt&#x3D;’%5.2f’) # 默认空格间隔，换行</p>
+</blockquote>
+<h2 id="矩阵转置"><a href="#矩阵转置" class="headerlink" title="矩阵转置"></a>矩阵转置</h2><p>转置：B &#x3D;A.T</p>
+<blockquote>
+<p>import numpy as np</p>
+<p>x&#x3D;np.random.standard_normal((4,4))</p>
+<p>np.savetxt(“d:\111.txt”,x,fmt&#x3D;’%5.2f’, delimiter&#x3D;’\t’, newline&#x3D;’\r\n’)</p>
+<p>xt&#x3D;x.T</p>
+<p>np.savetxt(“d:\222.txt”,xt,fmt&#x3D;’%5.2f’, delimiter&#x3D;’\t’, newline&#x3D;’\r\n’)</p>
+</blockquote>
+<h2 id="矩阵的-，-x2F-dot乘-运算："><a href="#矩阵的-，-x2F-dot乘-运算：" class="headerlink" title="矩阵的 +, - , *，&#x2F;, dot乘 运算："></a>矩阵的 +, - , *，&#x2F;, dot乘 运算：</h2><blockquote>
+<p>矩阵的+，-, *, &#x2F; 运算：维数相同的2个矩阵，对应元素进行计算。</p>
+<ul>
+<li>C&#x3D;A+B    或  D&#x3D;A-B</li>
+<li>dot乘：线性代数乘：C&#x3D;A.dot(B) 或 C&#x3D;np.dot(A,B)或 C&#x3D;A @ B</li>
+</ul>
+</blockquote>
+<h2 id="矩阵逆"><a href="#矩阵逆" class="headerlink" title="矩阵逆"></a>矩阵逆</h2><p>逆：B&#x3D;np.linalg .inv (A)</p>
+<blockquote>
+<p>import numpy as np</p>
+<p>x&#x3D;np.random.standard_normal((4,4))</p>
+<p>xinv&#x3D;np.linalg.inv(x)</p>
+<p>I&#x3D;x @ xinv</p>
+</blockquote>
+<h2 id="矩阵乘方运算"><a href="#矩阵乘方运算" class="headerlink" title="矩阵乘方运算"></a>矩阵乘方运算</h2><p>矩阵每个元素的乘方，形成新矩阵</p>
+<blockquote>
+<p>A&#x3D;np.array([[1,-1,0],[2,0,-2.0]])</p>
+<p>B&#x3D;A**2</p>
+<p>array([[1., 1., 0.],</p>
+<p>​    [4., 0., 4.]])</p>
+</blockquote>
+<h2 id="矩阵的行和列数"><a href="#矩阵的行和列数" class="headerlink" title="矩阵的行和列数"></a>矩阵的行和列数</h2><blockquote>
+<p> size &#x3D; A.shape</p>
+<p> size[0]是行数，size[1]是列数 </p>
+</blockquote>
+<h2 id="两矩阵合并"><a href="#两矩阵合并" class="headerlink" title="两矩阵合并"></a>两矩阵合并</h2><blockquote>
+<p>np.r_[ ]是行合并</p>
+<p>np.c_[  ]  列合并  </p>
+<p>A&#x3D;np.ones((3,3))</p>
+<p>B&#x3D;np.zeros((2,3))</p>
+<p>np.r_[A,B]</p>
+<p>array([[1., 1., 1.],</p>
+<p>​    [1., 1., 1.],</p>
+<p>​    [1., 1., 1.],</p>
+<p>​    [0., 0., 0.],</p>
+<p>​    [0., 0., 0.]])</p>
+</blockquote>
+<blockquote>
+<p>注意：</p>
+<p>A&#x3D;np.ones(3)</p>
+<p>B&#x3D;np.zeros((2,3))</p>
+<p>因为1维向量被看作是竖起来的，所以无法与B矩阵np.r_[ ]</p>
+<p>np.r_[A,B] 报错，数据维度不一致</p>
+</blockquote>
+<h2 id="矩阵分片"><a href="#矩阵分片" class="headerlink" title="矩阵分片"></a>矩阵分片</h2><blockquote>
+<p>x&#x3D;np.random.standard_normal((4,4))</p>
+<p>x</p>
+<p>array([[ 1.098, -0.594, -1.353, 1.181],</p>
+<p>​      [-0.686, -0.794, 1.686, -0.676],</p>
+<p>​      [ 0.363, 0.419, 0.561, 1.086],</p>
+<p>​      [ 0.774, -2.578, -0.436, 0.837]])</p>
+<p>y&#x3D;x[: , :2] </p>
+<p>第一个:，代表所有行，第二个:，后跟数字2，取前两列</p>
+<p>array([[ 1.098, -0.594],</p>
+<p>​    [-0.686, -0.794],</p>
+<p>​    [ 0.363, 0.419],</p>
+<p>​    [ 0.774, -2.578]])</p>
+</blockquote>
+<h2 id="矩阵分片—指定行列索引选择"><a href="#矩阵分片—指定行列索引选择" class="headerlink" title="矩阵分片—指定行列索引选择"></a>矩阵分片—指定行列索引选择</h2><blockquote>
+<p>import numpy as np</p>
+<p>a&#x3D;np.random.standard_normal((9,4))</p>
+<p>print(a)</p>
+<p>xSel&#x3D;[0,5,7]</p>
+<p>ySel&#x3D;[1,3]</p>
+<p>b&#x3D;a[xSel]  # 选择指定行</p>
+<p>b&#x3D;b[:,ySel] # 再选择指定列</p>
+<p>print(b)</p>
+<p>b&#x3D;a[xSel，ySel]  # 可否？</p>
+<p>b&#x3D;a[[0,5],[1,3]]</p>
+<p>代表[0,1],[5,3]两个位置的数字</p>
+</blockquote>
+<h2 id="数据过滤"><a href="#数据过滤" class="headerlink" title="数据过滤"></a>数据过滤</h2><p>给定一维数组y，y&#x3D;&#x3D;值1, 返回元素值为True和False的一维数组，元素值等于值1的元素，返回True</p>
+<blockquote>
+<p>import numpy as np</p>
+<p>y&#x3D;np.array([1,-1,1])</p>
+<p>z&#x3D;y&#x3D;&#x3D;1</p>
+<p>z值 ： array([ True, False, True])</p>
+<p>长度与矩阵的行(列数)数相等且每个元素的取值为True&#x2F;False 的一维数组，将其作为矩阵的行或列，可以过滤数据</p>
+<p>y[z],取值 array([1, 1])</p>
+</blockquote>
+<p>已知X存储了8朵鸢尾花的花瓣长、宽数据。y存储了8朵花的归属，1是山鸢尾，-1是变色鸢尾。</p>
+<p>写语句，将X中的山鸢尾数据提取出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">X=np.array([[<span class="number">5.1</span>, <span class="number">3.5</span> ],  [<span class="number">4.9</span>, <span class="number">3.</span> ],</span><br><span class="line">    [<span class="number">5.5</span>, <span class="number">2.6</span> ],  [<span class="number">6.1</span>, <span class="number">3.0</span>],    </span><br><span class="line">    [<span class="number">4.7</span>, <span class="number">3.2</span>], [<span class="number">4.6</span>, <span class="number">3.1</span>],</span><br><span class="line">    [<span class="number">5.8</span>, <span class="number">2.6</span>], [<span class="number">5.</span> , <span class="number">2.3</span>]])</span><br><span class="line">y=np.array([-<span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>,  -<span class="number">1</span>, -<span class="number">1</span>,<span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">mask=y==<span class="number">1</span></span><br><span class="line"><span class="built_in">print</span>(X[mask])</span><br></pre></td></tr></table></figure>
+
+<h2 id="矩阵函数"><a href="#矩阵函数" class="headerlink" title="矩阵函数"></a>矩阵函数</h2><ul>
+<li>如sum（元素和）、 std（标准偏差），mean(均值)</li>
+<li>默认情况下，这些函数对矩阵所有元素进行</li>
+<li>由于矩阵具有行、列属性，因此，通过特别指定，这些函数也可以按行或列操作。</li>
+<li>指定该操作的参数为axis，当axis&#x3D;0时，求列方向，axis&#x3D;1时，求行方向</li>
+</ul>
+<p><img src="/img/Numpy%E5%9F%BA%E7%A1%80%E4%B8%8E%E7%9F%A9%E9%98%B5%E8%AE%A1%E7%AE%97/img001.png" alt="img"></p>
+<blockquote>
+<p>&gt;&gt;&gt; x&#x3D;np.array([[1,2,3],[5,6,7]])</p>
+<p>&gt;&gt;&gt; x.sum()</p>
+<p>24</p>
+<p>&gt;&gt;&gt; x.sum(axis&#x3D;0)</p>
+<p>array([ 6, 8, 10])</p>
+<p>&gt;&gt;&gt; x.sum(axis&#x3D;1)</p>
+<p>array([ 6, 18])</p>
+</blockquote>
+<h2 id="矩阵与标量的运算"><a href="#矩阵与标量的运算" class="headerlink" title="矩阵与标量的运算"></a>矩阵与标量的运算</h2><p>矩阵与标量（一个数值）运算，+、-、*、&#x2F;，在每个元素上进行</p>
+<blockquote>
+<p>zz&#x3D;np.eye(3,3)</p>
+<p>array([[ 1., 0., 0.],</p>
+<p>​    [ 0., 1., 0.],</p>
+<p>​    [ 0., 0., 1.]])</p>
+<p>zz+1</p>
+<p>array([[ 2., 1., 1.],</p>
+<p>​    [ 1., 2., 1.],</p>
+<p> [ 1., 1., 2.]])</p>
+</blockquote>
+<h2 id="矩阵与向量的-x2F-扩展"><a href="#矩阵与向量的-x2F-扩展" class="headerlink" title="矩阵与向量的+ - * &#x2F; 扩展"></a>矩阵与向量的+ - * &#x2F; 扩展</h2><p>+、-、*、&#x2F;，指定运算在列上进行</p>
+<p>（行运算可以转置）</p>
+<p><img src="/img/Numpy%E5%9F%BA%E7%A1%80%E4%B8%8E%E7%9F%A9%E9%98%B5%E8%AE%A1%E7%AE%97/img002.png" alt="img"></p>
+<blockquote>
+<p>import numpy as np</p>
+<p>X&#x3D;np.random.random((5,3))</p>
+<p>y&#x3D;np.array([1,2,1])</p>
+<p>z&#x3D;X+y</p>
+<p>print(z)</p>
+<p>[[0.01569532 0.7719744  0.68876164]<br> [0.94614404 0.09550832 0.72591569]<br> [0.04651266 0.35518092 0.78006742]<br> [0.79136464 0.14264937 0.38290291]<br> [0.91792254 0.82318107 0.96811695]]<br>[[1.01569532 2.7719744  1.68876164]<br> [1.94614404 2.09550832 1.72591569]<br> [1.04651266 2.35518092 1.78006742]<br> [1.79136464 2.14264937 1.38290291]<br> [1.91792254 2.82318107 1.96811695]]</p>
+</blockquote>
+<h2 id="矩阵间的-、-x2F-VS-线性代数乘"><a href="#矩阵间的-、-x2F-VS-线性代数乘" class="headerlink" title="矩阵间的*、&#x2F;  VS 线性代数乘"></a>矩阵间的*、&#x2F;  VS 线性代数乘</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x=np.array([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>]])</span><br><span class="line">y=np.array([[<span class="number">0</span>,<span class="number">1</span>],[<span class="number">1</span>,<span class="number">2</span>]])</span><br><span class="line">z=x @ y </span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line">[[<span class="number">2</span>  <span class="number">5</span>]</span><br><span class="line"> [<span class="number">4</span> <span class="number">11</span>]]</span><br><span class="line">dot线性代数乘</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x=np.array([[<span class="number">1</span>,<span class="number">2</span>],[<span class="number">3</span>,<span class="number">4</span>]])</span><br><span class="line">y=np.array([[<span class="number">0</span>,<span class="number">1</span>],[<span class="number">1</span>,<span class="number">2</span>]])</span><br><span class="line">z=x * y</span><br><span class="line"><span class="built_in">print</span>(z)</span><br><span class="line">[[<span class="number">0</span> <span class="number">2</span>]</span><br><span class="line"> [<span class="number">3</span> <span class="number">8</span>]]</span><br><span class="line">对应元素相乘</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="额外内容："><a href="#额外内容：" class="headerlink" title="额外内容："></a>额外内容：</h2><h2 id="矩阵Sigular-Value-Decomposition分解（SVD）"><a href="#矩阵Sigular-Value-Decomposition分解（SVD）" class="headerlink" title="矩阵Sigular Value Decomposition分解（SVD）"></a>矩阵Sigular Value Decomposition分解（SVD）</h2><p>实矩阵的SVD分解： 按特征值由大到小，逐个提取特征向量分解</p>
+<p>B &#x3D; np.linalg.svd(A)</p>
+<p>常用于主特征提取，降维，数据可视化</p>
+<blockquote>
+<p>实矩阵的SVD分解，将一个实矩阵分解为三个矩阵的乘积，其结果可以表达为：</p>
+<p>  A&#x3D;USV</p>
+<p>其中S为一维矩阵，其每个元素是矩阵的A的实奇异值（特征值开根号），从大到小排列</p>
+<p>U是列正交矩阵，且每个列的模为1（所有元素的平方和开根号）</p>
+<p>V是行正交矩阵</p>
+<p>所谓列（行）正交，是指矩阵的任意两列（行）的对应元素的乘积之和为0</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A=np.array([[1,5.0,3.0],[2.1,2.0,7.0]])</span><br><span class="line">Z=np.linalg.svd(A)</span><br><span class="line">Z[0]</span><br><span class="line">array([[-0.58281835, -0.81260247],</span><br><span class="line">       [-0.81260247,  0.58281835]])</span><br><span class="line">&gt;&gt;&gt; Z[1]</span><br><span class="line">array([ 9.00833663,  3.35557316])</span><br><span class="line">&gt;&gt;&gt; Z[2]</span><br><span class="line">array([[-0.25412944, -0.50389954, -0.82553224],</span><br><span class="line">       [ 0.12257699, -0.86345179,  0.48931164]])</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>SVD分解，特征值从大到小排列</p>
+<p>当对应最后一种物质的信号特征值，与后面一个对应噪声的特征值，比值会出现突跃</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">A=np.loadtxt (“某数据集<span class="string">&quot;)</span></span><br><span class="line"><span class="string">B = np.linalg.svd(A)</span></span><br><span class="line"><span class="string">lamda=B[1]</span></span><br><span class="line"><span class="string">for i in range(len(lamda)-1):</span></span><br><span class="line"><span class="string">    print(lamda[i]/lamda[i+1])</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>2.041 2.309 <strong>27.370</strong> 1.226 1.096 1.088 1.031 1.018</p>
+<p>1.040 1.130 1.060  1.062 1.020 1.078 1.047 1.135</p>
+<p>……</p>
+<p>所以体系中有3中组分，即体系中，只有3个特征值对应有效信号，其余为噪声</p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                    
+                        <a href="/tags/numpy/"># numpy</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/08/18/cvxpy%E7%AE%80%E6%98%93%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/">cvxpy简易入门教程</a>
+            
+            
+            <a class="next" rel="next" href="/2022/08/18/python%E5%8F%AF%E8%A7%86%E5%8C%961-%E5%9F%BA%E4%BA%8Ematplotlib/">python可视化1——基于matplotlib库</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

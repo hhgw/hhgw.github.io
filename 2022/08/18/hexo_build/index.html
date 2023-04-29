@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>hexo搭建个人博客&amp;发布github.io | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">hexo搭建个人博客&amp;发布github.io</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2022-08-18&nbsp;&nbsp;09:27:59</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">个人博客搭建</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p><img src="/img/head.jpg" alt="pic"></p>
+<p>本文介绍MacOS通过hexo搭建个人博客网站的流程</p>
+<p>2022-8-17 ｜ MacOS:11.6.8</p>
+<ol>
+<li><h3 id="什么是hexo？"><a href="#什么是hexo？" class="headerlink" title="什么是hexo？"></a>什么是hexo？</h3></li>
+</ol>
+<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。</p>
+<ol start="2">
+<li><h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3></li>
+</ol>
+<p>根据<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">hexo官方文档</a>，安装 Hexo 相当简单，只需要先安装下列应用程序即可：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://nodejs.org/">Node.js</a> (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本)</li>
+<li><a target="_blank" rel="noopener" href="http://git-scm.com/">Git</a></li>
+</ul>
+<ol>
+<li><h4 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h4></li>
+</ol>
+<ul>
+<li>Mac：使用 <a target="_blank" rel="noopener" href="http://mxcl.github.com/homebrew/">Homebrew</a>, <a target="_blank" rel="noopener" href="http://www.macports.org/">MacPorts</a> 或者从镜像资源网站下载 <a target="_blank" rel="noopener" href="http://sourceforge.net/projects/git-osx-installer/">安装程序</a>。</li>
+</ul>
+<p>​	Git官网只提供Homebrew等安装方法，本人使用镜像资源网站sourceforge.net下载安装包安装程序。</p>
+<p>​	注：Mac 用户如果在编译时可能会遇到问题，请先到 App Store 安装 Xcode，Xcode 完成后，启动并进入 <strong>Preferences -&gt; Download -&gt; Command Line Tools -&gt; Install</strong> 安装命令行工具。如果安装包出现“无法打开git-2.15.0-intel-universal-mavericks.pkg，因为它来自身份不明的开发者”，前往 设置 -&gt; 安全性与隐私 进行操作。</p>
+<ol start="2">
+<li><h4 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h4></li>
+</ol>
+<p>Node.js 为大多数平台提供了官方的 <a target="_blank" rel="noopener" href="https://nodejs.org/en/download/">安装程序</a>。对于中国大陆地区用户，可以前往 <a target="_blank" rel="noopener" href="https://npm.taobao.org/mirrors/node">淘宝 Node.js 镜像</a> （不是说淘宝购买，是指淘宝的源，我没试过）下载。Mac：使用 <a target="_blank" rel="noopener" href="https://brew.sh/">Homebrew</a> 或 <a target="_blank" rel="noopener" href="http://www.macports.org/">MacPorts</a> 安装。</p>
+<h3 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><p>所有必备的应用程序安装完成后，即可使用 npm 安装 Hexo。</p>
+<p><code>$ npm install -g hexo-cli</code></p>
+<p><strong>Mac &#x2F; Linux 用户：</strong>如果在尝试安装 Hexo 的过程中出现 <code>EACCES</code> 权限错误，请遵循 <a target="_blank" rel="noopener" href="https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally">由 npmjs 发布的指导</a> 修复该问题。强烈建议 <strong>不要</strong> 使用 root、sudo 等方法覆盖权限。</p>
+<p><strong>报错示例：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">npm notice </span><br><span class="line">npm notice New minor version of npm available! 8.15.0 -&gt; 8.17.0</span><br><span class="line">npm notice Changelog: https://github.com/npm/cli/releases/tag/v8.17.0</span><br><span class="line">npm notice Run npm install -g npm@8.17.0 to update!</span><br><span class="line">npm notice </span><br><span class="line">npm ERR! code EACCES</span><br><span class="line">npm ERR! syscall mkdir</span><br><span class="line">npm ERR! path /usr/local/lib/node_modules/hexo-cli</span><br><span class="line">npm ERR! errno -13</span><br><span class="line">npm ERR! Error: EACCES: permission denied, mkdir &#x27;/usr/local/lib/node_modules/hexo-cli&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><strong>指导文件翻译</strong></p>
+<blockquote>
+<p>解决全局安装包时EACCES权限错误</p>
+<p>如果在尝试全局安装软件包时发现EACCES错误，您可以：</p>
+<p>·使用节点版本管理器（node version manager）重新安装npm（推荐）<br>或<br>·手动更改npm的默认目录</p>
+<h5 id="使用节点版本管理器重新安装npm"><a href="#使用节点版本管理器重新安装npm" class="headerlink" title="使用节点版本管理器重新安装npm"></a>使用节点版本管理器重新安装npm</h5><p>这是避免权限问题的最佳方法。要使用节点版本管理器重新安装npm，请按照“下载并安装node.js和npm”中的步骤进行操作。您不需要删除当前版本的npm或节点。js，然后安装节点版本管理器。</p>
+<h5 id="手动更改npm的默认目录"><a href="#手动更改npm的默认目录" class="headerlink" title="手动更改npm的默认目录"></a>手动更改npm的默认目录</h5><p>注：仅限macOS</p>
+<p>为了将权限错误的可能性降至最低，您可以将npm配置为使用不同的目录。在本例中，您将在主目录中创建并使用隐藏目录。</p>
+<ol>
+<li>备份（废话）</li>
+<li>终端（terminal）里，在用户根目录（默认状态）创建文件夹：</li>
+</ol>
+<p><code>mkdir ~/.npm-global</code></p>
+<ol start="3">
+<li>配置npm以使用新目录路径：</li>
+</ol>
+<p><code>npm config set prefix &#39;~/.npm-global&#39;</code></p>
+<ol start="4">
+<li>在文本编辑器中，创建 ~&#x2F;.profile 文件并添加此行：</li>
+</ol>
+<p><code>export PATH=~/.npm-global/bin:$PATH</code></p>
+<ol start="5">
+<li>终端中，更新系统变量：</li>
+</ol>
+<p><code>source ~/.profile</code></p>
+<ol start="6">
+<li>除了2-4步之外，如果你不想更改 ~&#x2F;.profile 文件，也可以使用对应的环境变量：</li>
+</ol>
+<p><code>NPM_CONFIG_PREFIX=~/.npm-global</code></p>
+</blockquote>
+<h3 id="安装-Hexo-1"><a href="#安装-Hexo-1" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h3><p>所有必备的应用程序安装完成后，即可使用 npm 安装 Hexo。</p>
+<p><code>$ npm install -g hexo-cli</code></p>
+<h3 id="建站"><a href="#建站" class="headerlink" title="建站"></a>建站</h3><p>注：</p>
+<p>安装以后，可以使用以下两种方式执行 Hexo：</p>
+<ol>
+<li><code>npx hexo &lt;command&gt;</code></li>
+<li>将 Hexo 所在的目录下的 <code>node_modules</code> 添加到环境变量之中即可直接使用 <code>hexo &lt;command&gt;</code>：</li>
+</ol>
+<p><code>echo &#39;PATH=&quot;$PATH:./node_modules/.bin&quot;&#39; &gt;&gt; ~/.profile</code></p>
+<p>安装 Hexo 完成后，请执行下列命令，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init &lt;folder&gt;</span><br><span class="line">$ cd &lt;folder&gt;</span><br><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
+
+<p>新建完成后，指定文件夹的目录如下：</p>
+<blockquote>
+<p>.<br>├── _config.yml<br>├── package.json<br>├── scaffolds<br>├── source<br>|   ├── _drafts<br>|   └── _posts<br>└── themes</p>
+</blockquote>
+<h3 id="启动服务站点"><a href="#启动服务站点" class="headerlink" title="启动服务站点"></a>启动服务站点</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[hahaguowang@hahaguowangdeMac-mini hhgw_blog % hexo g</span><br><span class="line">INFO  Validating config</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Files loaded in 168 ms</span><br><span class="line">INFO  Generated: archives/index.html</span><br><span class="line">INFO  Generated: archives/2022/index.html</span><br><span class="line">INFO  Generated: index.html</span><br><span class="line">INFO  Generated: archives/2022/08/index.html</span><br><span class="line">INFO  Generated: fancybox/jquery.fancybox.min.css</span><br><span class="line">INFO  Generated: js/script.js</span><br><span class="line">INFO  Generated: css/style.css</span><br><span class="line">INFO  Generated: css/fonts/fontawesome-webfont.woff</span><br><span class="line">INFO  Generated: fancybox/jquery.fancybox.min.js</span><br><span class="line">INFO  Generated: js/jquery-3.4.1.min.js</span><br><span class="line">INFO  Generated: css/fonts/fontawesome-webfont.woff2</span><br><span class="line">INFO  Generated: css/fonts/FontAwesome.otf</span><br><span class="line">INFO  Generated: css/fonts/fontawesome-webfont.eot</span><br><span class="line">INFO  Generated: css/fonts/fontawesome-webfont.ttf</span><br><span class="line">INFO  Generated: css/images/banner.jpg</span><br><span class="line">INFO  Generated: 2022/08/17/hello-world/index.html</span><br><span class="line">INFO  Generated: css/fonts/fontawesome-webfont.svg</span><br><span class="line">INFO  17 files generated in 390 ms</span><br><span class="line">hahaguowang@hahaguowangdeMac-mini hhgw_blog % hexo server</span><br><span class="line">INFO  Validating config</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000/ . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
+
+<p>访问<a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a> 至此hero就搭建好了。可以在本地访问了。</p>
+<h3 id="将hexo博客站点上传到github上"><a href="#将hexo博客站点上传到github上" class="headerlink" title="将hexo博客站点上传到github上"></a>将hexo博客站点上传到github上</h3><p>这里需要安装一个hexo的上传插件deploy-git</p>
+<p><code>npm install hexo-deployer-git --save</code></p>
+<p>ls -l 查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[hahaguowang@hahaguowangdeMac-mini hhgw_blog % ls -l</span><br><span class="line">total 392</span><br><span class="line">-rw-r--r--    1 hahaguowang  staff       0  8 17 19:54 _config.landscape.yml</span><br><span class="line">-rw-r--r--    1 hahaguowang  staff    2441  8 17 19:54 _config.yml</span><br><span class="line">-rw-r--r--    1 hahaguowang  staff   21863  8 17 20:15 db.json</span><br><span class="line">drwxr-xr-x  225 hahaguowang  staff    7200  8 17 20:17 node_modules</span><br><span class="line">-rw-r--r--    1 hahaguowang  staff  166413  8 17 20:17 package-lock.json</span><br><span class="line">-rw-r--r--    1 hahaguowang  staff     655  8 17 20:17 package.json</span><br><span class="line">drwxr-xr-x    8 hahaguowang  staff     256  8 17 20:03 public</span><br><span class="line">drwxr-xr-x    5 hahaguowang  staff     160  8 17 19:54 scaffolds</span><br><span class="line">drwxr-xr-x    3 hahaguowang  staff      96  8 17 19:54 source</span><br><span class="line">drwxr-xr-x    3 hahaguowang  staff      96  8 17 19:54 themes</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改hexo配置文件指定仓库路径"><a href="#修改hexo配置文件指定仓库路径" class="headerlink" title="修改hexo配置文件指定仓库路径"></a>修改hexo配置文件指定仓库路径</h3><p>可在文件夹中直接打开文件 _config.yml ，也可通过vim直接编辑</p>
+<p>找到Deployment加上（注意空格）</p>
+<blockquote>
+<p>deploy:<br>  type: git<br>  repo: <a target="_blank" rel="noopener" href="https://github.com/hhgw/hhgw.github.io">https://github.com/hhgw/hhgw.github.io</a><br>  branch: main     # 或者master 看自己的brench叫啥</p>
+</blockquote>
+<p>推送命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>推送过程中需要输入你的github用户名和密码。但是在2021年8月14日开始github官方就加强安全访问。不能通过原有账号密码git访问，密码需要用官方的token或者采用ssh公私钥访问。否则会出现下图：鉴权失败（用户名密码错误）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">remote: Support for password authentication was removed on August 13, 2021.</span><br><span class="line">remote: Please see https://docs.github.com/en/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls for information on currently recommended modes of authentication.</span><br><span class="line">fatal: Authentication failed for &#x27;https://github.com/hhgw/hhgw.github.io/&#x27;</span><br><span class="line">FATAL Something&#x27;s wrong. Maybe you can find the solution here: https://hexo.io/docs/troubleshooting.html</span><br></pre></td></tr></table></figure>
+
+<p>解决方式就是获取token，登录github设置setting-&gt;Developer Settings-&gt;Prosonal access tokens 创建一个新token。然后就可以拿这个token当密码输入了。</p>
+<p>另外，全局科学上网后，可能还会出现连接不成功的情况，系网络问题，多次尝试<code>hexo d</code> 即可。</p>
+<h3 id="尝试访问"><a href="#尝试访问" class="headerlink" title="尝试访问"></a>尝试访问</h3><p>输入地址即可访问成功：</p>
+<p><a target="_blank" rel="noopener" href="https://hhgw.github.io/">https://hhgw.github.io</a></p>
+<h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p>博客样式太死板，想换成属于自己的风格，没问题我们可以更换博客的主题，来达到我们想要的风格。</p>
+<p>到GitHub上搜索hexo主题或者<a target="_blank" rel="noopener" href="https://hexo.io/themes/">hero自带的主题</a>找一个喜欢的。</p>
+<p>按照各自的主题文档上面一步步操作即可。</p>
+<p>一般包括：</p>
+<blockquote>
+<p>下载解压</p>
+<p>放到主题包themes文件夹下</p>
+<p>在hero配置文件 _config.yml 中修改为喜欢主题的名字</p>
+<p>hexo server启动即可访问</p>
+</blockquote>
+<h3 id="更新仓库"><a href="#更新仓库" class="headerlink" title="更新仓库"></a>更新仓库</h3><p>本地调试完之后。就可以更新到github上了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hexo clean   清理</span><br><span class="line">hexo g       构建静态文件</span><br><span class="line">hexo d       上传至仓库</span><br><span class="line">hexo server  本地预览</span><br><span class="line"># 前面可能需要加 npx</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加-md文章"><a href="#添加-md文章" class="headerlink" title="添加.md文章"></a>添加.md文章</h3><p>在站点文件夹中打开 git ，输入如下命令创建文章，其中 我的第一篇博客 为文章的标题。hexo会在source文件夹下创建一个markdowm的文件。这就是你要编写的文章。</p>
+<blockquote>
+<p>Markdown 是一种可以使用普通文本编辑器编写的 标记语言，通过简单的 标记语法，它可以使普通文本内容具有一定的格式<br>基于 Markdown 语法的简洁性，它已经成为目前世界上最流行的用于书写博客的语言</p>
+</blockquote>
+<p><code>hexo new &quot;bulabula&quot;</code></p>
+<p>markdown 记得加title：</p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: Hello World</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="草稿箱"><a href="#草稿箱" class="headerlink" title="草稿箱"></a>草稿箱</h3><p>很多时候我们需要先写成草稿，而暂时不发布出去。draft page就可以满足我们的要求，我们的网站上是看不到草稿文件的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo new draft b          新建草稿</span><br><span class="line">hexo server --draaft      预览草稿文件</span><br><span class="line">hexo publish b            发布草稿</span><br></pre></td></tr></table></figure>
+
+<h3 id="新建页面"><a href="#新建页面" class="headerlink" title="新建页面"></a>新建页面</h3><p>有时我们不满足主题自由的一些页面，希望自己添加一些页面。</p>
+<p>我们可以新建页面,新建页面则会在hexo的source中新建该页面文件并生成md文件，这就是你要编辑的博客页了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page &quot;resouces&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后打开主题的配置文件<code>_config.yml</code>，在菜单属性<code>menu</code>中的添加如下（注意不是Hexo的配置文件）</p>
+<p>将页面路径联接到页面上去</p>
+<p>格式如下：</p>
+<blockquote>
+<p>菜单自定义名称: &#x2F;生成的页面名称</p>
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">menu:</span><br><span class="line">  主页: /</span><br><span class="line">  技术笔记: https://xxxx</span><br><span class="line">  随笔: /tags/随笔/</span><br><span class="line">  资源: /resources</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>当我们点击资源时后会跳转到我们自定义的博客页了</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"># 个人博客</a>
+                    
+                        <a href="/tags/github-io/"># github.io</a>
+                    
+                        <a href="/tags/%E6%90%AD%E5%BB%BA%E7%BD%91%E7%AB%99/"># 搭建网站</a>
+                    
+                        <a href="/tags/hexo/"># hexo</a>
+                    
+                        <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/08/18/DataFrame%E7%9B%B8%E5%85%B3%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">DataFrame相关常用操作</a>
+            
+            
+            <a class="next" rel="next" href="/2022/08/17/hello-world/">Hello World</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
