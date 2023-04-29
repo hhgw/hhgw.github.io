@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>机器学习-分类问题D | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">机器学习-分类问题D</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-04-29&nbsp;&nbsp;17:29:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="机器学习-分类问题D"><a href="#机器学习-分类问题D" class="headerlink" title="机器学习-分类问题D"></a>机器学习-分类问题D</h1><p>数学公式在渲染器中会出现错误，目前还没有解决</p>
+<hr>
+<p>数据集：</p>
+<hr>
+<p>In this week you will train a classifier to detect whether there is a face in a small image patch.  This type of face detector is used in your phone and camera whenever you take a picture!</p>
+<p>First we need to initialize Python.  Run the below cell.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib_inline   <span class="comment"># setup output image format</span></span><br><span class="line">matplotlib_inline.backend_inline.set_matplotlib_formats(<span class="string">&#x27;svg&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> fnmatch</span><br><span class="line">random.seed(<span class="number">100</span>)</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> ndimage</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> signal</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"><span class="keyword">import</span> skimage.color</span><br><span class="line"><span class="keyword">import</span> skimage.exposure</span><br><span class="line"><span class="keyword">import</span> skimage.io</span><br><span class="line"><span class="keyword">import</span> skimage.util</span><br><span class="line"><span class="comment"># import xgboost as xgb</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Loading-Data-and-Pre-processing"><a href="#Loading-Data-and-Pre-processing" class="headerlink" title="Loading Data and Pre-processing"></a>Loading Data and Pre-processing</h2><p>Next we need to load the images.  Download <code>faces.zip</code>, and put it in the same direcotry as this ipynb file.  <strong>Do not unzip the file.</strong> Then run the following cell to load the images.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">imgdata = &#123;<span class="string">&#x27;train&#x27;</span>:[], <span class="string">&#x27;test&#x27;</span>:[]&#125;</span><br><span class="line">classes = &#123;<span class="string">&#x27;train&#x27;</span>:[], <span class="string">&#x27;test&#x27;</span>:[]&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># the dataset is too big, so subsample the training and test sets...</span></span><br><span class="line"><span class="comment"># reduce training set by a factor of 4</span></span><br><span class="line">train_subsample = <span class="number">4</span>  </span><br><span class="line">train_counter = [<span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line"><span class="comment"># maximum number of samples in each class for test set</span></span><br><span class="line">test_maxsample = <span class="number">472</span></span><br><span class="line">test_counter = [<span class="number">0</span>, <span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># load the zip file</span></span><br><span class="line">filename = <span class="string">&#x27;faces.zip&#x27;</span></span><br><span class="line">zfile = zipfile.ZipFile(filename, <span class="string">&#x27;r&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> zfile.namelist():</span><br><span class="line">    <span class="comment"># check file name matches</span></span><br><span class="line">    <span class="keyword">if</span> fnmatch.fnmatch(name, <span class="string">&quot;faces/*/*/*.png&quot;</span>):</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># filename is : faces/train/face/fname.png</span></span><br><span class="line">        (fdir1, fname)  = os.path.split(name)     <span class="comment"># get file name</span></span><br><span class="line">        (fdir2, fclass) = os.path.split(fdir1) <span class="comment"># get class (face, nonface)</span></span><br><span class="line">        (fdir3, fset)   = os.path.split(fdir2) <span class="comment"># get training/test set</span></span><br><span class="line">        <span class="comment"># class 1 = face; class 0 = non-face</span></span><br><span class="line">        myclass = <span class="built_in">int</span>(fclass == <span class="string">&quot;face&quot;</span>)  </span><br><span class="line"></span><br><span class="line">        loadme = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> fset == <span class="string">&#x27;train&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> (train_counter[myclass] % train_subsample) == <span class="number">0</span>:</span><br><span class="line">                loadme = <span class="literal">True</span></span><br><span class="line">            train_counter[myclass] += <span class="number">1</span></span><br><span class="line">        <span class="keyword">elif</span> fset == <span class="string">&#x27;test&#x27;</span>:</span><br><span class="line">            <span class="keyword">if</span> test_counter[myclass] &lt; test_maxsample:</span><br><span class="line">                loadme = <span class="literal">True</span></span><br><span class="line">            test_counter[myclass] += <span class="number">1</span></span><br><span class="line">            </span><br><span class="line">        <span class="keyword">if</span> (loadme):</span><br><span class="line">            <span class="comment"># open file in memory, and parse as an image</span></span><br><span class="line">            myfile = zfile.<span class="built_in">open</span>(name)</span><br><span class="line">            <span class="comment">#img = matplotlib.image.imread(myfile)</span></span><br><span class="line">            img = skimage.io.imread(myfile, as_gray=<span class="literal">True</span>) <span class="comment"># read as grayscale</span></span><br><span class="line">            myfile.close()</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># append data</span></span><br><span class="line">            imgdata[fset].append(img)</span><br><span class="line">            classes[fset].append(myclass)</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line">zfile.close()</span><br><span class="line">imgsize = img.shape</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(imgdata[<span class="string">&#x27;train&#x27;</span>]))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(imgdata[<span class="string">&#x27;test&#x27;</span>]))</span><br><span class="line">trainclass2start = <span class="built_in">sum</span>(classes[<span class="string">&#x27;train&#x27;</span>])</span><br></pre></td></tr></table></figure>
+
+<pre><code>1745
+944
+</code></pre>
+<p>Each image is a 19x19 array of pixel values.  Run the below code to show an example:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(img.shape)</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.imshow(imgdata[<span class="string">&#x27;train&#x27;</span>][<span class="number">0</span>], cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;face sample&quot;</span>)</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.imshow(imgdata[<span class="string">&#x27;train&#x27;</span>][trainclass2start], cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;non-face sample&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<pre><code>(19, 19)
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_5_1.svg" alt="svg"></p>
+<p>Run the below code to show more images!</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># function to make an image montage</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">image_montage</span>(<span class="params">X, imsize=<span class="literal">None</span>, maxw=<span class="number">10</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;X can be a list of images, or a matrix of vectorized images.</span></span><br><span class="line"><span class="string">      Specify imsize when X is a matrix.&quot;&quot;&quot;</span></span><br><span class="line">    tmp = []</span><br><span class="line">    numimgs = <span class="built_in">len</span>(X)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># create a list of images (reshape if necessary)</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,numimgs):</span><br><span class="line">        <span class="keyword">if</span> imsize != <span class="literal">None</span>:</span><br><span class="line">            tmp.append(X[i].reshape(imsize))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            tmp.append(X[i])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># add blanks</span></span><br><span class="line">    <span class="keyword">if</span> (numimgs &gt; maxw) <span class="keyword">and</span> (mod(numimgs, maxw) &gt; <span class="number">0</span>):</span><br><span class="line">        leftover = maxw - mod(numimgs, maxw)</span><br><span class="line">        meanimg = <span class="number">0.5</span>*(X[<span class="number">0</span>].<span class="built_in">max</span>()+X[<span class="number">0</span>].<span class="built_in">min</span>())</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,leftover):</span><br><span class="line">            tmp.append(ones(tmp[<span class="number">0</span>].shape)*meanimg)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># make the montage</span></span><br><span class="line">    tmp2 = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(tmp),maxw):</span><br><span class="line">        tmp2.append( hstack(tmp[i:i+maxw]) )</span><br><span class="line">    montimg = vstack(tmp2) </span><br><span class="line">    <span class="keyword">return</span> montimg</span><br><span class="line"></span><br><span class="line"><span class="comment"># show a few images</span></span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">plt.imshow(image_montage(imgdata[<span class="string">&#x27;train&#x27;</span>][::<span class="number">20</span>]), cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_7_0.svg" alt="svg"></p>
+<p>Each image is a 2d array, but the classifier algorithms work on 1d vectors. Run the following code to convert all the images into 1d vectors by flattening.  The result should be a matrix where each row is a flattened image.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">trainX = empty((<span class="built_in">len</span>(imgdata[<span class="string">&#x27;train&#x27;</span>]), prod(imgsize)))</span><br><span class="line"><span class="keyword">for</span> i,img <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgdata[<span class="string">&#x27;train&#x27;</span>]):</span><br><span class="line">    trainX[i,:] = ravel(img)</span><br><span class="line">trainY = asarray(classes[<span class="string">&#x27;train&#x27;</span>])  <span class="comment"># convert list to numpy array</span></span><br><span class="line"><span class="built_in">print</span>(trainX.shape)</span><br><span class="line"><span class="built_in">print</span>(trainY.shape)</span><br><span class="line"></span><br><span class="line">testX = empty((<span class="built_in">len</span>(imgdata[<span class="string">&#x27;test&#x27;</span>]), prod(imgsize)))</span><br><span class="line"><span class="keyword">for</span> i,img <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgdata[<span class="string">&#x27;test&#x27;</span>]):</span><br><span class="line">    testX[i,:] = ravel(img)</span><br><span class="line">testY = asarray(classes[<span class="string">&#x27;test&#x27;</span>])  <span class="comment"># convert list to numpy array</span></span><br><span class="line"><span class="built_in">print</span>(testX.shape)</span><br><span class="line"><span class="built_in">print</span>(testY.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(1745, 361)
+(1745,)
+(944, 361)
+(944,)
+</code></pre>
+<h2 id="Detection-using-pixel-values"><a href="#Detection-using-pixel-values" class="headerlink" title="Detection using  pixel values"></a>Detection using  pixel values</h2><p>Train an AdaBoost and GradientBoosting classifiers to classify an image patch as face or non-face.  Also train a kernel SVM classifier using either RBF or polynomial kernel, and a Random Forest Classifier.  Evaluate all your classifiers on the test set.</p>
+<p>First we will normalize the features.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> preprocessing</span><br><span class="line">scaler = preprocessing.MinMaxScaler(feature_range=(-<span class="number">1</span>,<span class="number">1</span>))    <span class="comment"># make scaling object</span></span><br><span class="line">trainXn = scaler.fit_transform(trainX)   <span class="comment"># use training data to fit scaling parameters</span></span><br><span class="line">testXn  = scaler.transform(testX)        <span class="comment"># apply scaling to test data</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="comment"># ------AdaBoost------</span></span><br><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> model_selection</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> ensemble</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> metrics</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the list of parameters to try</span></span><br><span class="line">paramgrid = &#123;</span><br><span class="line">    <span class="string">&quot;learning_rate&quot;</span>: logspace(-<span class="number">5</span>, <span class="number">0</span>, <span class="number">8</span>),</span><br><span class="line">    <span class="string">&quot;n_estimators&quot;</span>: array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1000</span>, <span class="number">2000</span>]),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">adacv = model_selection.GridSearchCV(</span><br><span class="line">    ensemble.AdaBoostClassifier(random_state=<span class="number">1</span>), paramgrid, cv=<span class="number">5</span>, n_jobs=<span class="number">6</span>, verbose=<span class="number">10</span></span><br><span class="line">)  <span class="comment"># n_jobs is selected according to the number of cpu cores; verbose is the level of detail of the output</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">adacv.fit(trainXn, trainY)</span><br><span class="line"><span class="comment"># print the best parameters found</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, adacv.best_params_)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, adacv.best_score_)</span><br><span class="line"></span><br><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = adacv.predict(testXn)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 5 folds for each of 88 candidates, totalling 440 fits
+[CV 5/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 2/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 3/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 4/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 1/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 1/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 4/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.862 total time=   0.0s
+[CV 2/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.774 total time=   0.0s
+[CV 5/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.883 total time=   0.0s
+[CV 3/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.874 total time=   0.0s
+[CV 1/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.679 total time=   0.0s
+[CV 2/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 3/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 4/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 5/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 1/5; 3/88] START learning_rate=1e-05, n_estimators=5........................
+[CV 1/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.679 total time=   0.1s
+
+[CV 4/5; 88/88] START learning_rate=1.0, n_estimators=2000......................
+[CV 4/5; 87/88] END learning_rate=1.0, n_estimators=1000;, score=0.989 total time=  23.8s
+[CV 5/5; 88/88] START learning_rate=1.0, n_estimators=2000......................
+[CV 5/5; 87/88] END learning_rate=1.0, n_estimators=1000;, score=0.986 total time=  23.9s
+[CV 1/5; 88/88] END learning_rate=1.0, n_estimators=2000;, score=0.877 total time=  47.0s
+[CV 2/5; 88/88] END learning_rate=1.0, n_estimators=2000;, score=0.931 total time=  46.5s
+[CV 3/5; 88/88] END learning_rate=1.0, n_estimators=2000;, score=0.991 total time=  46.3s
+[CV 4/5; 88/88] END learning_rate=1.0, n_estimators=2000;, score=0.986 total time=  46.4s
+[CV 5/5; 88/88] END learning_rate=1.0, n_estimators=2000;, score=0.983 total time=  46.6s
+best params: &#123;&#39;learning_rate&#39;: 1.0, &#39;n_estimators&#39;: 1000&#125;
+best score: 0.954727793696275
+test accuracy = 0.6260593220338984
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="comment"># ------XGBoost-------</span></span><br><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"></span><br><span class="line">xclf = xgb.XGBClassifier(</span><br><span class="line">    objective=<span class="string">&quot;binary:logistic&quot;</span>,</span><br><span class="line">    eval_metric=<span class="string">&quot;logloss&quot;</span>,</span><br><span class="line">    random_state=<span class="number">1</span>,</span><br><span class="line">    use_label_encoder=<span class="literal">False</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">paramgrid = &#123;</span><br><span class="line">    <span class="string">&quot;learning_rate&quot;</span>: logspace(-<span class="number">4</span>, <span class="number">0</span>, <span class="number">8</span>),</span><br><span class="line">    <span class="string">&quot;n_estimators&quot;</span>: array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1000</span>, <span class="number">2000</span>, <span class="number">5000</span>]),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">xgbcv = model_selection.GridSearchCV(xclf, paramgrid, cv=<span class="number">3</span>, n_jobs=<span class="number">6</span>, verbose=<span class="number">10</span>)</span><br><span class="line">xgbcv.fit(trainXn, trainY)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, xgbcv.best_params_)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, xgbcv.best_score_)</span><br><span class="line"></span><br><span class="line">predY = xgbcv.predict(testXn)</span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 3 folds for each of 96 candidates, totalling 288 fits
+
+
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+
+
+[CV 3/3; 2/96] START learning_rate=0.0001, n_estimators=2.......................
+[CV 1/3; 2/96] START learning_rate=0.0001, n_estimators=2.......................
+[CV 1/3; 1/96] START learning_rate=0.0001, n_estimators=1.......................
+[CV 3/3; 1/96] START learning_rate=0.0001, n_estimators=1.......................
+[CV 2/3; 1/96] START learning_rate=0.0001, n_estimators=1.......................
+[CV 2/3; 2/96] START learning_rate=0.0001, n_estimators=2.......................
+[CV 2/3; 1/96] END learning_rate=0.0001, n_estimators=1;, score=0.895 total time=   0.1s
+[CV 1/3; 3/96] START learning_rate=0.0001, n_estimators=5.......................
+[CV 3/3; 1/96] END learning_rate=0.0001, n_estimators=1;, score=0.936 total time=   0.1s
+[CV 2/3; 3/96] START learning_rate=0.0001, n_estimators=5.......................
+[CV 1/3; 1/96] END learning_rate=0.0001, n_estimators=1;, score=0.770 total time=   0.1s
+[CV 3/3; 3/96] START learning_rate=0.0001, n_estimators=5.......................
+[CV 1/3; 2/96] END learning_rate=0.0001, n_estimators=2;, score=0.789 total time=   0.1s
+[CV 1/3; 4/96] START learning_rate=0.0001, n_estimators=10......................
+[CV 2/3; 2/96] END learning_rate=0.0001, n_estimators=2;, score=0.900 total time=   0.1s
+[CV 2/3; 4/96] START learning_rate=0.0001, n_estimators=10......................
+[CV 3/3; 2/96] END learning_rate=0.0001, n_estimators=2;, score=0.935 total time=   0.1s
+[CV 3/3; 4/96] START learning_rate=0.0001, n_estimators=10......................
+[CV 1/3; 3/96] END learning_rate=0.0001, n_estimators=5;, score=0.790 total time=   0.2s
+
+[CV 2/3; 96/96] START learning_rate=1.0, n_estimators=5000......................
+[CV 2/3; 84/96] END learning_rate=0.2682695795279725, n_estimators=5000;, score=0.985 total time=  27.7s
+[CV 3/3; 96/96] START learning_rate=1.0, n_estimators=5000......................
+[CV 2/3; 95/96] END learning_rate=1.0, n_estimators=2000;, score=0.976 total time=  10.6s
+[CV 3/3; 84/96] END learning_rate=0.2682695795279725, n_estimators=5000;, score=0.990 total time=  27.8s
+[CV 3/3; 95/96] END learning_rate=1.0, n_estimators=2000;, score=0.974 total time=  10.6s
+[CV 1/3; 96/96] END learning_rate=1.0, n_estimators=5000;, score=0.830 total time=  18.6s
+[CV 2/3; 96/96] END learning_rate=1.0, n_estimators=5000;, score=0.976 total time=  16.0s
+[CV 3/3; 96/96] END learning_rate=1.0, n_estimators=5000;, score=0.974 total time=  15.7s
+best params: &#123;&#39;learning_rate&#39;: 0.2682695795279725, &#39;n_estimators&#39;: 100&#125;
+best score: 0.9392858621525869
+test accuracy = 0.6610169491525424
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="comment"># ------SVM-----------</span></span><br><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"></span><br><span class="line">paramgrid = &#123;<span class="string">&quot;C&quot;</span>: logspace(-<span class="number">1</span>, <span class="number">3</span>, <span class="number">20</span>), <span class="string">&quot;gamma&quot;</span>: logspace(-<span class="number">3</span>, <span class="number">3</span>, <span class="number">20</span>)&#125;</span><br><span class="line"></span><br><span class="line">svmcv = model_selection.GridSearchCV(</span><br><span class="line">    svm.SVC(kernel=<span class="string">&quot;rbf&quot;</span>), paramgrid, cv=<span class="number">5</span>, n_jobs=<span class="number">6</span>, verbose=<span class="number">10</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">svmcv.fit(trainXn, trainY)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, svmcv.best_params_)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, svmcv.best_score_)</span><br><span class="line"></span><br><span class="line">predY = svmcv.predict(testXn)</span><br><span class="line"></span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 5 folds for each of 400 candidates, totalling 2000 fits
+[CV 5/5; 1/400] START C=0.1, gamma=0.001........................................
+[CV 2/5; 1/400] START C=0.1, gamma=0.001........................................
+[CV 3/5; 1/400] START C=0.1, gamma=0.001........................................
+[CV 4/5; 1/400] START C=0.1, gamma=0.001........................................
+[CV 1/5; 1/400] START C=0.1, gamma=0.001........................................
+[CV 1/5; 2/400] START C=0.1, gamma=0.00206913808111479..........................
+[CV 1/5; 2/400] END C=0.1, gamma=0.00206913808111479;, score=0.825 total time=   0.8s
+[CV 2/5; 2/400] START C=0.1, gamma=0.00206913808111479..........................
+[CV 1/5; 1/400] END .........C=0.1, gamma=0.001;, score=0.831 total time=   0.9s
+[CV 3/5; 2/400] START C=0.1, gamma=0.00206913808111479..........................
+[CV 2/5; 1/400] END .........C=0.1, gamma=0.001;, score=0.857 total time=   1.0s
+[CV 4/5; 2/400] START C=0.1, gamma=0.00206913808111479..........................
+[CV 4/5; 1/400] END .........C=0.1, gamma=0.001;, score=0.986 total time=   1.0s
+[CV 5/5; 2/400] START C=0.1, gamma=0.00206913808111479..........................
+[CV 3/5; 1/400] END .........C=0.1, gamma=0.001;, score=0.986 total time=   1.0s
+[CV 1/5; 3/400] START C=0.1, gamma=0.004281332398719396.........................
+[CV 5/5; 1/400] END .........C=0.1, gamma=0.001;, score=0.991 total time=   1.1s
+[CV 2/5; 3/400] START C=0.1, gamma=0.004281332398719396.........................
+[CV 2/5; 2/400] END C=0.1, gamma=0.00206913808111479;, score=0.874 total time=   0.7s
+
+[CV 2/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 2/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.650 total time=   2.0s
+[CV 3/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 3/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.650 total time=   2.0s
+[CV 4/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 4/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.653 total time=   2.0s
+[CV 5/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 5/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.653 total time=   2.0s
+[CV 1/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 1/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.650 total time=   2.0s
+[CV 2/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 2/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.650 total time=   1.9s
+[CV 3/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 3/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.650 total time=   2.0s
+[CV 4/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 4/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.653 total time=   2.0s
+[CV 5/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 5/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.653 total time=   2.0s
+[CV 1/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   2.0s
+[CV 2/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   2.0s
+[CV 3/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   1.8s
+[CV 4/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.653 total time=   0.7s
+[CV 5/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.653 total time=   0.7s
+best params: &#123;&#39;C&#39;: 1.1288378916846888, &#39;gamma&#39;: 0.018329807108324356&#125;
+best score: 0.9679083094555875
+test accuracy = 0.6610169491525424
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"><span class="comment"># ---Random Forest----</span></span><br><span class="line"><span class="comment"># --------------------</span></span><br><span class="line"></span><br><span class="line">paramsampler = &#123;</span><br><span class="line">    <span class="string">&quot;max_depth&quot;</span>: stats.randint(<span class="number">1</span>, <span class="number">5</span>),</span><br><span class="line">    <span class="string">&quot;min_samples_split&quot;</span>: stats.uniform(<span class="number">0</span>, <span class="number">0.5</span>),</span><br><span class="line">    <span class="string">&quot;min_samples_leaf&quot;</span>: stats.uniform(<span class="number">0</span>, <span class="number">0.5</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rfrcv = model_selection.RandomizedSearchCV(</span><br><span class="line">    ensemble.RandomForestClassifier(n_estimators=<span class="number">100</span>, random_state=<span class="number">1</span>, n_jobs=<span class="number">6</span>),</span><br><span class="line">    param_distributions=paramsampler,</span><br><span class="line">    random_state=<span class="number">1</span>,</span><br><span class="line">    n_iter=<span class="number">1000</span>,</span><br><span class="line">    cv=<span class="number">5</span>,</span><br><span class="line">    verbose=<span class="number">10</span>,</span><br><span class="line">    n_jobs=<span class="number">6</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rfrcv.fit(trainXn, trainY)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, rfrcv.best_params_)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, rfrcv.best_score_)</span><br><span class="line">predY = rfrcv.predict(testXn)</span><br><span class="line"></span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 5 folds for each of 1000 candidates, totalling 5000 fits
+[CV 2/5; 1/1000] START max_depth=2, min_samples_leaf=0.4985924054694343, min_samples_split=0.4662786796693294
+[CV 1/5; 1/1000] START max_depth=2, min_samples_leaf=0.4985924054694343, min_samples_split=0.4662786796693294
+[CV 3/5; 1/1000] START max_depth=2, min_samples_leaf=0.4985924054694343, min_samples_split=0.4662786796693294
+[CV 4/5; 1/1000] START max_depth=2, min_samples_leaf=0.4985924054694343, min_samples_split=0.4662786796693294
+[CV 5/5; 1/1000] START max_depth=2, min_samples_leaf=0.4985924054694343, min_samples_split=0.4662786796693294
+[CV 1/5; 2/1000] START max_depth=2, min_samples_leaf=0.15116628631591988, 
+[CV 1/5; 1000/1000] END max_depth=1, min_samples_leaf=0.17171004655433614, min_samples_split=0.1753085946534768;, score=0.745 total time=   0.5s
+[CV 2/5; 1000/1000] END max_depth=1, min_samples_leaf=0.17171004655433614, min_samples_split=0.1753085946534768;, score=0.791 total time=   0.4s
+[CV 3/5; 1000/1000] END max_depth=1, min_samples_leaf=0.17171004655433614, min_samples_split=0.1753085946534768;, score=0.883 total time=   0.4s
+[CV 4/5; 1000/1000] END max_depth=1, min_samples_leaf=0.17171004655433614, min_samples_split=0.1753085946534768;, score=0.894 total time=   0.4s
+[CV 5/5; 999/1000] END max_depth=2, min_samples_leaf=0.0752203373318121, min_samples_split=0.1452287642960985;, score=0.980 total time=   0.5s
+[CV 5/5; 1000/1000] END max_depth=1, min_samples_leaf=0.17171004655433614, min_samples_split=0.1753085946534768;, score=0.894 total time=   0.4s
+best params: &#123;&#39;max_depth&#39;: 4, &#39;min_samples_leaf&#39;: 0.0020517537799524255, &#39;min_samples_split&#39;: 0.0172701749254065&#125;
+best score: 0.9300859598853869
+test accuracy = 0.673728813559322
+</code></pre>
+<p><em>Which classifier was best?</em></p>
+<hr>
+<ul>
+<li><p>According to the test accuracy and F1 value (below), the random forest classifier works best。</p>
+</li>
+<li><p>Some of the advantages of Random Forest Classifier include:</p>
+<ul>
+<li><p>Low bias and low variance, making it less prone to overfitting than some other models.</p>
+</li>
+<li><p>Ability to handle high-dimensional data with many features.</p>
+</li>
+<li><p>Ability to handle both categorical and continuous data.</p>
+</li>
+<li><p>Capable of handling missing values and outliers without the need for data pre-processing.</p>
+</li>
+</ul>
+</li>
+<li><p>However, in this case, the advantages of the random forest classifier are not obvious, and the overall accuracy is only slightly higher than other classifiers‘. These classifiers all have the problem of insufficient generalization.</p>
+</li>
+</ul>
+<hr>
+<h3 id="Error-analysis"><a href="#Error-analysis" class="headerlink" title="Error analysis"></a>Error analysis</h3><p>The accuracy only tells part of the classifier’s performance. We can also look at the different types of errors that the classifier makes:</p>
+<ul>
+<li><em>True Positive (TP)</em>: classifier correctly said face</li>
+<li><em>True Negative (TN)</em>: classifier correctly said non-face</li>
+<li><em>False Positive (FP)</em>: classifier said face, but not a face</li>
+<li><em>False Negative (FN)</em>: classifier said non-face, but was a face</li>
+</ul>
+<p>This is summarized in the following table:</p>
+<table>
+<tr><th colspan=2 rowspan=2><th colspan=2 style="text-align: center">Actual</th></tr>
+<tr>  <th>Face</th><th>Non-face</th></tr>
+<tr><th rowspan=2>Prediction</th><th>Face</th><td>True Positive (TP)</td><td>False Positive (FP)</td></tr>
+<tr>  <th>Non-face</th><td>False Negative (FN)</td><td>True Negative (TN)</td></tr>
+</table>
+
+<p>We can then look at the <em>true positive rate</em> and the <em>false positive rate</em>.</p>
+<ul>
+<li><em>true positive rate (TPR)</em>: proportion of true faces that were correctly detected</li>
+<li><em>false positive rate (FPR)</em>: proportion of non-faces that were mis-classified as faces.</li>
+</ul>
+<p>Use the below code to calculate the TPR and FPR of your classifiers.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">predY_list = []</span><br><span class="line">predY_list.append(adacv.predict(testXn))</span><br><span class="line">predY_list.append(xgbcv.predict(testXn))</span><br><span class="line">predY_list.append(svmcv.predict(testXn))</span><br><span class="line">predY_list.append(rfrcv.predict(testXn))</span><br><span class="line">model_list=[<span class="string">&#x27;AdaBoost&#x27;</span>,<span class="string">&#x27;XGBoost&#x27;</span>,<span class="string">&#x27;SVM&#x27;</span>,<span class="string">&#x27;RandomForest&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># print the accuracy and F1 score for each model</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">4</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;------------------------------------&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;         model : &#x27;</span>,model_list[i])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;------------------------------------&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Accuracy:&quot;</span>, metrics.accuracy_score(testY, predY_list[i]))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;F1 score:&quot;</span>, metrics.f1_score(testY, predY_list[i]))</span><br><span class="line"></span><br><span class="line">    Pind = where(predY_list[i]==<span class="number">1</span>) <span class="comment"># indicies for face predictions</span></span><br><span class="line">    Nind = where(predY_list[i]==<span class="number">0</span>) <span class="comment"># indicies for non-face predictions</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># calculate confusion matrix</span></span><br><span class="line">    TP = count_nonzero(testY[Pind] == predY_list[i][Pind])</span><br><span class="line">    FP = count_nonzero(testY[Pind] != predY_list[i][Pind])</span><br><span class="line">    TN = count_nonzero(testY[Nind] == predY_list[i][Nind])</span><br><span class="line">    FN = count_nonzero(testY[Nind] != predY_list[i][Nind])</span><br><span class="line"></span><br><span class="line">    TPR = TP / (TP+FN)</span><br><span class="line">    FPR = FP / (FP+TN)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Confusion matrix:&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TP=&quot;</span>, TP, end=<span class="string">&quot; | &quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FP=&quot;</span>, FP)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TN=&quot;</span>, TN, end=<span class="string">&#x27; | &#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FN=&quot;</span>, FN)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TPR=&quot;</span>, TPR)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FPR=&quot;</span>, FPR)</span><br></pre></td></tr></table></figure>
+
+<pre><code>------------------------------------
+         model :  AdaBoost
+------------------------------------
+Accuracy: 0.6260593220338984
+F1 score: 0.4087102177554438
+Confusion matrix:
+TP= 122 | FP= 3
+TN= 469 | FN= 350
+TPR= 0.2584745762711864
+FPR= 0.006355932203389831
+------------------------------------
+         model :  XGBoost
+------------------------------------
+Accuracy: 0.6610169491525424
+F1 score: 0.4952681388012618
+Confusion matrix:
+TP= 157 | FP= 5
+TN= 467 | FN= 315
+TPR= 0.3326271186440678
+FPR= 0.01059322033898305
+------------------------------------
+         model :  SVM
+------------------------------------
+Accuracy: 0.6610169491525424
+F1 score: 0.48881789137380194
+Confusion matrix:
+TP= 153 | FP= 1
+TN= 471 | FN= 319
+TPR= 0.3241525423728814
+FPR= 0.00211864406779661
+------------------------------------
+         model :  RandomForest
+------------------------------------
+Accuracy: 0.673728813559322
+F1 score: 0.5333333333333334
+Confusion matrix:
+TP= 176 | FP= 12
+TN= 460 | FN= 296
+TPR= 0.3728813559322034
+FPR= 0.025423728813559324
+</code></pre>
+<p><em>How does the classifier make errors?</em></p>
+<hr>
+<ul>
+<li><p>The classifier recognizes face image as non-face, which is the main reason for classifier errors, however, the classifier almost never recognizes non-face image as face. In short, the classifier is not good at recognizing face image.</p>
+</li>
+<li><p>A model with a low TP value and a high TN value suggests that the model is not performing well in correctly identifying positive cases. There are several potential reasons for this:</p>
+<ul>
+<li><p>Imbalanced data: The dataset used to train the model may be imbalanced, meaning that there are significantly more negative cases than positive cases. This can lead the model to predict negative more often and result in a high TN value, but a low TP value.</p>
+</li>
+<li><p>Inadequate features: The features used to train the model may not be informative enough to distinguish between positive and negative cases, leading to poor performance in identifying positive cases.</p>
+</li>
+<li><p>Overfitting: The model may be overfitting to the training data, meaning that it is performing well on the training data but poorly on new, unseen data. This can lead to a high TN value, but a low TP value.</p>
+</li>
+<li><p>Model complexity: The model may be too simple or too complex for the problem at hand, leading to poor performance in identifying positive cases.</p>
+</li>
+</ul>
+</li>
+<li><p>To improve the performance of the model, I may need to adjust the dataset, feature selection or model complexity.</p>
+</li>
+</ul>
+<hr>
+<h3 id="Classifier-analysis"><a href="#Classifier-analysis" class="headerlink" title="Classifier analysis"></a>Classifier analysis</h3><p>For the AdaBoost classifier, we can interpret what it is doing by looking at which features it uses most in the weak learners.  Use the below code to visualize the pixel features used.</p>
+<p>Note: if you used GridSearchCV to train the classifier, then you need to use the <code>best_estimator_</code> field to access the classifier.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># adaboost classifier</span></span><br><span class="line">fi = adacv.best_estimator_.feature_importances_.reshape(imgsize)</span><br><span class="line">plt.imshow(fi, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fc72e9d0&gt;
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_22_1.svg" alt="svg"></p>
+<p>Similarly, we can also look at the important features for xgboost.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># xgboost classifier</span></span><br><span class="line">fi = xgbcv.best_estimator_.feature_importances_.reshape(imgsize)</span><br><span class="line">plt.imshow(fi, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fe059520&gt;
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_24_1.svg" alt="svg"></p>
+<p>Similarly for Random Forests, we can look at the important features.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># random forest classifier</span></span><br><span class="line">fi = rfrcv.best_estimator_.feature_importances_.reshape(imgsize)</span><br><span class="line">plt.imshow(fi, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fcdcb100&gt;
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_26_1.svg" alt="svg"></p>
+<p>Comment on which features (pixels) that AdaBoost and Random Forests are using</p>
+<hr>
+<ul>
+<li>AdaBoost uses the pixel points around the corners of the image and part of the face contour for classification, while Random Forests uses the nose, eyes and cheeks for classification.</li>
+<li>The reason why Random Forests uses different features than AdaBoost for face detection is that the two algorithms have different ways of selecting features. AdaBoost selects the most discriminative features for classification, Focusing on the full picture outline, while Random Forests focuses on selecting the most informative features for generalization.</li>
+</ul>
+<hr>
+<p>For kernel SVM, we can look at the support vectors to see what the classifier finds difficult.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># svm classifier</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;num support vectors:&quot;</span>, <span class="built_in">len</span>(svmcv.best_estimator_.support_vectors_))</span><br><span class="line">si  = svmcv.best_estimator_.support_  <span class="comment"># get indicies of support vectors</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get all the patches for each support vector</span></span><br><span class="line">simg = [ imgdata[<span class="string">&#x27;train&#x27;</span>][i] <span class="keyword">for</span> i <span class="keyword">in</span> si ]</span><br><span class="line"></span><br><span class="line"><span class="comment"># make montage</span></span><br><span class="line">outimg = image_montage(simg, maxw=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">plt.imshow(outimg, cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<pre><code>num support vectors: 664
+
+
+
+
+
+&lt;matplotlib.image.AxesImage at 0x7ff1fce6cb50&gt;
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_29_2.svg" alt="svg"></p>
+<p>Comment on anything you notice about what the SVM finds difficult (i.e., on the decision boundary or within the margin)</p>
+<hr>
+<ul>
+<li><p>High Dimensionality: When the number of dimensions in the data is very high, SVM may find it challenging to find the optimal hyperplane that separates the classes. This is because as the number of dimensions increases, the data becomes more sparse, and the search space becomes more complex, making it more difficult to find a good separation.</p>
+</li>
+<li><p>Overfitting: In some cases, SVM may overfit the training data, resulting in a model that performs well on the training set but poorly on the testing set. This can happen if the SVM tries to fit too closely to the training data, resulting in a decision boundary that does not generalize well to new data.</p>
+</li>
+<li><p>Noise: If the data contains a significant amount of noise, SVM may struggle to find the optimal hyperplane that separates the classes accurately. This is because the noise can lead to misclassifications and make it difficult to find a clear separation.</p>
+</li>
+</ul>
+<p>In addition to the above challenges, there are some specific cases where SVM may find it difficult to classify certain images accurately. For example, SVM may struggle to recognize faces with glasses, as the glasses can obscure important facial features. Similarly, images of faces with deep eye sockets may be challenging to classify accurately, as these features can alter the appearance of the face and make it difficult to find a clear separation between the classes.</p>
+<hr>
+<h3 id="Custom-kernel-SVM"><a href="#Custom-kernel-SVM" class="headerlink" title="Custom kernel SVM"></a>Custom kernel SVM</h3><p>Now we will try to use a custom kernel with the SVM.  We will consider the following RBF-like kernel based on L1 distance (i.e., cityblock or Manhattan distance),</p>
+<p>$$ k(\mathbf{x},\mathbf{y}) &#x3D; \exp \left(-\alpha \sum_{i&#x3D;1}^d |x_i-y_i|\right)$$</p>
+<p>where $x_i,y_i$ are the elements of the vectors $\mathbf{x},\mathbf{y}$, and $\alpha$ is the hyperparameter.  The difference with the RBF kernel is that the new kernel uses the absolute difference rather than the squared difference. Thus, the new kernel does not “drop off” as fast as the RBF kernel using squared distance.</p>
+<ul>
+<li>Implement the new kernel as a custom kernel function. The <code>scipy.spatial.distance.cdist</code> function will be helpful.</li>
+<li>Train the SVM with the new kernel.  To select the hyperparameter $\alpha$, you need to run cross-validation “manually” by: 1) trying different values of $\alpha$, and running cross-validation to select $C$; 2) selecting the  $\alpha$ with the highest cross-validation score <code>best_score_</code> in <code>GridSearchCV</code>.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> spatial</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mykernel</span>(<span class="params">X1, X2, alpha=<span class="number">1.0</span></span>):</span><br><span class="line">    <span class="comment"># alpha is the hyperparameter</span></span><br><span class="line">    D = spatial.distance.cdist(X1, X2, metric=<span class="string">&quot;cityblock&quot;</span>)</span><br><span class="line">    <span class="comment"># return the kernel matrix</span></span><br><span class="line">    <span class="keyword">return</span> exp(-alpha * D)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">paramgrid = &#123;<span class="string">&quot;C&quot;</span>: logspace(-<span class="number">2</span>, <span class="number">3</span>, <span class="number">20</span>)&#125;</span><br><span class="line"></span><br><span class="line">alphas = logspace(-<span class="number">3</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">best_score = <span class="number">0</span></span><br><span class="line">best_alpha = <span class="number">0</span></span><br><span class="line">best_params = &#123;&#125;</span><br><span class="line">best_custom_svmcv = <span class="literal">None</span></span><br><span class="line"><span class="comment"># find the best alpha and C manually</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> alphas:</span><br><span class="line">    tmpkern = <span class="keyword">lambda</span> X1, X2, alpha=i: mykernel(X1, X2, alpha=alpha)</span><br><span class="line">    custom_svmcv = model_selection.GridSearchCV(</span><br><span class="line">        svm.SVC(kernel=tmpkern), paramgrid, cv=<span class="number">3</span>, n_jobs=<span class="number">6</span>, verbose=<span class="number">0</span></span><br><span class="line">    )</span><br><span class="line">    custom_svmcv.fit(trainXn, trainY)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;---------------------------\nalpha :&quot;</span>, i)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, custom_svmcv.best_params_)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, custom_svmcv.best_score_)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> custom_svmcv.best_score_ &gt; best_score:</span><br><span class="line">        best_score = custom_svmcv.best_score_</span><br><span class="line">        best_alpha = i</span><br><span class="line">        best_params = custom_svmcv.best_params_</span><br><span class="line">        best_custom_svmcv = custom_svmcv</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;===============================\nbest alpha:&quot;</span>, best_alpha)</span><br><span class="line">predY = best_custom_svmcv.predict(testXn)</span><br><span class="line"><span class="comment"># calculate accuracy and F1 score</span></span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;F1 score:&quot;</span>, metrics.f1_score(testY, predY))</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate confusion matrix</span></span><br><span class="line">Pind = where(predY == <span class="number">1</span>)  </span><br><span class="line">Nind = where(predY == <span class="number">0</span>)  </span><br><span class="line">TP = count_nonzero(testY[Pind] == predY[Pind])</span><br><span class="line">FP = count_nonzero(testY[Pind] != predY[Pind])</span><br><span class="line">TN = count_nonzero(testY[Nind] == predY[Nind])</span><br><span class="line">FN = count_nonzero(testY[Nind] != predY[Nind])</span><br><span class="line">TPR = TP / (TP + FN)</span><br><span class="line">FPR = FP / (FP + TN)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Confusion matrix:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;TP=&quot;</span>, TP, end=<span class="string">&quot; | &quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;FP=&quot;</span>, FP)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;TN=&quot;</span>, TN, end=<span class="string">&quot; | &quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;FN=&quot;</span>, FN)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;TPR=&quot;</span>, TPR)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;FPR=&quot;</span>, FPR)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>---------------------------
+alpha : 0.001
+best params: &#123;&#39;C&#39;: 26.366508987303583&#125;
+best score: 0.952457843154651
+---------------------------
+alpha : 0.0021544346900318843
+best params: &#123;&#39;C&#39;: 7.847599703514607&#125;
+best score: 0.9558942692714895
+---------------------------
+alpha : 0.004641588833612777
+best params: &#123;&#39;C&#39;: 2.3357214690901213&#125;
+best score: 0.9587589434813383
+---------------------------
+alpha : 0.01
+best params: &#123;&#39;C&#39;: 2.3357214690901213&#125;
+best score: 0.9581871915743484
+---------------------------
+alpha : 0.021544346900318832
+best params: &#123;&#39;C&#39;: 1.2742749857031335&#125;
+best score: 0.9352766983496085
+---------------------------
+alpha : 0.046415888336127774
+best params: &#123;&#39;C&#39;: 1.2742749857031335&#125;
+best score: 0.6991549901126352
+---------------------------
+alpha : 0.1
+best params: &#123;&#39;C&#39;: 0.01&#125;
+best score: 0.6515763594387368
+---------------------------
+alpha : 0.21544346900318823
+best params: &#123;&#39;C&#39;: 0.01&#125;
+best score: 0.6515763594387368
+---------------------------
+alpha : 0.46415888336127775
+best params: &#123;&#39;C&#39;: 0.01&#125;
+best score: 0.6515763594387368
+---------------------------
+alpha : 1.0
+best params: &#123;&#39;C&#39;: 0.01&#125;
+best score: 0.6515763594387368
+===============================
+best alpha: 0.004641588833612777
+test accuracy = 0.6641949152542372
+F1 score: 0.49602543720190784
+Confusion matrix:
+TP= 156 | FP= 1
+TN= 471 | FN= 316
+TPR= 0.3305084745762712
+FPR= 0.00211864406779661
+</code></pre>
+<p>Does using the new kernel improve the results?</p>
+<hr>
+<ul>
+<li><p>Yes, the new kernel improved the results, but only to a very limited extent. However, the program does run faster.</p>
+<ul>
+<li><p>When using a kernel SVM classifier for face detection, the choice of kernel can have a significant impact on the performance of the classifier. A custom kernel based on cityblock distance can have advantages over an RBF-like kernel based on squared difference, depending on the specific characteristics of the data.</p>
+</li>
+<li><p>Cityblock distance is a metric that measures the distance between two points by summing the absolute differences of their coordinates. This type of distance metric can be useful in face detection because it is robust to differences in lighting and contrast, which can cause pixel values to vary significantly. In contrast, an RBF-like kernel based on squared difference is sensitive to these differences, which can lead to overfitting and poor generalization performance.</p>
+</li>
+<li><p>The advantage of using a custom kernel based on cityblock distance is that it can better capture the intrinsic structure of the face data, which can lead to improved classification performance. This is particularly true when the face data has significant variations in lighting, contrast, or other factors that can affect pixel values.</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="Image-Feature-Extraction"><a href="#Image-Feature-Extraction" class="headerlink" title="Image Feature Extraction"></a>Image Feature Extraction</h2><p>The detection performance is not that good. The problem is that we are using the raw pixel values as features, so it is difficult for the classifier to interpret larger structures of the face that might be important.  To fix the problem, we will extract features from the image using a set of filters.</p>
+<p>Run the below code to look at the filter output.  The filters are a sets of black and white boxes that respond to similar structures in the image.  After applying the filters to the image, the filter response map is aggregated over a 4x4 window.  Hence each filter produces a 5x5 feature response.  Since there are 4 filters, then the feature vector is 100 dimensions.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">extract_features</span>(<span class="params">imgs, doplot=<span class="literal">False</span></span>):</span><br><span class="line">    <span class="comment"># the filter layout</span></span><br><span class="line">    lay = [array([-<span class="number">1</span>,<span class="number">1</span>]), array([-<span class="number">1</span>,<span class="number">1</span>,-<span class="number">1</span>]),  </span><br><span class="line">               array([[<span class="number">1</span>],[-<span class="number">1</span>]]), array([[-<span class="number">1</span>],[<span class="number">1</span>],[-<span class="number">1</span>]])]</span><br><span class="line">    sc=<span class="number">8</span>            <span class="comment"># size of each filter patch</span></span><br><span class="line">    poolmode = <span class="string">&#x27;i&#x27;</span>  <span class="comment"># pooling mode (interpolate)</span></span><br><span class="line">    cmode = <span class="string">&#x27;same&#x27;</span>  <span class="comment"># convolution mode</span></span><br><span class="line">    brick = ones((sc,sc))  <span class="comment"># filter patch</span></span><br><span class="line">    ks = []</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> lay:</span><br><span class="line">        tmp = [brick*i <span class="keyword">for</span> i <span class="keyword">in</span> l]</span><br><span class="line">        <span class="keyword">if</span> (l.ndim==<span class="number">1</span>):</span><br><span class="line">            k = hstack(tmp)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            k = vstack(tmp)</span><br><span class="line">        ks.append(k)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># get the filter response size</span></span><br><span class="line">    <span class="keyword">if</span> (poolmode==<span class="string">&#x27;max&#x27;</span>) <span class="keyword">or</span> (poolmode==<span class="string">&#x27;absmax&#x27;</span>):</span><br><span class="line">        tmpimg = maxpool(maxpool(imgs[<span class="number">0</span>])) <span class="comment"># do max pooling, but I forget where I got this function</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        tmpimg = ndimage.zoom(imgs[<span class="number">0</span>], <span class="number">0.25</span>)        </span><br><span class="line">    fs = prod(tmpimg.shape)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># get the total feature length</span></span><br><span class="line">    fst = fs*<span class="built_in">len</span>(ks)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># filter the images</span></span><br><span class="line">    X  = empty((<span class="built_in">len</span>(imgs), fst))</span><br><span class="line">    <span class="keyword">for</span> i,img <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgs):</span><br><span class="line">        x = empty(fst)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># for each filter</span></span><br><span class="line">        <span class="keyword">for</span> j,th <span class="keyword">in</span> <span class="built_in">enumerate</span>(ks):</span><br><span class="line">            <span class="comment"># filter the image</span></span><br><span class="line">            imgk = signal.convolve(img, ks[j], mode=cmode)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># do pooling</span></span><br><span class="line">            <span class="keyword">if</span> poolmode == <span class="string">&#x27;maxabs&#x27;</span>:</span><br><span class="line">                mimg = maxpool(maxpool(<span class="built_in">abs</span>(imgk)))</span><br><span class="line">            <span class="keyword">elif</span> poolmode == <span class="string">&#x27;max&#x27;</span>:</span><br><span class="line">                mimg = maxpool(maxpool(imgk))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                mimg = ndimage.zoom(imgk, <span class="number">0.25</span>)</span><br><span class="line">    </span><br><span class="line">            <span class="comment"># put responses into feature vector</span></span><br><span class="line">            x[(j*fs):(j+<span class="number">1</span>)*fs] = ravel(mimg)</span><br><span class="line">               </span><br><span class="line">            <span class="keyword">if</span> (doplot):             </span><br><span class="line">                plt.subplot(<span class="number">3</span>,<span class="built_in">len</span>(ks),j+<span class="number">1</span>)</span><br><span class="line">                plt.imshow(ks[j], cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">                plt.title(<span class="string">&quot;filter &quot;</span> + <span class="built_in">str</span>(j))</span><br><span class="line">                plt.subplot(<span class="number">3</span>,<span class="built_in">len</span>(ks),<span class="built_in">len</span>(ks)+j+<span class="number">1</span>)</span><br><span class="line">                plt.imshow(imgk, cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">                plt.title(<span class="string">&quot;filtered image&quot;</span>)</span><br><span class="line">                plt.subplot(<span class="number">3</span>,<span class="built_in">len</span>(ks),<span class="number">2</span>*<span class="built_in">len</span>(ks)+j+<span class="number">1</span>)</span><br><span class="line">                plt.imshow(mimg, cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">                plt.title(<span class="string">&quot;image features&quot;</span>)</span><br><span class="line">        X[i,:] = x</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># new features</span></span><br><span class="line">img = imgdata[<span class="string">&#x27;train&#x27;</span>][<span class="number">0</span>]</span><br><span class="line">plt.imshow(img, cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;image&quot;</span>)</span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">extract_features([img], doplot=<span class="literal">True</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_0.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_1.svg" alt="svg"></p>
+<p>Now lets extract image features on the training and test sets.  It may take a few seconds.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">trainXf = extract_features(imgdata[<span class="string">&#x27;train&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(trainXf.shape)</span><br><span class="line">testXf = extract_features(imgdata[<span class="string">&#x27;test&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(testXf.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(1745, 100)
+(944, 100)
+</code></pre>
+<h3 id="Detection-using-Image-Features"><a href="#Detection-using-Image-Features" class="headerlink" title="Detection using Image Features"></a>Detection using Image Features</h3><p>Now train AdaBoost and SVM classifiers on the image feature data.  Evaluate on the test set.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># first scale the features</span></span><br><span class="line">scalerf = preprocessing.MinMaxScaler(feature_range=(-<span class="number">1</span>,<span class="number">1</span>))    <span class="comment"># make scaling object</span></span><br><span class="line">trainXfn = scalerf.fit_transform(trainXf)   <span class="comment"># use training data to fit scaling parameters</span></span><br><span class="line">testXfn  = scalerf.transform(testXf)        <span class="comment"># apply scaling to test data</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># AdaBoost</span></span><br><span class="line">paramgrid = &#123;</span><br><span class="line">    <span class="string">&quot;learning_rate&quot;</span>: logspace(-<span class="number">5</span>, <span class="number">0</span>, <span class="number">8</span>),</span><br><span class="line">    <span class="string">&quot;n_estimators&quot;</span>: array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1000</span>, <span class="number">2000</span>]),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">adacv_f = model_selection.GridSearchCV(</span><br><span class="line">    ensemble.AdaBoostClassifier(random_state=<span class="number">1</span>), paramgrid, cv=<span class="number">5</span>, n_jobs=<span class="number">6</span>, verbose=<span class="number">10</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">adacv_f.fit(trainXfn, trainY)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, adacv_f.best_params_)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best score:&quot;</span>, adacv_f.best_score_)</span><br><span class="line"></span><br><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = adacv_f.predict(testXfn)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 5 folds for each of 88 candidates, totalling 440 fits
+[CV 2/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 1/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 3/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 2/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.725 total time=   0.0s
+[CV 1/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.587 total time=   0.0s
+[CV 4/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 3/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.679 total time=   0.0s
+[CV 5/5; 1/88] START learning_rate=1e-05, n_estimators=1........................
+[CV 1/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 2/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 3/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 4/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.693 total time=   0.0s
+[CV 5/5; 1/88] END learning_rate=1e-05, n_estimators=1;, score=0.762 total time=   0.0s
+[CV 4/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 5/5; 2/88] START learning_rate=1e-05, n_estimators=2........................
+[CV 1/5; 3/88] START learning_rate=1e-05, n_estimators=5........................
+[CV 1/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.587 total time=   0.0s
+[CV 2/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.725 total time=   0.0s
+[CV 2/5; 3/88] START learning_rate=1e-05, n_estimators=5........................
+[CV 3/5; 3/88] START learning_rate=1e-05, n_estimators=5........................
+[CV 3/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.679 total time=   0.0s
+[CV 5/5; 3/88] START learning_rate=1e-05, n_estimators=5........................
+[CV 4/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.693 total time=   0.0s
+[CV 5/5; 2/88] END learning_rate=1e-05, n_estimators=2;, score=0.762 total time=   0.0s
+
+[CV 2/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 4/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.653 total time=   0.3s
+[CV 5/5; 398/400] START C=1000.0, gamma=233.57214690901213......................
+[CV 4/5; 397/400] END C=1000.0, gamma=112.88378916846884;, score=0.653 total time=   0.3s
+[CV 5/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 1/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.650 total time=   0.3s
+[CV 2/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 3/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.650 total time=   0.3s
+[CV 4/5; 399/400] START C=1000.0, gamma=483.2930238571752.......................
+[CV 3/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.650 total time=   0.3s
+[CV 4/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 2/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.650 total time=   0.3s
+[CV 5/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 5/5; 398/400] END C=1000.0, gamma=233.57214690901213;, score=0.653 total time=   0.3s
+[CV 5/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.653 total time=   0.3s
+[CV 1/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 2/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   0.3s
+[CV 3/5; 400/400] START C=1000.0, gamma=1000.0..................................
+[CV 4/5; 399/400] END C=1000.0, gamma=483.2930238571752;, score=0.653 total time=   0.3s
+[CV 4/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.653 total time=   0.2s
+[CV 5/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.653 total time=   0.2s
+[CV 1/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   0.2s
+[CV 3/5; 400/400] END ...C=1000.0, gamma=1000.0;, score=0.650 total time=   0.2s
+best params: &#123;&#39;C&#39;: 1000.0, &#39;gamma&#39;: 0.008858667904100823&#125;
+best score: 0.9570200573065903
+test accuracy = 0.7372881355932204
+</code></pre>
+<h3 id="Error-Analysis"><a href="#Error-Analysis" class="headerlink" title="Error Analysis"></a>Error Analysis</h3><p>Repeat the error analysis for the new classifiers.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">predY_list = []</span><br><span class="line">predY_list.append(adacv_f.predict(testXfn))</span><br><span class="line">predY_list.append(svmcv_f.predict(testXfn))</span><br><span class="line">model_list = [<span class="string">&quot;AdaBoost&quot;</span>, <span class="string">&quot;SVM&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(predY_list)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;------------------------------------&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;         model : &quot;</span>, model_list[i])</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;------------------------------------&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Accuracy:&quot;</span>, metrics.accuracy_score(testY, predY_list[i]))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;F1 score:&quot;</span>, metrics.f1_score(testY, predY_list[i]))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># confusion matrix</span></span><br><span class="line">    Pind = where(predY_list[i] == <span class="number">1</span>)</span><br><span class="line">    Nind = where(predY_list[i] == <span class="number">0</span>)</span><br><span class="line">    TP = count_nonzero(testY[Pind] == predY_list[i][Pind])</span><br><span class="line">    FP = count_nonzero(testY[Pind] != predY_list[i][Pind])</span><br><span class="line">    TN = count_nonzero(testY[Nind] == predY_list[i][Nind])</span><br><span class="line">    FN = count_nonzero(testY[Nind] != predY_list[i][Nind])</span><br><span class="line">    TPR = TP / (TP + FN)</span><br><span class="line">    FPR = FP / (FP + TN)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Confusion matrix:&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TP=&quot;</span>, TP, end=<span class="string">&quot; | &quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FP=&quot;</span>, FP)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TN=&quot;</span>, TN, end=<span class="string">&quot; | &quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FN=&quot;</span>, FN)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;TPR=&quot;</span>, TPR)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;FPR=&quot;</span>, FPR)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>------------------------------------
+         model :  AdaBoost
+------------------------------------
+Accuracy: 0.715042372881356
+F1 score: 0.6184397163120567
+Confusion matrix:
+TP= 218 | FP= 15
+TN= 457 | FN= 254
+TPR= 0.461864406779661
+FPR= 0.03177966101694915
+------------------------------------
+         model :  SVM
+------------------------------------
+Accuracy: 0.7372881355932204
+F1 score: 0.6545961002785515
+Confusion matrix:
+TP= 235 | FP= 11
+TN= 461 | FN= 237
+TPR= 0.4978813559322034
+FPR= 0.023305084745762712
+</code></pre>
+<p>How has the classifier using image features improved?</p>
+<hr>
+<ul>
+<li><p>The classifier increases the TP value and reduces the TN value to a considerable extent,  which means that the classifier can recognize faces more easily, resulting in an increase in the accuracy and F1 value.</p>
+</li>
+<li><p>Training machine learning models on image feature data rather than the original image data can improve the performance of the models for a few reasons:</p>
+<ul>
+<li><p>Dimensionality reduction: Image feature data typically has fewer dimensions than the original image data. This reduces the number of features that the models have to learn from, making them more efficient and less prone to overfitting.</p>
+</li>
+<li><p>Noise reduction: Image feature data is often pre-processed to remove noise and enhance relevant features. This can make the models more robust to noisy input data.</p>
+</li>
+<li><p>Increased generalization: Image feature data can capture higher-level information about the images, such as edges, textures, and shapes, which can be more useful for classification than pixel-level information. This can improve the generalization of the models to new, unseen data.</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="Test-image"><a href="#Test-image" class="headerlink" title="Test image"></a>Test image</h1><p>Now lets try your face detector on a real image.  Download the “nasa-small.png” image and put it in the same directory as your ipynb file.  The below code will load the image, crop out image patches and then extract features. (this may take a few minutes)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fname = <span class="string">&quot;nasa-small.png&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># load image</span></span><br><span class="line">testimg = skimage.io.imread(fname, as_gray=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(testimg.shape)</span><br><span class="line">plt.imshow(testimg, cmap=<span class="string">&#x27;gray&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(210, 480)
+
+
+
+
+
+&lt;matplotlib.image.AxesImage at 0x7ff202448580&gt;
+</code></pre>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_48_2.svg" alt="svg"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># step size for the sliding window</span></span><br><span class="line">step = <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># extract window patches with step size of 4</span></span><br><span class="line">patches = skimage.util.view_as_windows(testimg, (<span class="number">19</span>,<span class="number">19</span>), step=step)</span><br><span class="line">psize = patches.shape</span><br><span class="line"><span class="comment"># collapse the first 2 dimensions</span></span><br><span class="line">patches2 = patches.reshape((psize[<span class="number">0</span>]*psize[<span class="number">1</span>], psize[<span class="number">2</span>], psize[<span class="number">3</span>]))</span><br><span class="line"><span class="built_in">print</span>(patches2.shape )</span><br><span class="line"></span><br><span class="line"><span class="comment"># histogram equalize patches (improves contrast)</span></span><br><span class="line">patches3 = empty(patches2.shape)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(patches2.shape[<span class="number">0</span>]):</span><br><span class="line">    patches3[i,:,:] = skimage.exposure.equalize_hist(patches2[i,:,:])</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract features</span></span><br><span class="line">newXf = extract_features(patches3)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(5568, 19, 19)
+</code></pre>
+<p>Now predict using your classifier.  The extracted features are in <code>newXf</code>, and scaled features are <code>newXfn</code>.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">newXfn  = scalerf.transform(newXf)        <span class="comment"># apply scaling to test data</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># use the SVM model to predict</span></span><br><span class="line">prednewY = svmcv_f.predict(newXfn)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Now we we will view the results on the image.  Use the below code. <code>prednewY</code> is the vector of predictions.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># reshape prediction to an image</span></span><br><span class="line">imgY = prednewY.reshape(psize[<span class="number">0</span>], psize[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># zoom back to image size</span></span><br><span class="line">imgY2 = ndimage.zoom(imgY, step, output=<span class="literal">None</span>, order=<span class="number">0</span>)</span><br><span class="line"><span class="comment"># pad the top and left with half the window size</span></span><br><span class="line">imgY2 = vstack((zeros((<span class="number">9</span>, imgY2.shape[<span class="number">1</span>])), imgY2))</span><br><span class="line">imgY2 = hstack((zeros((imgY2.shape[<span class="number">0</span>],<span class="number">9</span>)), imgY2))</span><br><span class="line"><span class="comment"># pad right and bottom to same size as image</span></span><br><span class="line"><span class="keyword">if</span> (imgY2.shape[<span class="number">0</span>] != testimg.shape[<span class="number">0</span>]):</span><br><span class="line">    imgY2 = vstack((imgY2, zeros((testimg.shape[<span class="number">0</span>]-imgY2.shape[<span class="number">0</span>], imgY2.shape[<span class="number">1</span>]))))</span><br><span class="line"><span class="keyword">if</span> (imgY2.shape[<span class="number">1</span>] != testimg.shape[<span class="number">1</span>]):</span><br><span class="line">    imgY2 = hstack((imgY2, zeros((imgY2.shape[<span class="number">0</span>],testimg.shape[<span class="number">1</span>]-imgY2.shape[<span class="number">1</span>]))))</span><br><span class="line">    </span><br><span class="line"><span class="comment"># show detections with image</span></span><br><span class="line"><span class="comment">#detimg = dstack(((0.5*imgY2+0.5)*testimg, 0.5*testimg, 0.5*testimg))</span></span><br><span class="line">nimgY2 = <span class="number">1</span>-imgY2</span><br><span class="line">tmp = nimgY2*testimg</span><br><span class="line">detimg = dstack((imgY2+tmp, tmp, tmp))</span><br><span class="line"></span><br><span class="line"><span class="comment"># show it!</span></span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">plt.imshow(imgY2, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;detection map&#x27;</span>)</span><br><span class="line">plt.subplot(<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">plt.imshow(detimg)</span><br><span class="line">plt.title(<span class="string">&#x27;image&#x27;</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>(-0.5, 479.5, 209.5, -0.5)
+</code></pre>
+<p>​<br><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_54_1.svg" alt="svg"><br>​    </p>
+<p><em>How did your face detector do?</em></p>
+<hr>
+<ul>
+<li>Among the 23 faces, 15 faces were successfully recognized. Clothes badges were easily mistaken for human faces, and places with complex background textures were easily mistaken for human faces. Faces with less prominent eyebrows are ignored.</li>
+</ul>
+<hr>
+<p>You can try it on your own images.  The faces should all be around 19x19 pixels though. We only used 1&#x2F;4 of the training data. Try using more data to train it!</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/sklearn/"># sklearn</a>
+                    
+                        <a href="/tags/scipy/"># scipy</a>
+                    
+                        <a href="/tags/SVM/"># SVM</a>
+                    
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
+                    
+                        <a href="/tags/Kernel/"># Kernel</a>
+                    
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                    
+                        <a href="/tags/Boosting/"># Boosting</a>
+                    
+                        <a href="/tags/Random-Forests/"># Random Forests</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
+            
+            
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98B/">机器学习-分类问题B</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
