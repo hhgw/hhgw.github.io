@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>机器学习-分类问题C | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">机器学习-分类问题C</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-04-29&nbsp;&nbsp;17:29:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="机器学习-分类问题C"><a href="#机器学习-分类问题C" class="headerlink" title="机器学习-分类问题C"></a>机器学习-分类问题C</h1><p>数学公式在渲染器中会出现错误，目前还没有解决</p>
+<h2 id="Outline"><a href="#Outline" class="headerlink" title="Outline"></a>Outline</h2><ol>
+<li>Nonlinear classifiers</li>
+<li>Kernel trick and kernel SVM</li>
+<li>Ensemble Methods - Boosting, Random Forests</li>
+<li><strong>Classification Summary</strong></li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib_inline   <span class="comment"># setup output image format</span></span><br><span class="line">matplotlib_inline.backend_inline.set_matplotlib_formats(<span class="string">&#x27;retina&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.rcParams[<span class="string">&#x27;figure.dpi&#x27;</span>] = <span class="number">100</span>  <span class="comment"># display larger images</span></span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">drawstump</span>(<span class="params">fdim, fthresh, fdir=<span class="string">&#x27;gt&#x27;</span>, poscol=<span class="literal">None</span>, negcol=<span class="literal">None</span>, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span></span>):</span><br><span class="line">    <span class="comment"># fdim = dimension</span></span><br><span class="line">    <span class="comment"># fthresh = threshold</span></span><br><span class="line">    <span class="comment"># fdir = direction (gt, lt)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> fdir == <span class="string">&#x27;lt&#x27;</span>:</span><br><span class="line">        <span class="comment"># swap colors</span></span><br><span class="line">        tmp = poscol</span><br><span class="line">        poscol = negcol</span><br><span class="line">        negcol = tmp</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># assume fdim=0</span></span><br><span class="line">    polyxn = [fthresh, fthresh, -<span class="number">30</span>, -<span class="number">30</span>]</span><br><span class="line">    polyyn = [<span class="number">30</span>, -<span class="number">30</span>, -<span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">    </span><br><span class="line">    polyxp = [fthresh, fthresh, <span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">    polyyp = [<span class="number">30</span>, -<span class="number">30</span>, -<span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># fill positive half-space or neg space</span></span><br><span class="line">    <span class="keyword">if</span> (poscol):</span><br><span class="line">        <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">            plt.fill(polyxp, polyyp, poscol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            plt.fill(polyyp, polyxp, poscol, alpha=<span class="number">0.2</span>)            </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (negcol):</span><br><span class="line">        <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">            plt.fill(polyxn, polyyn, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            plt.fill(polyyn, polyxn, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># plot line</span></span><br><span class="line">    <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">        plt.plot(polyxp[<span class="number">0</span>:<span class="number">2</span>], polyyp[<span class="number">0</span>:<span class="number">2</span>], ls, lw=lw)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        plt.plot(polyyp[<span class="number">0</span>:<span class="number">2</span>], polyxp[<span class="number">0</span>:<span class="number">2</span>], ls, lw=lw)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">drawplane</span>(<span class="params">w, b=<span class="literal">None</span>, c=<span class="literal">None</span>, wlabel=<span class="literal">None</span>, poscol=<span class="literal">None</span>, negcol=<span class="literal">None</span>, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span></span>):</span><br><span class="line">    <span class="comment"># w^Tx + b = 0</span></span><br><span class="line">    <span class="comment"># w0 x0 + w1 x1 + b = 0</span></span><br><span class="line">    <span class="comment"># x1 = -w0/w1 x0 - b / w1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># OR</span></span><br><span class="line">    <span class="comment"># w^T (x-c) = 0 = w^Tx - w^Tc  --&gt; b = -w^Tc</span></span><br><span class="line">    <span class="keyword">if</span> c != <span class="literal">None</span>:</span><br><span class="line">        b = -<span class="built_in">sum</span>(w*c)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># the line</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">abs</span>(w[<span class="number">0</span>])&gt;<span class="built_in">abs</span>(w[<span class="number">1</span>])):   <span class="comment"># vertical line</span></span><br><span class="line">        x0 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x1 = -w[<span class="number">0</span>]/w[<span class="number">1</span>] * x0 - b / w[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">else</span>:                       <span class="comment"># horizontal line</span></span><br><span class="line">        x1 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x0 = -w[<span class="number">1</span>]/w[<span class="number">0</span>] * x1 - b / w[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># fill positive half-space or neg space</span></span><br><span class="line">    <span class="keyword">if</span> (poscol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, poscol, alpha=<span class="number">0.2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (negcol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># plot line</span></span><br><span class="line">    lineplt, = plt.plot(x0, x1, ls, lw=lw)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># the w</span></span><br><span class="line">    <span class="keyword">if</span> (wlabel):</span><br><span class="line">        xp = array([<span class="number">0</span>, -b/w[<span class="number">1</span>]])</span><br><span class="line">        xpw = xp+w</span><br><span class="line">        plt.arrow(xp[<span class="number">0</span>], xp[<span class="number">1</span>], w[<span class="number">0</span>], w[<span class="number">1</span>], width=<span class="number">0.01</span>)</span><br><span class="line">        plt.text(xpw[<span class="number">0</span>]-<span class="number">0.5</span>, xpw[<span class="number">1</span>], wlabel)</span><br><span class="line">    <span class="keyword">return</span> lineplt</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># load iris data each row is (petal length, sepal width, class)</span></span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> model_selection</span><br><span class="line"></span><br><span class="line">irisdata = load_iris()</span><br><span class="line"></span><br><span class="line">X = irisdata.data[:<span class="number">100</span>,<span class="number">0</span>:<span class="number">2</span>]  <span class="comment"># the first two columns are features (petal length, sepal width)</span></span><br><span class="line">Y = irisdata.target[:<span class="number">100</span>]    <span class="comment"># the third column is the class label (versicolor=1, virginica=2)</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(X.shape)</span><br><span class="line"></span><br><span class="line"><span class="comment"># randomly split data into 50% train and 50% test set</span></span><br><span class="line">trainX, testX, trainY, testY = \</span><br><span class="line">  model_selection.train_test_split(X, Y, </span><br><span class="line">  train_size=<span class="number">0.5</span>, test_size=<span class="number">0.5</span>, random_state=<span class="number">4487</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(trainX.shape)</span><br><span class="line"><span class="built_in">print</span>(testX.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(100, 2)
+(50, 2)
+(50, 2)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mycmap = matplotlib.colors.LinearSegmentedColormap.from_list(<span class="string">&#x27;mycmap&#x27;</span>, [<span class="string">&quot;#FF0000&quot;</span>, <span class="string">&quot;#FFFFFF&quot;</span>, <span class="string">&quot;#00FF00&quot;</span>])</span><br><span class="line"></span><br><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Feature-Pre-processing"><a href="#Feature-Pre-processing" class="headerlink" title="Feature Pre-processing"></a>Feature Pre-processing</h2><ul>
+<li><p>Some classifiers, such as SVM and LR, are sensitive to the scale of the feature values.</p>
+<ul>
+<li>feature dimensions with larger values may dominate the objective function.</li>
+</ul>
+</li>
+<li><p>Common practice is to <em>standardize</em> or <em>normalize</em> each feature dimension before learning the classifier.</p>
+<ul>
+<li>Two Methods…</li>
+</ul>
+</li>
+<li><p><strong>Method 1:</strong> scale each feature dimension so the mean is 0 and variance is 1.</p>
+<ul>
+<li>$\tilde{x}_d &#x3D; \frac{1}{s}(x_d-m)$</li>
+<li>$s$ is the standard deviation of feature values.</li>
+<li>$m$ is the mean of the feature values.</li>
+</ul>
+</li>
+<li><p><strong>NOTE:</strong> the parameters for scaling the features should be estimated from the training set!</p>
+<ul>
+<li>same scaling is applied to the test set.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># using the iris data</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> preprocessing</span><br><span class="line">scaler = preprocessing.StandardScaler()  <span class="comment"># make scaling object</span></span><br><span class="line">trainXn = scaler.fit_transform(trainX)   <span class="comment"># use training data to fit scaling parameters</span></span><br><span class="line">testXn  = scaler.transform(testX)        <span class="comment"># apply scaling to test data</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">nfig1 = plt.figure(figsize=(<span class="number">9</span>,<span class="number">4</span>))</span><br><span class="line">axbox2 = [-<span class="number">3</span>, <span class="number">3</span>, -<span class="number">3</span>, <span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.axis(axbox); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;unnormalized features&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.scatter(trainXn[:,<span class="number">0</span>], trainXn[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.axis(axbox2); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;normalized features&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nfig1</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_9_0.png" alt="png"></p>
+<ul>
+<li><strong>Method 2:</strong> scale features to a fixed range, -1 to 1.<ul>
+<li>$\tilde{x}_d &#x3D; 2*(x_d - min) &#x2F; (max-min) - 1$</li>
+<li>$max$ and $min$ are the maximum and minimum features values.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># using the iris data</span></span><br><span class="line">scaler = preprocessing.MinMaxScaler(feature_range=(-<span class="number">1</span>,<span class="number">1</span>))    <span class="comment"># make scaling object</span></span><br><span class="line">trainXn = scaler.fit_transform(trainX)   <span class="comment"># use training data to fit scaling parameters</span></span><br><span class="line">testXn  = scaler.transform(testX)        <span class="comment"># apply scaling to test data</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">nfig2 = plt.figure(figsize=(<span class="number">9</span>,<span class="number">4</span>))</span><br><span class="line">axbox2 = [-<span class="number">1</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.axis(axbox); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;unnormalized features&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plt.scatter(trainXn[:,<span class="number">0</span>], trainXn[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.axis(axbox2); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;equal&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;normalized features [-1,1]&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nfig2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_13_0.png" alt="png"></p>
+<h2 id="Data-Representation-and-Feature-Engineering"><a href="#Data-Representation-and-Feature-Engineering" class="headerlink" title="Data Representation and Feature Engineering"></a>Data Representation and Feature Engineering</h2><ul>
+<li><p>How to represent data as a vector of numbers?</p>
+<ul>
+<li>the encoding of the data into a feature vector should make sense</li>
+<li>inner-products or distances calculated between feature vectors should be meaningful in terms of the data.</li>
+</ul>
+</li>
+<li><p>Categorical variables</p>
+<ul>
+<li>Example: $x$ has 3 possible category labels: cat, dog, horse</li>
+<li>We could encode this as: $x&#x3D;0$, $x&#x3D;1$, and $x&#x3D;2$.<ul>
+<li>Suppose we have two data points: $x &#x3D; cat$, $x’&#x3D;horse$.</li>
+<li>What is the meaning of $x*x’ &#x3D; 2$?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="One-hot-encoding"><a href="#One-hot-encoding" class="headerlink" title="One-hot encoding"></a>One-hot encoding</h2><ul>
+<li>encode a categorical variable as a vector of ones and zeros<ul>
+<li>if there are $K$ categories, then the vector is $K$ dimensions.</li>
+</ul>
+</li>
+<li>Example:<ul>
+<li>x&#x3D;cat $\rightarrow$ x&#x3D;[1 0 0]</li>
+<li>x&#x3D;dog $\rightarrow$ x&#x3D;[0 1 0]</li>
+<li>x&#x3D;horse $\rightarrow$ x&#x3D;[0 0 1]</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># one-hot encoding example</span></span><br><span class="line">X = [[<span class="string">&#x27;cat&#x27;</span>], [<span class="string">&#x27;dog&#x27;</span>], [<span class="string">&#x27;cat&#x27;</span>], [<span class="string">&#x27;bird&#x27;</span>], [<span class="string">&#x27;dog&#x27;</span>]]  <span class="comment"># each row is a sample</span></span><br><span class="line">ohe = preprocessing.OneHotEncoder(sparse=<span class="literal">False</span>)</span><br><span class="line">ohe.fit(X)         <span class="comment"># map the categories to one-hot vectors</span></span><br><span class="line"><span class="built_in">print</span>(ohe.categories_)</span><br><span class="line">ohe.transform(X)   <span class="comment"># transform to one-hot-encoding</span></span><br></pre></td></tr></table></figure>
+
+<pre><code>[array([&#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;], dtype=object)]
+
+
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/sklearn/preprocessing/_encoders.py:828: FutureWarning: `sparse` was renamed to `sparse_output` in version 1.2 and will be removed in 1.4. `sparse_output` is ignored unless you leave `sparse` to its default value.
+  warnings.warn(
+
+
+
+
+
+array([[0., 1., 0.],
+       [0., 0., 1.],
+       [0., 1., 0.],
+       [1., 0., 0.],
+       [0., 0., 1.]])
+</code></pre>
+<h2 id="Binning"><a href="#Binning" class="headerlink" title="Binning"></a>Binning</h2><ul>
+<li>encode a real value as a vector of ones and zeros<ul>
+<li>assign each feature value to a bin, and then use one-hot-encoding</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example</span></span><br><span class="line">X = [[-<span class="number">3</span>], [<span class="number">0.5</span>], [<span class="number">1.5</span>], [<span class="number">2.5</span>]]  <span class="comment"># the data</span></span><br><span class="line">bins = [-<span class="number">2</span>,-<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]      <span class="comment"># define the bin edges</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># map from value to bin number</span></span><br><span class="line">Xbins = digitize(X, bins=bins)   </span><br><span class="line"></span><br><span class="line"><span class="comment"># map from bin number (0..5) to 0-1 vector</span></span><br><span class="line">ohe = preprocessing.OneHotEncoder(categories=[arange(<span class="number">6</span>)], sparse=<span class="literal">False</span>)</span><br><span class="line">ohe.fit(Xbins)</span><br><span class="line">ohe.transform(Xbins)</span><br></pre></td></tr></table></figure>
+
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/sklearn/preprocessing/_encoders.py:828: FutureWarning: `sparse` was renamed to `sparse_output` in version 1.2 and will be removed in 1.4. `sparse_output` is ignored unless you leave `sparse` to its default value.
+  warnings.warn(
+
+
+
+
+
+array([[1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 1., 0., 0.],
+       [0., 0., 0., 0., 1., 0.],
+       [0., 0., 0., 0., 0., 1.]])
+</code></pre>
+<h2 id="Data-transformations-polynomials"><a href="#Data-transformations-polynomials" class="headerlink" title="Data transformations - polynomials"></a>Data transformations - polynomials</h2><ul>
+<li>Represent interactions between features using polynomials</li>
+<li>Example:<ul>
+<li>2nd-degree polynomial models pair-wise interactions<ul>
+<li>$[x_1, x_2] \rightarrow [x_1^2, x_1 x_2, x_2^2]$</li>
+</ul>
+</li>
+<li>Combine with other degrees:<ul>
+<li>$[x_1, x_2] \rightarrow [1, x_1, x_2, x_1^2, x_1 x_2, x_2^2]$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">X = [[<span class="number">0</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">2</span>], [<span class="number">3</span>,<span class="number">4</span>]]</span><br><span class="line">pf = preprocessing.PolynomialFeatures(degree=<span class="number">2</span>)</span><br><span class="line">pf.fit(X)</span><br><span class="line">pf.transform(X) </span><br></pre></td></tr></table></figure>
+
+
+
+
+<pre><code>array([[ 1.,  0.,  1.,  0.,  0.,  1.],
+       [ 1.,  1.,  2.,  1.,  2.,  4.],
+       [ 1.,  3.,  4.,  9., 12., 16.]])
+</code></pre>
+<h2 id="Data-transformations-univariate"><a href="#Data-transformations-univariate" class="headerlink" title="Data transformations - univariate"></a>Data transformations - univariate</h2><ul>
+<li>Apply a non-linear transformation to the feature<ul>
+<li>e.g., x $\rightarrow$ log(x)</li>
+<li>useful if the dynamic range of x is very large</li>
+</ul>
+</li>
+</ul>
+<h2 id="Unbalanced-Data"><a href="#Unbalanced-Data" class="headerlink" title="Unbalanced Data"></a>Unbalanced Data</h2><ul>
+<li>For some classification tasks that data will be unbalanced<ul>
+<li>many more examples in one class than the other.</li>
+</ul>
+</li>
+<li><strong>Example:</strong> detecting credit card fraud<ul>
+<li>credit card fraud is rare<ul>
+<li>50 examples of fraud, 5000 examples of legitimate transactions.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># generate random data</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line">X,Y = datasets.make_blobs(n_samples=<span class="number">200</span>, </span><br><span class="line">         centers=[[<span class="number">0</span>,<span class="number">0</span>]], cluster_std=<span class="number">2</span>, n_features=<span class="number">2</span>, random_state=<span class="number">4487</span>)</span><br><span class="line">X2,Y2 = datasets.make_blobs(n_samples=<span class="number">20</span>, </span><br><span class="line">         centers=[[<span class="number">3</span>,<span class="number">3</span>]], cluster_std=<span class="number">0.5</span>, n_features=<span class="number">2</span>, random_state=<span class="number">4487</span>)</span><br><span class="line"></span><br><span class="line">X = r_[X,X2]</span><br><span class="line">Y = r_[Y,Y2+<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">udatafig = plt.figure()</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>],X[:,<span class="number">1</span>],c=Y,cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;class 0: 200 points; class 1: 20 points&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udatafig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_25_0.png" alt="png"></p>
+<ul>
+<li>Unbalanced data can cause problems when training the classifier<ul>
+<li>classifier will focus more on the class with more points.</li>
+<li>decision boundary is pushed away from  class with more points</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line">clf = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">10</span>)</span><br><span class="line">clf.fit(X, Y)</span><br><span class="line"></span><br><span class="line">udatafig1 = plt.figure()</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>],X[:,<span class="number">1</span>],c=Y,cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line"></span><br><span class="line">w = clf.coef_[<span class="number">0</span>]</span><br><span class="line">b = clf.intercept_[<span class="number">0</span>]</span><br><span class="line">l1 = drawplane(w, b, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span>)</span><br><span class="line">plt.legend((l1,), (<span class="string">&#x27;SVM decision boundary&#x27;</span>,), fontsize=<span class="number">9</span>)</span><br><span class="line">plt.axis([-<span class="number">6</span>, <span class="number">7</span>, -<span class="number">6</span>, <span class="number">7</span>])</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udatafig1</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_28_0.png" alt="png"></p>
+<ul>
+<li><strong>Solution:</strong> apply weights on the classes during training.<ul>
+<li>weights are inversely proportional to the class size.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">clfw = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">10</span>,  class_weight=<span class="string">&#x27;balanced&#x27;</span>)</span><br><span class="line">clfw.fit(X, Y)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;class weights =&quot;</span>, clfw.class_weight_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>class weights = [0.55 5.5 ]
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">udatafig2 = plt.figure()</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>],X[:,<span class="number">1</span>],c=Y,cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line"></span><br><span class="line">w = clf.coef_[<span class="number">0</span>]</span><br><span class="line">b = clf.intercept_[<span class="number">0</span>]</span><br><span class="line">ww = clfw.coef_[<span class="number">0</span>]</span><br><span class="line">bw = clfw.intercept_[<span class="number">0</span>]</span><br><span class="line">l1 = drawplane(w, b, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k--&#x27;</span>)</span><br><span class="line">l2 = drawplane(ww, bw, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span>)</span><br><span class="line">plt.legend((l1,l2), (<span class="string">&#x27;unweighted&#x27;</span>, <span class="string">&#x27;weighted&#x27;</span>), fontsize=<span class="number">9</span>)</span><br><span class="line">plt.axis([-<span class="number">6</span>, <span class="number">7</span>, -<span class="number">6</span>, <span class="number">7</span>])</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udatafig2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_32_0.png" alt="png"></p>
+<h2 id="Classifier-Imbalance"><a href="#Classifier-Imbalance" class="headerlink" title="Classifier Imbalance"></a>Classifier Imbalance</h2><ul>
+<li>In some tasks, errors on certain classes cannot be tolerated.</li>
+<li><strong>Example:</strong> detecting spam vs non-spam<ul>
+<li>non-spam should <em>definitely not</em> be marked as spam<ul>
+<li>okay to mark some spam as non-spam</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">X,Y = datasets.make_blobs(n_samples=<span class="number">200</span>, </span><br><span class="line">         centers=[[-<span class="number">3</span>,<span class="number">0</span>],[<span class="number">3</span>,<span class="number">0</span>]], cluster_std=<span class="number">2</span>, n_features=<span class="number">2</span>, random_state=<span class="number">447</span>)</span><br><span class="line">udatafig3 = plt.figure()</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>], X[:,<span class="number">1</span>], c=Y, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.close()</span><br><span class="line"></span><br><span class="line">clf = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">10</span>)</span><br><span class="line">clf.fit(X, Y)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>SVC(C=10, kernel=&#x27;linear&#x27;)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">SVC</label><div class="sk-toggleable__content"><pre>SVC(C=10, kernel=&#x27;linear&#x27;)</pre></div></div></div></div></div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udatafig3</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_35_0.png" alt="png"></p>
+<p>…</p>
+<ul>
+<li>Class weighting can be used to make the classifier focus on certain classes<ul>
+<li>e.g., weight non-spam class higher than spam class<ul>
+<li>classifier will try to correctly classify all non-spam samples, at the expense of making errors on spam samples.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># dictionary (key,value) = (class name, class weight)</span></span><br><span class="line">cw = &#123;<span class="number">0</span>: <span class="number">0.2</span>, </span><br><span class="line">      <span class="number">1</span>:  <span class="number">5</span>&#125;  <span class="comment"># class 1 is 25 times more important!</span></span><br><span class="line"></span><br><span class="line">clfw = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">10</span>,  class_weight=cw)</span><br><span class="line">clfw.fit(X, Y);</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">udatafig4 = plt.figure()</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>], X[:,<span class="number">1</span>], c=Y, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">w = clf.coef_[<span class="number">0</span>]</span><br><span class="line">b = clf.intercept_[<span class="number">0</span>]</span><br><span class="line">ww = clfw.coef_[<span class="number">0</span>]</span><br><span class="line">bw = clfw.intercept_[<span class="number">0</span>]</span><br><span class="line">l1 = drawplane(w, b, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k--&#x27;</span>)</span><br><span class="line">l2 = drawplane(ww, bw, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span>)</span><br><span class="line">plt.legend((l1,l2), (<span class="string">&#x27;unweighted&#x27;</span>, <span class="string">&#x27;weighted&#x27;</span>), fontsize=<span class="number">9</span>)</span><br><span class="line">plt.axis([-<span class="number">10</span>, <span class="number">8</span>, -<span class="number">6</span>, <span class="number">6</span>])</span><br><span class="line"></span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udatafig4</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_40_0.png" alt="png"></p>
+<p> …</p>
+<h2 id="Classification-Summary"><a href="#Classification-Summary" class="headerlink" title="Classification Summary"></a>Classification Summary</h2><ul>
+<li><strong>Classification task</strong><ul>
+<li>Observation $\mathbf{x}$: typically a real vector of feature values, $\mathbf{x}\in\mathbb{R}^d$.</li>
+<li>Class $y$: from a set of possible classes, e.g., ${\cal Y} &#x3D; {0,1}$</li>
+<li><strong>Goal:</strong> given an observation $\mathbf{x}$, predict its class $y$.</li>
+</ul>
+</li>
+</ul>
+<table style="font-size:9pt;">
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Classes</th>
+<th>Decision function</th>
+<th>Training</th>
+<th>Advantages</th>
+<th>Disadvantages</th>
+</tr>
+<tr>
+<td>Bayes' classifier</td>
+<td>generative</td>
+<td>multi-class</td>
+<td>non-linear</td>
+<td>estimate class-conditional densities $p(x|y)$ by maximizing likelihood of data.</td>
+<td>- works well with small amounts of data.<br>- multi-class.<br>- minimum probability of error if probability models are correct.</td>
+<td>- depends on the data correctly fitting the class-conditional.</td>
+</tr>
+<tr>
+<td>logistic regression</td>
+<td>discriminative</td>
+<td>binary</td>
+<td>linear</td>
+<td>maximize likelihood of data in $p(y|x)$.</td>
+<td>- well-calibrated probabilities.<br>- efficient to learn.</td>
+<td>- linear decision boundary.<br>- sensitive to $C$ parameter.</td>
+</tr>
+<tr>
+<td>support vector machine (SVM)</td>
+<td>discriminative</td>
+<td>binary</td>
+<td>linear</td>
+<td>maximize the margin (distance between decision surface and closest point).</td>
+<td>- works well in high-dimension.<br>- good generalization.</td>
+<td>- linear decision boundary.<br>- sensitive to $C$ parameter.</td>
+</tr>
+<tr>
+<td>kernel SVM</td>
+<td>discriminative</td>
+<td>binary</td>
+<td>non-linear (kernel function)</td>
+<td>maximize the margin.</td>
+<td>- non-linear decision boundary.<br>- can be applied to non-vector data using appropriate kernel.</td>
+<td>- sensitive to kernel function and hyperparameters.<br>
+- high memory usage for large datasets</td>
+</tr>
+<tr>
+<td>AdaBoost</td>
+<td>discriminative</td>
+<td>binary</td>
+<td>non-linear (ensemble of weak learners)</td>
+<td>train successive weak learners to focus on misclassified points.</td>
+<td>- non-linear decision boundary. can do feature selection.<br>- good generalization.</td>
+<td>- sensitive to outliers.</td>
+</tr>
+<tr>
+<td>XGBoost</td>
+<td>discriminative</td>
+<td>binary</td>
+<td>non-linear (ensemble of decision trees)</td>
+<td>train successive learners to focus on gradient of the loss.</td>
+<td>- non-linear decision boundary.<br>- good generalization.</td>
+<td>- sensitive to outliers.</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>discriminative</td>
+<td>multi-class</td>
+<td>non-linear (ensemble of decision trees)</td>
+<td>aggregate predictions over several decision trees, trained using different subsets of data.</td>
+<td>- non-linear decision boundary. can do feature selection.<br>- good generalization.<br>- fast</td>
+<td>- sensitive to outliers.</td>
+</tr>
+</table>
+
+<h2 id="Loss-functions"><a href="#Loss-functions" class="headerlink" title="Loss functions"></a>Loss functions</h2><ul>
+<li>The classifiers differ in their loss functions, which influence how they work.<ul>
+<li>$z_i &#x3D; y_i f(\mathbf{x}_i)$</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">z = linspace(-<span class="number">6</span>,<span class="number">6</span>,<span class="number">100</span>)</span><br><span class="line">logloss = log(<span class="number">1</span>+exp(-z)) / log(<span class="number">2</span>)</span><br><span class="line">hingeloss = maximum(<span class="number">0</span>, <span class="number">1</span>-z)</span><br><span class="line">exploss = exp(-z)</span><br><span class="line">lossfig = plt.figure()</span><br><span class="line"></span><br><span class="line">plt.plot([<span class="number">0</span>,<span class="number">0</span>], [<span class="number">0</span>,<span class="number">9</span>], <span class="string">&#x27;k--&#x27;</span>)</span><br><span class="line">plt.text(<span class="number">0</span>,<span class="number">8.5</span>, <span class="string">&quot;incorrectly classified $\\Leftarrow$ &quot;</span>, ha=<span class="string">&#x27;right&#x27;</span>, weight=<span class="string">&#x27;bold&#x27;</span>)</span><br><span class="line">plt.text(<span class="number">0</span>,<span class="number">8.5</span>, <span class="string">&quot; $\Rightarrow$ correctly classified&quot;</span>, ha=<span class="string">&#x27;left&#x27;</span>, weight=<span class="string">&#x27;bold&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.plot(z,hingeloss, <span class="string">&#x27;b-&#x27;</span>, label=<span class="string">&#x27;hinge (SVM)&#x27;</span>)</span><br><span class="line">plt.plot(z,logloss, <span class="string">&#x27;r-&#x27;</span>, label=<span class="string">&#x27;logistic (LR)&#x27;</span>)</span><br><span class="line">plt.plot(z,exploss, <span class="string">&#x27;g-&#x27;</span>, label=<span class="string">&#x27;exponential (AdaBoost)&#x27;</span>)</span><br><span class="line">plt.axis([-<span class="number">6</span>,<span class="number">6</span>,<span class="number">0</span>,<span class="number">9</span>]); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$z_i$&#x27;</span>);</span><br><span class="line">plt.ylabel(<span class="string">&#x27;loss&#x27;</span>)</span><br><span class="line">plt.legend(loc=<span class="string">&#x27;right&#x27;</span>, fontsize=<span class="number">10</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;loss functions&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lossfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_45_0.png" alt="png"></p>
+<h2 id="Regularization-and-Overfitting"><a href="#Regularization-and-Overfitting" class="headerlink" title="Regularization and Overfitting"></a>Regularization and Overfitting</h2><ul>
+<li>Some models have terms to prevent overfitting the training data.<ul>
+<li>this can improve <em>generalization</em> to new data.</li>
+</ul>
+</li>
+<li>There is a parameter to control the regularization effect.<ul>
+<li>select this parameter using cross-validation on the training set.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">X,Y = datasets.make_blobs(n_samples=<span class="number">100</span>, </span><br><span class="line">         centers=[[-<span class="number">3</span>,<span class="number">0</span>],[<span class="number">3</span>,<span class="number">0</span>]], cluster_std=<span class="number">1.5</span>, n_features=<span class="number">2</span>, random_state=<span class="number">447</span>)</span><br><span class="line">udatafig3 = plt.figure()</span><br><span class="line">axbox = [-<span class="number">10</span>,<span class="number">8</span>,-<span class="number">6</span>,<span class="number">6</span>]</span><br><span class="line">xr = [linspace(axbox[<span class="number">0</span>], axbox[<span class="number">1</span>], <span class="number">50</span>), linspace(axbox[<span class="number">2</span>], axbox[<span class="number">3</span>], <span class="number">50</span>)]</span><br><span class="line"></span><br><span class="line">Cs = [<span class="number">0.1</span>, <span class="number">10</span>, <span class="number">100</span>]</span><br><span class="line">clf=&#123;&#125;</span><br><span class="line"></span><br><span class="line">ofig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line"><span class="keyword">for</span> i,C <span class="keyword">in</span> <span class="built_in">enumerate</span>(Cs):</span><br><span class="line">    clf[C] = svm.SVC(kernel=<span class="string">&#x27;rbf&#x27;</span>, C=C, gamma=<span class="number">0.05</span>)</span><br><span class="line">    clf[C].fit(X, Y)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># make a grid for calculating the posterior, </span></span><br><span class="line">    <span class="comment">#  then form into a big [N,2] matrix</span></span><br><span class="line">    xgrid0, xgrid1 = meshgrid(xr[<span class="number">0</span>], xr[<span class="number">1</span>])</span><br><span class="line">    allpts = c_[xgrid0.ravel(), xgrid1.ravel()]</span><br><span class="line"></span><br><span class="line">    score = clf[C].decision_function(allpts).reshape(xgrid0.shape)</span><br><span class="line"></span><br><span class="line">    cmap = ([<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">1</span>,<span class="number">0.7</span>,<span class="number">0.7</span>], [<span class="number">0.7</span>,<span class="number">1</span>,<span class="number">0.7</span>], [<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>])</span><br><span class="line">    </span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="built_in">len</span>(Cs),i+<span class="number">1</span>)</span><br><span class="line">    plt.contourf(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, colors=cmap, </span><br><span class="line">             levels=[-<span class="number">1000</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1000</span>], alpha=<span class="number">0.3</span>)</span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[-<span class="number">1</span>, <span class="number">1</span>], linewidths=<span class="number">1</span>, linestyles=<span class="string">&#x27;dashed&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[<span class="number">0</span>], linestyles=<span class="string">&#x27;solid&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    plt.scatter(X[:,<span class="number">0</span>], X[:,<span class="number">1</span>], c=Y, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">#plt.plot(clf.support_vectors_[:,0], clf.support_vectors_[:,1],</span></span><br><span class="line">    <span class="comment">#         &#x27;ko&#x27;,fillstyle=&#x27;none&#x27;, markeredgewidth=2)</span></span><br><span class="line">    plt.axis(axbox); plt.grid(<span class="literal">True</span>)</span><br><span class="line">    plt.title(<span class="string">&#x27;C=&#x27;</span>+<span class="built_in">str</span>(C))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<pre><code>&lt;Figure size 640x480 with 0 Axes&gt;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ofig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>​<br><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lc_files/Lc_48_0.png" alt="png"><br>​    </p>
+<h2 id="Structural-Risk-Minimization"><a href="#Structural-Risk-Minimization" class="headerlink" title="Structural Risk Minimization"></a>Structural Risk Minimization</h2><ul>
+<li>A general framework for balancing data fit and model complexity.</li>
+<li>Many learning problems can be written as a combination of data-fit and regularization term:<br>$$f^* &#x3D; \mathop{\mathrm{argmin}}_{f} \sum_i L(y_i, f(\mathbf{x}_i)) + \lambda \Omega(f)$$<ul>
+<li>assume $f$ within some class of funcitions, e.g., linear functions $f(\mathbf{x}) &#x3D; \mathbf{w}^T\mathbf{x}+b$.</li>
+<li>$L$ is the loss function, e.g., logistic loss.</li>
+<li>$\Omega$ is the regularization function on $f$, e.g., $||\mathbf{w}||^2$</li>
+<li>$\lambda$ is the tradeoff parameter, e.g., $1&#x2F;C$.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Other-things"><a href="#Other-things" class="headerlink" title="Other things"></a>Other things</h2><ul>
+<li><em>Multiclass classification</em><ul>
+<li>can use binary classifiers to do multi-class using <em>1-vs-rest</em> formulation.</li>
+</ul>
+</li>
+<li><em>Feature normalization</em><ul>
+<li>normalize each feature dimension so that some feature dimensions with larger ranges do not dominate the optimization process.</li>
+</ul>
+</li>
+<li><em>Unbalanced data</em><ul>
+<li>if more data in one class, then apply weights to each class to balance objectives.</li>
+</ul>
+</li>
+<li><em>Class imbalance</em><ul>
+<li>mistakes on some classes are more critical.</li>
+<li>reweight class to focus classifier on correctly predicting one class at the expense of others.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Applications"><a href="#Applications" class="headerlink" title="Applications"></a>Applications</h2><ul>
+<li>Web document classification, spam classification</li>
+<li>Face gender recognition, face detection, digit classification</li>
+</ul>
+<h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><ul>
+<li>Choice of features is important!<ul>
+<li>using uninformative features may confuse the classifier.</li>
+<li>use domain knowledge to pick the best features to extract from the data.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Which-classifier-is-best"><a href="#Which-classifier-is-best" class="headerlink" title="Which classifier is best?"></a>Which classifier is best?</h2><ul>
+<li><strong>“No Free Lunch” Theorem</strong> (Wolpert and Macready)</li>
+</ul>
+<blockquote>
+<p>“If an algorithm performs well on a certain class of problems then it necessarily pays for that with degraded performance on the set of all remaining problems.”</p>
+</blockquote>
+<ul>
+<li>In other words, there is no <em>best</em> classifier for all tasks.  The best classifier depends on the particular problem.</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/sklearn/"># sklearn</a>
+                    
+                        <a href="/tags/scipy/"># scipy</a>
+                    
+                        <a href="/tags/SVM/"># SVM</a>
+                    
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
+                    
+                        <a href="/tags/Kernel/"># Kernel</a>
+                    
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                    
+                        <a href="/tags/Boosting/"># Boosting</a>
+                    
+                        <a href="/tags/Random-Forests/"># Random Forests</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98B/">机器学习-分类问题B</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

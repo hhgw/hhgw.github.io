@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>机器学习-分类问题A | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">机器学习-分类问题A</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-04-29&nbsp;&nbsp;16:13:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="机器学习-分类问题A"><a href="#机器学习-分类问题A" class="headerlink" title="机器学习-分类问题A"></a>机器学习-分类问题A</h1><p>数学公式在渲染器中会出现错误，目前还没有解决</p>
+<h2 id="Outline"><a href="#Outline" class="headerlink" title="Outline"></a>Outline</h2><ol>
+<li>Nonlinear classifiers</li>
+<li>Kernel trick and kernel SVM</li>
+<li>Ensemble Methods - Boosting, Random Forests</li>
+<li>Classification Summary</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib_inline   <span class="comment"># setup output image format</span></span><br><span class="line">matplotlib_inline.backend_inline.set_matplotlib_formats(<span class="string">&#x27;retina&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.rcParams[<span class="string">&#x27;figure.dpi&#x27;</span>] = <span class="number">100</span>  <span class="comment"># display larger images</span></span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">drawplane</span>(<span class="params">w, b=<span class="literal">None</span>, c=<span class="literal">None</span>, wlabel=<span class="literal">None</span>, poscol=<span class="literal">None</span>, negcol=<span class="literal">None</span>, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span>, label=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="comment"># w^Tx + b = 0</span></span><br><span class="line">    <span class="comment"># w0 x0 + w1 x1 + b = 0</span></span><br><span class="line">    <span class="comment"># x1 = -w0/w1 x0 - b / w1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># OR</span></span><br><span class="line">    <span class="comment"># w^T (x-c) = 0 = w^Tx - w^Tc  --&gt; b = -w^Tc</span></span><br><span class="line">    <span class="keyword">if</span> c <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        b = -<span class="built_in">sum</span>(w*c)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># the line</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">abs</span>(w[<span class="number">0</span>])&gt;<span class="built_in">abs</span>(w[<span class="number">1</span>])):   <span class="comment"># vertical line</span></span><br><span class="line">        x0 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x1 = -w[<span class="number">0</span>]/w[<span class="number">1</span>] * x0 - b / w[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">else</span>:                       <span class="comment"># horizontal line</span></span><br><span class="line">        x1 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x0 = -w[<span class="number">1</span>]/w[<span class="number">0</span>] * x1 - b / w[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># fill positive half-space or neg space</span></span><br><span class="line">    <span class="keyword">if</span> (poscol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, poscol, alpha=<span class="number">0.2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (negcol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># plot line</span></span><br><span class="line">    plt.plot(x0, x1, ls, lw=lw, label=label)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># the w</span></span><br><span class="line">    <span class="keyword">if</span> (wlabel):</span><br><span class="line">        xp = array([<span class="number">0</span>, -b/w[<span class="number">1</span>]])</span><br><span class="line">        xpw = xp+w</span><br><span class="line">        plt.arrow(xp[<span class="number">0</span>], xp[<span class="number">1</span>], w[<span class="number">0</span>], w[<span class="number">1</span>], width=<span class="number">0.01</span>)</span><br><span class="line">        plt.text(xpw[<span class="number">0</span>]-<span class="number">0.5</span>, xpw[<span class="number">1</span>], wlabel)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">drawmargin</span>(<span class="params">w,b,xmarg=<span class="literal">None</span>, label=<span class="literal">None</span></span>):</span><br><span class="line">    wnorm = w / sqrt(<span class="built_in">sum</span>(w**<span class="number">2</span>))</span><br><span class="line">    <span class="keyword">if</span> xmarg <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="comment"># calculate a point on the margin</span></span><br><span class="line">        dm = <span class="number">1</span> / sqrt(<span class="built_in">sum</span>(w**<span class="number">2</span>))</span><br><span class="line">        xpt  = array([<span class="number">1</span>,-w[<span class="number">0</span>]/w[<span class="number">1</span>]-b/w[<span class="number">1</span>]])</span><br><span class="line">        <span class="comment"># then find the margin (assuming learned with SVM)</span></span><br><span class="line">        xmarg = xpt + dm*wnorm</span><br><span class="line">        xmarg2 = xpt - dm*wnorm</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># find the distance to the margin</span></span><br><span class="line">        dm = (<span class="built_in">sum</span>(w*xmarg)+b) / sqrt(<span class="built_in">sum</span>(w**<span class="number">2</span>))</span><br><span class="line">        <span class="comment"># move to the other side of the decision plane</span></span><br><span class="line">        xmarg2 = xmarg - <span class="number">2</span>*dm*wnorm</span><br><span class="line"></span><br><span class="line">    drawplane(w, c=xmarg, ls=<span class="string">&#x27;k--&#x27;</span>, lw=<span class="number">1</span>, label=label)</span><br><span class="line">    drawplane(w, c=xmarg2, ls=<span class="string">&#x27;k--&#x27;</span>, lw=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">plot_svm</span>(<span class="params">clf, axbox, mycmap, showleg=<span class="literal">True</span></span>):</span><br><span class="line">    <span class="comment"># get line parameters</span></span><br><span class="line">    w = clf.coef_[<span class="number">0</span>]</span><br><span class="line">    b = clf.intercept_[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    drawplane(w, b, poscol=<span class="string">&#x27;g&#x27;</span>, negcol=<span class="string">&#x27;r&#x27;</span>, label=<span class="string">&#x27;boundary&#x27;</span>)</span><br><span class="line">    drawmargin(w, b, label=<span class="string">&#x27;margin&#x27;</span>)</span><br><span class="line">    plt.plot(clf.support_vectors_[:,<span class="number">0</span>], clf.support_vectors_[:,<span class="number">1</span>],</span><br><span class="line">         <span class="string">&#x27;ko&#x27;</span>,fillstyle=<span class="string">&#x27;none&#x27;</span>, markeredgewidth=<span class="number">2</span>, label=<span class="string">&#x27;support vectors&#x27;</span>)</span><br><span class="line">    plt.axis(axbox); plt.grid(<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> showleg:</span><br><span class="line">        leg = plt.legend(loc=<span class="string">&#x27;lower right&#x27;</span>, fontsize=<span class="number">10</span>)</span><br><span class="line">        leg.get_frame().set_facecolor(<span class="string">&#x27;white&#x27;</span>) </span><br></pre></td></tr></table></figure>
+
+<h1 id="Linear-Classifiers"><a href="#Linear-Classifiers" class="headerlink" title="Linear Classifiers"></a>Linear Classifiers</h1><ul>
+<li>So far we have only looked at <em>linear classifiers</em><ul>
+<li>separate classes using a hyperplane (line, plane).</li>
+<li>e.g., support vector machine, logistic regression</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># generate random data</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line">X,Y = datasets.make_blobs(n_samples=<span class="number">50</span>, </span><br><span class="line">         centers=<span class="number">2</span>, cluster_std=<span class="number">2</span>, n_features=<span class="number">2</span>, </span><br><span class="line">         center_box=[-<span class="number">5</span>,<span class="number">5</span>], random_state=<span class="number">4487</span>)</span><br><span class="line">mycmap = matplotlib.colors.LinearSegmentedColormap.from_list(<span class="string">&#x27;mycmap&#x27;</span>, [<span class="string">&quot;#FF0000&quot;</span>, <span class="string">&quot;#FFFFFF&quot;</span>, <span class="string">&quot;#00FF00&quot;</span>])</span><br><span class="line"></span><br><span class="line">axbox = [-<span class="number">10</span>,<span class="number">10</span>,-<span class="number">10</span>,<span class="number">10</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># fit SVM (kernel is the type of decision surface...more in the next lecture)</span></span><br><span class="line">clf = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">1</span>)</span><br><span class="line">clf.fit(X, Y)</span><br><span class="line"></span><br><span class="line">maxmfig = plt.figure()</span><br><span class="line">plot_svm(clf, axbox, mycmap)</span><br><span class="line">plt.scatter(X[:,<span class="number">0</span>], X[:,<span class="number">1</span>], c=Y, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">maxmfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_5_0.png" alt="png"><br>​    </p>
+<h1 id="Non-linear-decision-boundary"><a href="#Non-linear-decision-boundary" class="headerlink" title="Non-linear decision boundary"></a>Non-linear decision boundary</h1><ul>
+<li>What if the data is separable, but not linearly separable?</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">nlfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">3</span>,<span class="number">1</span>)</span><br><span class="line"><span class="comment"># type one - XOR</span></span><br><span class="line">X1,Y1 = datasets.make_blobs(n_samples=<span class="number">100</span>, </span><br><span class="line">         centers=array([[<span class="number">5</span>,<span class="number">5</span>],[-<span class="number">5</span>,-<span class="number">5</span>],[-<span class="number">5</span>, <span class="number">5</span>], [<span class="number">5</span>, -<span class="number">5</span>]]), cluster_std=<span class="number">0.5</span>, n_features=<span class="number">2</span>, </span><br><span class="line">         random_state=<span class="number">4487</span>)</span><br><span class="line">Y1 = (Y1&gt;=<span class="number">2</span>)+<span class="number">0</span></span><br><span class="line">plt.scatter(X1[:,<span class="number">0</span>], X1[:,<span class="number">1</span>], c=Y1, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line"><span class="comment"># type two - split</span></span><br><span class="line">X2,Y2 = datasets.make_blobs(n_samples=<span class="number">100</span>, </span><br><span class="line">         centers=array([[<span class="number">5</span>],[-<span class="number">5</span>],[<span class="number">0</span>]]), cluster_std=<span class="number">0.5</span>, n_features=<span class="number">1</span>, </span><br><span class="line">         random_state=<span class="number">4487</span>)</span><br><span class="line">Y2 = (Y2&gt;<span class="number">1</span>)+<span class="number">0</span></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>)</span><br><span class="line">plt.scatter(X2[:,<span class="number">0</span>], zeros(X2.shape), c=Y2, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># type three - moons</span></span><br><span class="line">X3,Y3 = datasets.make_moons(n_samples=<span class="number">100</span>,</span><br><span class="line">                                             noise=<span class="number">0.1</span>, random_state=<span class="number">4487</span>)</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">3</span>,<span class="number">3</span>)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nlfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_8_0.png" alt="png"></p>
+<h1 id="Idea-transform-the-input-space"><a href="#Idea-transform-the-input-space" class="headerlink" title="Idea - transform the input space"></a>Idea - transform the input space</h1><ul>
+<li>map from input space $\mathbf{x} \in \mathbb{R}^d$ to a new high-dimensional space $\mathbf{z} \in \mathbb{R}^D$.<ul>
+<li>$\mathbf{z} &#x3D; \Phi(\mathbf{x})$, where $\Phi(\mathbf{x})$ is the transformation function.</li>
+</ul>
+</li>
+<li>learn the linear classifier in the new space<ul>
+<li>if dimension of new space is large enough ($D&gt;d$), then the data should be linearly separable</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">nl2fig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">7</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># type one - XOR</span></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">0</span>,<span class="number">0</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.scatter(X1[:,<span class="number">0</span>], X1[:,<span class="number">1</span>], c=Y1, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line">X1t = X1[:,<span class="number">0</span>]*X1[:,<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">2</span>,<span class="number">0</span>))</span><br><span class="line">plt.annotate(<span class="string">&quot;&quot;</span>, xy=(<span class="number">0</span>, -<span class="number">1</span>), xytext=(<span class="number">0</span>,<span class="number">0.8</span>), </span><br><span class="line">             arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&#x27;Fancy,head_width=3,tail_width=2,head_length=2&#x27;</span>))</span><br><span class="line">plt.text(<span class="number">0.2</span>,<span class="number">0</span>,<span class="string">&quot;$\Phi(\mathbf&#123;x&#125;) = x_1*x_2$&quot;</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.axis([-<span class="number">1</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">3</span>,<span class="number">0</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.scatter(X1t, zeros(X1t.shape), c=Y1, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1 x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.plot([<span class="number">0</span>,<span class="number">0</span>],[-<span class="number">0.5</span>,<span class="number">0.5</span>], <span class="string">&#x27;k-&#x27;</span>, lw=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># type two - split</span></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">0</span>,<span class="number">1</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.scatter(X2[:,<span class="number">0</span>], zeros(X2.shape), c=Y2, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">2</span>,<span class="number">1</span>))</span><br><span class="line">plt.annotate(<span class="string">&quot;&quot;</span>, xy=(<span class="number">0</span>, -<span class="number">1</span>), xytext=(<span class="number">0</span>,<span class="number">0.8</span>), </span><br><span class="line">             arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&#x27;Fancy,head_width=3,tail_width=2,head_length=2&#x27;</span>))</span><br><span class="line">plt.text(<span class="number">0.2</span>,<span class="number">0</span>,<span class="string">&quot;$\Phi(\mathbf&#123;x&#125;) = [x, x^2]$&quot;</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.axis([-<span class="number">1</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">X2t = c_[X2, X2**<span class="number">2</span>]</span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">3</span>,<span class="number">1</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.scatter(X2t[:,<span class="number">0</span>], X2t[:,<span class="number">1</span>], c=Y2, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x^2$&#x27;</span>);plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.plot([-<span class="number">8</span>,<span class="number">8</span>],[<span class="number">10</span>,<span class="number">10</span>], <span class="string">&#x27;k-&#x27;</span>, lw=<span class="number">2</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line"><span class="comment"># type three - moons</span></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">0</span>,<span class="number">2</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line"></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">2</span>,<span class="number">2</span>))</span><br><span class="line">plt.annotate(<span class="string">&quot;&quot;</span>, xy=(<span class="number">0</span>, -<span class="number">1</span>), xytext=(<span class="number">0</span>,<span class="number">0.8</span>), </span><br><span class="line">             arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&#x27;Fancy,head_width=3,tail_width=2,head_length=2&#x27;</span>))</span><br><span class="line">plt.text(<span class="number">0.2</span>,<span class="number">0</span>,<span class="string">&quot;$\Phi(\mathbf&#123;x&#125;)$&quot;</span>, fontsize=<span class="number">14</span>)</span><br><span class="line">plt.axis([-<span class="number">1</span>, <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>])</span><br><span class="line">plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot2grid((<span class="number">5</span>,<span class="number">3</span>),(<span class="number">3</span>,<span class="number">2</span>), rowspan=<span class="number">2</span>)</span><br><span class="line">plt.arrow(<span class="number">0</span>,<span class="number">0</span>, <span class="number">10</span>,<span class="number">0</span>, lw=<span class="number">2</span>, head_width=<span class="number">1</span>)</span><br><span class="line">plt.arrow(<span class="number">0</span>,<span class="number">0</span>, <span class="number">0</span>,<span class="number">10</span>, lw=<span class="number">2</span>, head_width=<span class="number">1</span>)</span><br><span class="line">plt.arrow(<span class="number">0</span>,<span class="number">0</span>, -<span class="number">7</span>,-<span class="number">7</span>, lw=<span class="number">2</span>, head_width=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">X3t,Y3t = datasets.make_blobs(n_samples=<span class="number">100</span>, </span><br><span class="line">          centers=array([[-<span class="number">5</span>,<span class="number">5</span>],[<span class="number">5</span>,-<span class="number">5</span>]]), cluster_std=<span class="number">2</span>, n_features=<span class="number">2</span>, </span><br><span class="line">          random_state=<span class="number">4487</span>)</span><br><span class="line">plt.scatter(X3t[:,<span class="number">0</span>], X3t[:,<span class="number">1</span>], c=Y3t, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.fill([<span class="number">5</span>, -<span class="number">5</span>, -<span class="number">5</span>, <span class="number">5</span>], [<span class="number">10</span>, <span class="number">2</span>, -<span class="number">7</span>, <span class="number">1</span>], alpha=<span class="number">0.5</span>, color=<span class="string">&#x27;gray&#x27;</span>, ls=<span class="string">&#x27;solid&#x27;</span>)</span><br><span class="line">plt.axis([-<span class="number">10</span>, <span class="number">12</span>, -<span class="number">10</span>, <span class="number">12</span>])</span><br><span class="line">plt.text(-<span class="number">10</span>,-<span class="number">12</span>,<span class="string">&quot;high-dimensional features space&quot;</span>)</span><br><span class="line">plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nl2fig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_11_0.png" alt="png"></p>
+<h1 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h1><ul>
+<li><h2 id="Let’s-try-it…-2-dimensional-vector-inputs"><a href="#Let’s-try-it…-2-dimensional-vector-inputs" class="headerlink" title="Let’s try it…- 2-dimensional vector inputs"></a>Let’s try it…<br>- 2-dimensional vector inputs</h2><pre><code>$$
+\mathbf&#123;x&#125; = \begin&#123;bmatrix&#125;x_1\\x_2\end&#123;bmatrix&#125;
+$$
+</code></pre>
+<ul>
+<li><h2 id="transformation-consists-of-quadratic-terms"><a href="#transformation-consists-of-quadratic-terms" class="headerlink" title="transformation consists of quadratic terms"></a>transformation consists of quadratic terms</h2>  $$<br>  \Phi(\mathbf{x}) &#x3D; \begin{bmatrix} x_1^2 \ x_1x_2 \ x_2^2 \end{bmatrix}<br>  $$</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_posterior_svm</span>(<span class="params">model, axbox, X, phi=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="comment"># grid points</span></span><br><span class="line">    xr = [ linspace(axbox[<span class="number">0</span>], axbox[<span class="number">1</span>], <span class="number">200</span>), </span><br><span class="line">           linspace(axbox[<span class="number">2</span>], axbox[<span class="number">3</span>], <span class="number">200</span>) ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># make a grid for calculating the posterior, </span></span><br><span class="line">    <span class="comment">#  then form into a big [N,2] matrix</span></span><br><span class="line">    xgrid0, xgrid1 = meshgrid(xr[<span class="number">0</span>], xr[<span class="number">1</span>])</span><br><span class="line">    allptsx = c_[xgrid0.ravel(), xgrid1.ravel()]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># transform</span></span><br><span class="line">    <span class="keyword">if</span> phi != <span class="literal">None</span>:</span><br><span class="line">        allpts = apply_along_axis(phi, <span class="number">1</span>, allptsx)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        allpts = allptsx</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># calculate the score</span></span><br><span class="line">    score = model.decision_function(allpts).reshape(xgrid0.shape)</span><br><span class="line"></span><br><span class="line">    cmap = ([<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>], [<span class="number">1</span>,<span class="number">0.7</span>,<span class="number">0.7</span>], [<span class="number">0.7</span>,<span class="number">1</span>,<span class="number">0.7</span>], [<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>])</span><br><span class="line">    CS = plt.contourf(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, colors=cmap, </span><br><span class="line">                      levels=[-<span class="number">1000</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1000</span>], alpha=<span class="number">0.3</span>)</span><br><span class="line"></span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[-<span class="number">1</span>, <span class="number">1</span>], linewidths=<span class="number">1</span>, linestyles=<span class="string">&#x27;dashed&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[<span class="number">0</span>], linestyles=<span class="string">&#x27;solid&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">    plt.plot([-<span class="number">100</span>,-<span class="number">100</span>], [-<span class="number">100</span>,-<span class="number">100</span>], <span class="string">&#x27;k-&#x27;</span>, label=<span class="string">&#x27;boundary&#x27;</span>)</span><br><span class="line">    plt.plot([-<span class="number">100</span>,-<span class="number">100</span>], [-<span class="number">100</span>,-<span class="number">100</span>], <span class="string">&#x27;k--&#x27;</span>, label=<span class="string">&#x27;margin&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    plt.plot(X[model.support_,<span class="number">0</span>], X[model.support_,<span class="number">1</span>], </span><br><span class="line">             <span class="string">&#x27;ko&#x27;</span>,fillstyle=<span class="string">&#x27;none&#x27;</span>, markeredgewidth=<span class="number">2</span>, label=<span class="string">&#x27;support vectors&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    leg = plt.legend(loc=<span class="string">&#x27;best&#x27;</span>, fontsize=<span class="number">7</span>)</span><br><span class="line">    leg.get_frame().set_facecolor(<span class="string">&#x27;white&#x27;</span>)         </span><br><span class="line">    plt.axis(axbox); plt.grid(<span class="literal">True</span>)    </span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># define the transformation function for a vector x</span></span><br><span class="line"><span class="comment"># (a lambda function is an anonymous function)</span></span><br><span class="line">phi = <span class="keyword">lambda</span> x: array([x[<span class="number">0</span>]**<span class="number">2</span>, x[<span class="number">1</span>]**<span class="number">2</span>, x[<span class="number">0</span>]*x[<span class="number">1</span>]])</span><br><span class="line"></span><br><span class="line"><span class="comment"># apply function phi to each row of data matrix X1</span></span><br><span class="line">PX = apply_along_axis(phi, <span class="number">1</span>, X1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># fit SVM with transformed data</span></span><br><span class="line">clf = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">1</span>)</span><br><span class="line">clf.fit(PX, Y1)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>SVC(C=1, kernel=&#x27;linear&#x27;)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">SVC</label><div class="sk-toggleable__content"><pre>SVC(C=1, kernel=&#x27;linear&#x27;)</pre></div></div></div></div></div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># make plot</span></span><br><span class="line">axbox = [-<span class="number">8</span>, <span class="number">8</span>, -<span class="number">8</span>, <span class="number">8</span>]</span><br><span class="line">plt.figure()</span><br><span class="line">plot_posterior_svm(clf, axbox, X1, phi=phi)</span><br><span class="line">plt.scatter(X1[:,<span class="number">0</span>], X1[:,<span class="number">1</span>], c=Y1, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_15_0.png" alt="png"></p>
+<h1 id="SVM-with-transformed-input"><a href="#SVM-with-transformed-input" class="headerlink" title="SVM with transformed input"></a>SVM with transformed input</h1><ul>
+<li><p>Given a training set<br>$$<br>{\mathbf{x}<em>i,y_i}</em>{i&#x3D;1}^N<br>$$<br>, </p>
+</li>
+<li><p>the original SVM training is:<br>$$ \mathop{\mathrm{argmin}}_{\mathbf{w},b} \frac{1}{2} \mathbf{w}^T\mathbf{w}\quad \mathrm{s.t.}~y_i (\mathbf{w}^T\mathbf{x}_i+b)\geq 1,\quad 1\leq i \leq N$$</p>
+</li>
+<li><p>Apply high-dimensional transform to input $$\mathbf{x}\rightarrow \Phi(\mathbf{x})$$:<br>$$ \mathop{\mathrm{argmin}}_{\mathbf{w},b} \frac{1}{2} \mathbf{w}^T\mathbf{w}\quad \mathrm{s.t.}~y_i(\mathbf{w}^T\Phi(\mathbf{x}_i)+b)\geq 1,\quad 1\leq i \leq N$$</p>
+</li>
+<li><p><strong>Note:</strong> the hyperplane $$\mathbf{w}\in\mathbb{R}^D$$ is now in the high-dimensional space!</p>
+<ul>
+<li>if $D$ is very large,<ul>
+<li>calculating feature vector $\Phi(\mathbf{x}_i)$ could be time consuming.</li>
+<li>optimization could be very inefficient in high-dimensional space.</li>
+</ul>
+</li>
+<li>To solve this problem requires some optimization theory…</li>
+</ul>
+</li>
+</ul>
+<h1 id="Review-of-Constrained-Optimization"><a href="#Review-of-Constrained-Optimization" class="headerlink" title="Review of Constrained Optimization"></a>Review of Constrained Optimization</h1><ul>
+<li>Consider an optimization problem with inequality constraints:<br>$$ \min_{\mathbf{x}} f(\mathbf{x})\ \text{s.t.}\  g(\mathbf{x}) \geq 0$$<ul>
+<li>$f(\mathbf{x})$ is the objective function (for SVM, it’s the inverse margin).</li>
+<li>$g(\mathbf{x})$ is the constraint function (for SVM, it’s the margin constraint).</li>
+</ul>
+</li>
+</ul>
+<center>
+<img width="500" src="imgs/fmin.png"></center>
+
+<ul>
+<li>Use Langrange multipliers to solve this problem:<ul>
+<li>introduce Lagrange multiplier: $\lambda \geq 0$</li>
+<li>form the Lagrangian: $L(\mathbf{x},\lambda) &#x3D; f(\mathbf{x}) - \lambda g(\mathbf{x})$</li>
+<li>find the stationary point $(\mathbf{x}^*, \lambda^*)$ of the Lagrangian<ul>
+<li>find solution of $\frac{dL}{d\mathbf{x}}&#x3D;0$ and $\frac{dL}{d\lambda}&#x3D;0$.</li>
+</ul>
+</li>
+<li>at the solution, the Langrange multiplier indicates the mode of the inequality constraint<ul>
+<li>when $\lambda^*&gt;0$, then $g(\mathbf{x}^*)&#x3D;0$ (called “active equality”).</li>
+<li>when $\lambda^*&#x3D;0$, then $g(\mathbf{x}^*)&gt;0$ (called “inactive”).</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Duality"><a href="#Duality" class="headerlink" title="Duality"></a>Duality</h1><ul>
+<li><p>We can rewrite the original (primal) problem into its dual form:</p>
+<ul>
+<li>dual function: $q(\lambda) &#x3D; \min_{\mathbf{x}} L(\mathbf{x},\lambda)$</li>
+<li>dual problem: $\max_{\lambda\geq 0} q(\lambda)$</li>
+</ul>
+</li>
+<li><p>Solve for $\lambda$, rather than original variable $\mathbf{x}$.</p>
+<ul>
+<li>can recover the value of $\mathbf{x}$ from $\lambda$.</li>
+</ul>
+</li>
+<li><p>If the optimization problem is convex…</p>
+<ul>
+<li>solving the dual is equivalent to solving the <strong>primal</strong></li>
+<li>$\min_{\mathbf{x}, g(\mathbf{x})\geq 0} f(\mathbf{x}) &#x3D; \max_{\lambda\geq 0} q(\lambda)$.</li>
+</ul>
+</li>
+<li><p><strong>Note:</strong> The SVM problem is convex, so we can obtain an equivalent dual problem.</p>
+</li>
+</ul>
+<h1 id="Lagrange-multipliers-amp-SVM"><a href="#Lagrange-multipliers-amp-SVM" class="headerlink" title="Lagrange multipliers &amp; SVM"></a>Lagrange multipliers &amp; SVM</h1><ul>
+<li>introduce a Langrange multiplier $\alpha_i$ for each constrain<br>  $$ L(\mathbf{w}, \alpha) &#x3D;  \frac{1}{2} \mathbf{w}^T\mathbf{w}- \sum_i \alpha_i [y_i(\mathbf{w}^T\mathbf{x}_i+b)-1] $$</li>
+<li>Lagrange multiplier tells us which points are on the margin:<ul>
+<li>If $\alpha_i&#x3D;0$, then $y_i(\mathbf{w}^T\mathbf{x}_i+b)&gt;1$ ($\mathbf{x}_i$ is beyond margin).</li>
+<li>If $\alpha_i&gt;0$, then $y_i(\mathbf{w}^T\mathbf{x}_i+b)&#x3D;1$ ($\mathbf{x}_i$ is on the margin).<ul>
+<li>i.e., the point is a <em>support vector</em>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="SVM-Dual-Problem"><a href="#SVM-Dual-Problem" class="headerlink" title="SVM Dual Problem"></a>SVM Dual Problem</h1><ul>
+<li><p>The SVM problem can be rewritten as a <em>dual</em> problem:<br>$$<br>\mathop{\mathrm{argmax}}<em>{\alpha} \sum_i \alpha_i -\frac{1}{2}\sum</em>{i&#x3D;1}^N\sum_{j&#x3D;1}^N \alpha_i\alpha_j y_i y_j \Phi(\mathbf{x}_i)^T \Phi(\mathbf{x}<em>j) \ \mathrm{s.t.} \sum</em>{i&#x3D;1}^N \alpha_iy_i &#x3D; 0, \quad \alpha_i\geq 0<br>$$</p>
+</li>
+<li><p>The new variable $\alpha_i$ corresponds to each training sample $(\mathbf{x}_i,y_i)$.</p>
+<ul>
+<li>instead of solving for $\mathbf{w}$, we now solve for $\mathbf{\alpha}$</li>
+</ul>
+</li>
+<li><p>For <em>soft-margin</em> SVM, the constraint on $\alpha$ is $C\geq \alpha_i\geq 0$</p>
+</li>
+<li><p>Recover the hyperplane $\mathbf{w}$ using $\alpha$:</p>
+<ul>
+<li>weighted combination of (transformed) data points.</li>
+<li>$\mathbf{w} &#x3D; \sum_{i&#x3D;1}^N \alpha_i y_i \Phi(\mathbf{x}_i)$</li>
+</ul>
+</li>
+<li><p>Classify a new point $\mathbf{x}<em>*$,<br>$$\begin{align}y</em>* &amp;&#x3D; \mathrm{sign}(\mathbf{w}^T\Phi(\mathbf{x}<em>*)+b) \&amp;&#x3D; \mathrm{sign}(\sum</em>{i&#x3D;1}^N \alpha_i y_i \Phi(\mathbf{x}<em>i)^T \Phi(\mathbf{x}</em>*) + b)\end{align}$$</p>
+</li>
+<li><p>Interpretation of $\alpha_i$</p>
+<ul>
+<li>$\alpha_i&#x3D;0$ when the sample $\mathbf{x}_i$ is not on the margin.</li>
+<li>$\alpha_i&gt;0$ when the sample $\mathbf{x}_i$ is on the margin (or violates).<ul>
+<li>i.e., the sample $\mathbf{x}_i$ is a support vector.</li>
+<li>$y_i\alpha_i &gt; 0$ margin sample for positive class</li>
+<li>$y_i\alpha_i &lt; 0$ margin sample for negative class.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">alfig = plt.figure()</span><br><span class="line">plot_posterior_svm(clf, axbox, X1, phi=phi)</span><br><span class="line">plt.scatter(X1[:,<span class="number">0</span>], X1[:,<span class="number">1</span>], c=Y1, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i,s <span class="keyword">in</span> <span class="built_in">enumerate</span>(clf.support_):</span><br><span class="line">    myal = clf.dual_coef_[<span class="number">0</span>][i]</span><br><span class="line">    myx  = X1[s]</span><br><span class="line">    plt.annotate(<span class="string">&quot;$y_i\\alpha_i=%0.3g$&quot;</span> % myal, xy=myx, xytext=(myx)*(<span class="number">0.8</span>, <span class="number">0.3</span>),</span><br><span class="line">                 arrowprops=<span class="built_in">dict</span>(facecolor=<span class="string">&#x27;black&#x27;</span>, shrink=<span class="number">0.15</span>, width=<span class="number">2</span>, headwidth=<span class="number">8</span>),</span><br><span class="line">                 backgroundcolor=<span class="string">&#x27;white&#x27;</span>, </span><br><span class="line">                )</span><br><span class="line">plt.text(-<span class="number">7</span>,<span class="number">7</span>,<span class="string">&quot;$y_i\\alpha_i=0$&quot;</span>, backgroundcolor=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">plt.text(-<span class="number">7</span>,-<span class="number">7</span>,<span class="string">&quot;$y_i\\alpha_i=0$&quot;</span>, backgroundcolor=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_27_0.png" alt="png"></p>
+<h1 id="Kernel-function"><a href="#Kernel-function" class="headerlink" title="Kernel function"></a>Kernel function</h1><ul>
+<li>the SVM dual problem is completely written in terms of <em>inner product</em> between the high-dimensional feature vectors: $\Phi(\mathbf{x}_i)^T \Phi(\mathbf{x}_j)$</li>
+<li>So rather than explicitly calculate the high-dimensional vector $\Phi(\mathbf{x}_i)$, <ul>
+<li>we only need to calculate the inner product between two high-dim feature vectors.</li>
+</ul>
+</li>
+<li>We call this a <strong>kernel function</strong><ul>
+<li>$k(\mathbf{x}_i, \mathbf{x}_j) &#x3D; \Phi(\mathbf{x}_i)^T \Phi(\mathbf{x}_j)$</li>
+<li>calculating the kernel will be less expensive than explicitly calculating the high-dimensional feature vector and the inner product.</li>
+</ul>
+</li>
+</ul>
+<h1 id="Example-Polynomial-kernel"><a href="#Example-Polynomial-kernel" class="headerlink" title="Example: Polynomial kernel"></a>Example: Polynomial kernel</h1><ul>
+<li><p>input vector $<br>$$<br>\mathbf{x}&#x3D;\left[\begin{matrix}x_1\\vdots\x_d\end{matrix}\right]\in\mathbb{R}^d<br>$$<br>$</p>
+</li>
+<li><p>kernel between two vectors is a $p$-th order polynomial:</p>
+<ul>
+<li>$k(\mathbf{x},\mathbf{x}’) &#x3D; (\mathbf{x}^T\mathbf{x}’)^p &#x3D; (\sum_{i&#x3D;1}^d x_i x_i’)^p$</li>
+</ul>
+</li>
+<li><p>For example, $p&#x3D;2$,<br>$$\begin{align}k(\mathbf{x},\mathbf{x}’) &amp;&#x3D; (\mathbf{x}^T \mathbf{x}’)^2 &#x3D; (\sum_{i&#x3D;1}^d x_i x_i’)^2 \ &amp;&#x3D; \sum_{i&#x3D;1}^d \sum_{j&#x3D;1}^d (x_ix_i’ x_jx_j’) &#x3D; \Phi(\mathbf{x})^T \Phi(\mathbf{x}’)\end{align}$$</p>
+<ul>
+<li>transformed feature space is the quadratic terms of the input vector:<br>$$<br>\Phi(\mathbf{x}) &#x3D; \left[\begin{matrix} x_1 x_1 \ x_1 x_2 \ \vdots  \<br>x_2 x_1 \x_2 x_2 \ \vdots \<br>x_d x_1 \ \vdots \ x_d x_d<br>\end{matrix}\right]<br>$$</li>
+</ul>
+</li>
+<li><p>Comparison of number of multiplications</p>
+<ul>
+<li>for kernel: $O(d)$</li>
+<li>explicit transformation $\Phi$: $O(d^2)$</li>
+</ul>
+</li>
+</ul>
+<h1 id="Kernel-trick"><a href="#Kernel-trick" class="headerlink" title="Kernel trick"></a>Kernel trick</h1><ul>
+<li>Replacing the inner product with a kernel function in the optimization problem is called the <strong>kernel trick</strong>.<ul>
+<li><em>turns a linear classification algorithm into a non-linear classification algorithm</em>.</li>
+<li>the shape of the decision boundary is determined by the kernel.</li>
+</ul>
+</li>
+</ul>
+<h1 id="Kernel-SVM"><a href="#Kernel-SVM" class="headerlink" title="Kernel SVM"></a>Kernel SVM</h1><ul>
+<li><p>Replace inner product in linear SVM with kernel function:<br>$$<br>\mathop{\mathrm{argmax}}<em>{\alpha} \sum_i \alpha_i -\frac{1}{2}\sum</em>{i&#x3D;1}^N\sum_{j&#x3D;1}^N \alpha_i\alpha_j y_i y_j k(\mathbf{x}_i, \mathbf{x}<em>j) \ \mathrm{s.t.} \sum</em>{i&#x3D;1}^N \alpha_iy_i &#x3D; 0, \quad \alpha_i\geq 0<br>$$</p>
+</li>
+<li><h2 id="Prediction"><a href="#Prediction" class="headerlink" title="Prediction"></a>Prediction</h2><p>  $$<br>  y_* &#x3D; \mathrm{sign}(\sum_{i&#x3D;1}^N \alpha_i y_i k(\mathbf{x}<em>i, \mathbf{x}</em>*) + b)<br>  $$</p>
+</li>
+</ul>
+<h1 id="Example-Kernel-SVM-with-polynomial-kernel"><a href="#Example-Kernel-SVM-with-polynomial-kernel" class="headerlink" title="Example: Kernel SVM with polynomial kernel"></a>Example: Kernel SVM with polynomial kernel</h1><ul>
+<li>decision surface is a “cut” of a polynomial surface</li>
+<li>higher polynomial-order yields more complex decision boundaries.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">inds = (Y3==<span class="number">0</span>)</span><br><span class="line">X4 = X3[inds]</span><br><span class="line">Y4 = Y3[inds]</span><br><span class="line">tmpX,tmpY = datasets.make_blobs(n_samples=<span class="number">20</span>, </span><br><span class="line">         centers=<span class="number">1</span>, cluster_std=<span class="number">0.2</span>, n_features=<span class="number">2</span>, </span><br><span class="line">         center_box=[<span class="number">0</span>,<span class="number">0</span>], random_state=<span class="number">4487</span>)</span><br><span class="line">X4 = vstack((X4,tmpX))</span><br><span class="line">Y4 = r_[Y4, tmpY+<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fit SVM (poly kernel with different degrees)</span></span><br><span class="line">degs = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">clf = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> d <span class="keyword">in</span> degs:</span><br><span class="line">    clf[d] = svm.SVC(kernel=<span class="string">&#x27;poly&#x27;</span>, degree=d, C=<span class="number">100</span>)</span><br><span class="line">    clf[d].fit(X4, Y4)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">axbox = [-<span class="number">1.5</span>, <span class="number">1.5</span>, -<span class="number">1.5</span>, <span class="number">1.5</span>]</span><br><span class="line"></span><br><span class="line">polysvmfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (i,d) <span class="keyword">in</span> <span class="built_in">enumerate</span>(degs):</span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_posterior_svm(clf[d], axbox, X4)</span><br><span class="line">    plt.scatter(X4[:,<span class="number">0</span>], X4[:,<span class="number">1</span>], c=Y4, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])    </span><br><span class="line">    plt.title(<span class="string">&#x27;polynomial deg=&#x27;</span> + <span class="built_in">str</span>(degs[i]))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">polysvmfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_38_0.png" alt="png"></p>
+<h1 id="RBF-kernel"><a href="#RBF-kernel" class="headerlink" title="RBF kernel"></a>RBF kernel</h1><ul>
+<li>RBF kernel (radial basis function)<ul>
+<li>$k(\mathbf{x},\mathbf{x}’) &#x3D; e^{-\gamma|\mathbf{x}-\mathbf{x}’|^2}$</li>
+<li>similar to a Gaussian</li>
+</ul>
+</li>
+<li>gamma $\gamma&gt;0$ is the inverse bandwidth parameter of the kernel<ul>
+<li>controls the smoothness of the function</li>
+<li>small $\gamma$ -&gt; wider RBF -&gt; smooth functions</li>
+<li>large $\gamma$ -&gt; thin RBF -&gt; wiggly function</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">rbffig = plt.figure()</span><br><span class="line">x = linspace(-<span class="number">10</span>,<span class="number">10</span>,<span class="number">500</span>)</span><br><span class="line">gammas = array([<span class="number">0.1</span>, <span class="number">1.0</span>, <span class="number">10.0</span>])</span><br><span class="line"><span class="keyword">for</span> g <span class="keyword">in</span> gammas:</span><br><span class="line">    kx = exp(-g*(x**<span class="number">2</span>))</span><br><span class="line">    plt.plot(x, kx, label=<span class="string">&quot;$\gamma=&quot;</span>+<span class="built_in">str</span>(g)+<span class="string">&quot;$&quot;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&quot;$||\mathbf&#123;x&#125;-\mathbf&#123;x&#125;&#x27;||$&quot;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&quot;$k(\mathbf&#123;x&#125;,\mathbf&#123;x&#125;&#x27;)$&quot;</span>)</span><br><span class="line">plt.axis([-<span class="number">10</span>, <span class="number">10</span>, <span class="number">0</span>, <span class="number">1.1</span>]); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rbffig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_41_0.png" alt="png"></p>
+<h1 id="Kernel-SVM-with-RBF-kernel"><a href="#Kernel-SVM-with-RBF-kernel" class="headerlink" title="Kernel SVM with RBF kernel"></a>Kernel SVM with RBF kernel</h1><ul>
+<li>try different $\gamma$<ul>
+<li>each $\gamma$ yields different levels of smoothness of the decision boundary</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fit SVM (RBF)</span></span><br><span class="line">gammas = [<span class="number">0.1</span>, <span class="number">1</span>, <span class="number">25</span>]</span><br><span class="line"></span><br><span class="line">clf = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> gammas:</span><br><span class="line">    clf[i] = svm.SVC(kernel=<span class="string">&#x27;rbf&#x27;</span>, gamma=i, C=<span class="number">1000</span>)</span><br><span class="line">    clf[i].fit(X3, Y3)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">axbox = [-<span class="number">2</span>, <span class="number">3</span>, -<span class="number">2</span>, <span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">rbfsvmfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i,x <span class="keyword">in</span> <span class="built_in">enumerate</span>(gammas):</span><br><span class="line">    clfx = clf[x]</span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    plot_posterior_svm(clfx, axbox, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&#x27;RBF $\gamma$=&#x27;</span> + <span class="built_in">str</span>(x))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rbfsvmfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_45_0.png" alt="png"></p>
+<h1 id="Example-on-Iris-data"><a href="#Example-on-Iris-data" class="headerlink" title="Example on Iris data"></a>Example on Iris data</h1><ul>
+<li>Large $\gamma$ yields a complicated wiggly decision boundary.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># load iris data each row is (petal length, sepal width, class)</span></span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"></span><br><span class="line">irisdata = load_iris()</span><br><span class="line"></span><br><span class="line">X = irisdata.data[:<span class="number">100</span>,<span class="number">0</span>:<span class="number">2</span>]  <span class="comment"># the first two columns are features (petal length, sepal width)</span></span><br><span class="line">Y = irisdata.target[:<span class="number">100</span>]    <span class="comment"># the third column is the class label (versicolor=1, virginica=2)</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(X.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(100, 2)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># randomly split data into 50% train and 50% test set</span></span><br><span class="line">trainX, testX, trainY, testY = \</span><br><span class="line">  model_selection.train_test_split(X, Y, </span><br><span class="line">  train_size=<span class="number">0.5</span>, test_size=<span class="number">0.5</span>, random_state=<span class="number">4487</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(trainX.shape)</span><br><span class="line"><span class="built_in">print</span>(testX.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(50, 2)
+(50, 2)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fit SVM (RBF)</span></span><br><span class="line">gammas = [<span class="number">0.1</span>, <span class="number">1</span>, <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line">clf = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> gammas:</span><br><span class="line">    clf[i] = svm.SVC(kernel=<span class="string">&#x27;rbf&#x27;</span>, gamma=i, C=<span class="number">100</span>)</span><br><span class="line">    clf[i].fit(trainX, trainY)</span><br><span class="line"></span><br><span class="line">irbffig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> i,x <span class="keyword">in</span> <span class="built_in">enumerate</span>(gammas):</span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_posterior_svm(clf[x], axbox, trainX)</span><br><span class="line">    plt.scatter(trainX[:,<span class="number">0</span>],trainX[:,<span class="number">1</span>],c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&#x27;RBF $\gamma$=&#x27;</span> + <span class="built_in">str</span>(x))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">irbffig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_50_0.png" alt="png"></p>
+<h1 id="How-to-select-the-best-kernel-parameters"><a href="#How-to-select-the-best-kernel-parameters" class="headerlink" title="How to select the best kernel parameters?"></a>How to select the best kernel parameters?</h1><ul>
+<li>use cross-validation over possible kernel parameter ($\gamma$) and SVM $C$ parameter<ul>
+<li>if a lot of parameters, can be computationally expensive!</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup the list of parameters to try</span></span><br><span class="line">paramgrid = &#123;<span class="string">&#x27;C&#x27;</span>: logspace(-<span class="number">2</span>,<span class="number">3</span>,<span class="number">20</span>), </span><br><span class="line">             <span class="string">&#x27;gamma&#x27;</span>: logspace(-<span class="number">4</span>,<span class="number">3</span>,<span class="number">20</span>) &#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(paramgrid)</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the cross-validation object</span></span><br><span class="line"><span class="comment"># pass the SVM object w/ rbf kernel, parameter grid, and number of CV folds</span></span><br><span class="line">svmcv = model_selection.GridSearchCV(svm.SVC(kernel=<span class="string">&#x27;rbf&#x27;</span>), paramgrid, cv=<span class="number">5</span>,</span><br><span class="line">                                    n_jobs=-<span class="number">1</span>, verbose=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># run cross-validation (train for each split)</span></span><br><span class="line">svmcv.fit(trainX, trainY);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, svmcv.best_params_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>&#123;&#39;C&#39;: array([1.00000000e-02, 1.83298071e-02, 3.35981829e-02, 6.15848211e-02,
+       1.12883789e-01, 2.06913808e-01, 3.79269019e-01, 6.95192796e-01,
+       1.27427499e+00, 2.33572147e+00, 4.28133240e+00, 7.84759970e+00,
+       1.43844989e+01, 2.63665090e+01, 4.83293024e+01, 8.85866790e+01,
+       1.62377674e+02, 2.97635144e+02, 5.45559478e+02, 1.00000000e+03]), &#39;gamma&#39;: array([1.00000000e-04, 2.33572147e-04, 5.45559478e-04, 1.27427499e-03,
+       2.97635144e-03, 6.95192796e-03, 1.62377674e-02, 3.79269019e-02,
+       8.85866790e-02, 2.06913808e-01, 4.83293024e-01, 1.12883789e+00,
+       2.63665090e+00, 6.15848211e+00, 1.43844989e+01, 3.35981829e+01,
+       7.84759970e+01, 1.83298071e+02, 4.28133240e+02, 1.00000000e+03])&#125;
+Fitting 5 folds for each of 400 candidates, totalling 2000 fits
+best params: &#123;&#39;C&#39;: 0.20691380811147891, &#39;gamma&#39;: 0.4832930238571752&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># show the test error for the first 25 parameter sets</span></span><br><span class="line">N = <span class="number">25</span></span><br><span class="line"><span class="keyword">for</span> m,p <span class="keyword">in</span> <span class="built_in">zip</span>(svmcv.cv_results_[<span class="string">&#x27;mean_test_score&#x27;</span>][<span class="number">0</span>:N], svmcv.cv_results_[<span class="string">&#x27;params&#x27;</span>][<span class="number">0</span>:N]):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;mean=&#123;:.4f&#125; &#123;&#125;&quot;</span>.<span class="built_in">format</span>(m,p))</span><br></pre></td></tr></table></figure>
+
+<pre><code>mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.0001&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.00023357214690901214&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.000545559478116852&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.0012742749857031334&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.002976351441631319&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.0069519279617756054&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.01623776739188721&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.0379269019073225&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.08858667904100823&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.2069138081114788&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 0.4832930238571752&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 1.1288378916846884&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 2.6366508987303554&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 6.1584821106602545&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 14.38449888287663&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 33.59818286283781&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 78.47599703514607&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 183.29807108324337&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 428.1332398719387&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.01, &#39;gamma&#39;: 1000.0&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.018329807108324356, &#39;gamma&#39;: 0.0001&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.018329807108324356, &#39;gamma&#39;: 0.00023357214690901214&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.018329807108324356, &#39;gamma&#39;: 0.000545559478116852&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.018329807108324356, &#39;gamma&#39;: 0.0012742749857031334&#125;
+mean=0.6200 &#123;&#39;C&#39;: 0.018329807108324356, &#39;gamma&#39;: 0.002976351441631319&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">extract_grid_scores</span>(<span class="params">modelcv, paramgrid</span>):</span><br><span class="line">    <span class="string">&quot;extract CV scores from GridSearchCV and put into a matrix&quot;</span></span><br><span class="line">    <span class="comment"># get parameters</span></span><br><span class="line">    pkeys = <span class="built_in">list</span>(paramgrid.keys())</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># initialize empty score matrix</span></span><br><span class="line">    scoresize = [<span class="built_in">len</span>(paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line">    avgscores = zeros(scoresize)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># fill in the matrix with run for each parameter set</span></span><br><span class="line">    <span class="keyword">for</span> rm,rp <span class="keyword">in</span> <span class="built_in">zip</span>(modelcv.cv_results_[<span class="string">&#x27;mean_test_score&#x27;</span>], modelcv.cv_results_[<span class="string">&#x27;params&#x27;</span>]):</span><br><span class="line">        <span class="comment"># get the index into each of the parameter lists</span></span><br><span class="line">        myind = [where(rp[p] == paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line">        avgscores[<span class="built_in">tuple</span>(myind)] = rm    <span class="comment"># put the score</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># location of best score</span></span><br><span class="line">    bestind = [where(modelcv.best_params_[p] == paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> avgscores, pkeys, bestind</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(avgscores, pnames, bestind) = extract_grid_scores(svmcv, paramgrid)</span><br><span class="line">paramfig = plt.figure()</span><br><span class="line">plt.imshow(avgscores, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.plot(bestind[<span class="number">1</span>], bestind[<span class="number">0</span>], <span class="string">&#x27;*w&#x27;</span>, markersize=<span class="number">12</span>)</span><br><span class="line">plt.ylabel(pnames[<span class="number">0</span>] + <span class="string">&#x27; index&#x27;</span>); plt.xlabel(pnames[<span class="number">1</span>] + <span class="string">&#x27; index&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;accuracy for different parameters&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>);</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">paramfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_56_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># show classifier with training data</span></span><br><span class="line">plt.figure()</span><br><span class="line">plot_posterior_svm(svmcv.best_estimator_, axbox, trainX)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;class boundary with training data&#x27;</span>);</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_57_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = svmcv.predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
+
+<pre><code>test accuracy = 0.98
+</code></pre>
+<h1 id="Custom-kernel-function"><a href="#Custom-kernel-function" class="headerlink" title="Custom kernel function"></a>Custom kernel function</h1><ul>
+<li>we can use any kernel function, as long as it is <em>positive semi-definite</em>:<ul>
+<li><ol>
+<li>it can be written as an inner-product of a feature transformation: $k(\mathbf{x}_1,\mathbf{x}_2) &#x3D; \langle \Phi(\mathbf{x}_1), \Phi(\mathbf{x}_2) \rangle$.</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>for all possible datasets $\mathbf{X} &#x3D; {\mathbf{x}_1, \cdots \mathbf{x}_N}$ of all possible sizes $N$, the kernel matrix $K&#x3D;[k(\mathbf{x}_i,\mathbf{x}<em>j)]</em>{i,j}$ is a positive definite matrix.</li>
+</ol>
+<ul>
+<li>$\mathbf{K}$ is a <em>positive semi-definite matrix</em> iff $\mathbf{z}^T\mathbf{K}\mathbf{z} \geq 0, \forall \mathbf{z}$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>in sklearn, pass a callable function as the kernel parameter.</li>
+</ul>
+<h2 id="Example-Laplacian-kernel"><a href="#Example-Laplacian-kernel" class="headerlink" title="Example: Laplacian kernel"></a>Example: Laplacian kernel</h2><ul>
+<li>$k(\mathbf{x}_1,\mathbf{x}_2) &#x3D; \exp(-\alpha ||\mathbf{x}_1 - \mathbf{x}_2||)$</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> spatial</span><br><span class="line"></span><br><span class="line"><span class="comment"># create a custom kernel function</span></span><br><span class="line"><span class="comment"># Laplacian kernel: exp( -alpha*||x1-x2|| )</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mykernel</span>(<span class="params">X1, X2, alpha=<span class="number">1.0</span></span>):</span><br><span class="line">    <span class="comment"># X1,X2 are (N1 x d) and (N2 x d) matrices of N1 and N2 d-dim vectors</span></span><br><span class="line">    <span class="comment"># alpha is the hyperparameter</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># compute pairwise euclidean distance</span></span><br><span class="line">    D = spatial.distance.cdist(X1, X2, metric=<span class="string">&#x27;euclidean&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># return the kernel matrix</span></span><br><span class="line">    <span class="keyword">return</span> exp(-alpha*D)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">alphas = [<span class="number">0.1</span>, <span class="number">1.</span>, <span class="number">10.</span>]</span><br><span class="line"></span><br><span class="line">clf = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> alphas:</span><br><span class="line">    <span class="comment"># make a temporary kernel function with the selected alpha value</span></span><br><span class="line">    tmpkern = <span class="keyword">lambda</span> X1,X2,alpha=i: mykernel(X1,X2,alpha=alpha)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># create the SVM with custom kernel function</span></span><br><span class="line">    clf[i] = svm.SVC(kernel=tmpkern, C=<span class="number">100</span>)</span><br><span class="line">    clf[i].fit(trainX, trainY)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ilapfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> i,x <span class="keyword">in</span> <span class="built_in">enumerate</span>(alphas):</span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_posterior_svm(clf[x], axbox, trainX)</span><br><span class="line">    plt.scatter(trainX[:,<span class="number">0</span>],trainX[:,<span class="number">1</span>],c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&#x27;Laplacian $\\alpha$=&#x27;</span> + <span class="built_in">str</span>(x))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ilapfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/La_files/La_64_0.png" alt="png"></p>
+<h1 id="Kernel-SVM-Summary"><a href="#Kernel-SVM-Summary" class="headerlink" title="Kernel SVM Summary"></a>Kernel SVM Summary</h1><ul>
+<li><p><strong>Kernel Classifier:</strong></p>
+<ul>
+<li>Kernel function defines the shape of the non-linear decision boundary.<ul>
+<li>implicitly transforms input feature into high-dimensional space.</li>
+<li>uses linear classifier in high-dim space.</li>
+<li>the decision boundary is non-linear in the original input space.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Training:</strong></p>
+<ul>
+<li>Maximize the margin of the training data.<ul>
+<li>i.e., maximize the separation between the points and the decision boundary.</li>
+</ul>
+</li>
+<li>Use cross-validation to pick the hyperparameter $C$ and the kernel hyperparameters.</li>
+</ul>
+</li>
+<li><p><strong>Advantages:</strong></p>
+<ul>
+<li>non-linear decision boundary for more complex classification problems</li>
+<li>some intuition from the type of kernel function used.</li>
+<li>kernel function can also be used to do non-vector data.</li>
+</ul>
+</li>
+<li><p><strong>Disadvantages:</strong></p>
+<ul>
+<li>sensitive to the kernel function used.</li>
+<li>sensitive to the $C$ and kernel hyperparameters.</li>
+<li>computationally expensive to do cross-validation.</li>
+<li>need to calculate the kernel matrix<ul>
+<li>$N^2$ terms where $N$ is the size of the training set</li>
+<li>for large $N$, uses a large amount of memory and computation.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Kernels-on-other-types-of-data"><a href="#Kernels-on-other-types-of-data" class="headerlink" title="Kernels on other types of data"></a>Kernels on other types of data</h1><ul>
+<li><p><strong>Histograms:</strong> $\mathbf{x} &#x3D; [x_1,\cdots, x_d]$, $x_i$ is a bin value.</p>
+<ul>
+<li>Bhattacharyya: $$k(\mathbf{x},\mathbf{x}’) &#x3D; \sum_{i&#x3D;1}^d \sqrt{x_i x’_i}$$</li>
+<li>histogram intersection: $$k(\mathbf{x},\mathbf{x}’) &#x3D; \sum_i \min(x_i, x_i’)$$</li>
+<li>$\chi^2$-RBF: $$k(\mathbf{x},\mathbf{x}’) &#x3D; e^{-\gamma \chi^2(\mathbf{x},\mathbf{x}’)}$$<ul>
+<li>$\gamma$ is a inverse bandwidth parameter</li>
+<li>$\chi^2$ distance: $\chi^2(\mathbf{x},\mathbf{x}’) &#x3D; \sum_{i&#x3D;1}^d\frac{(x_i-x’_i)^2}{\tfrac{1}{2}(x_i+x’_i)}$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Strings</strong>: $\mathbf{x}$ &#x3D; “….” (strings can be different sizes)<br>$$k(\mathbf{x},\mathbf{x}’) &#x3D; \sum_{s} w_s \phi_s(\mathbf{x})\phi_s(\mathbf{x}’)$$</p>
+<ul>
+<li>$\phi_s(\mathbf{x})$ is the number of times substring $s$ appears in $\mathbf{x}$.</li>
+<li>$w_s&gt;0$ is a weight.</li>
+</ul>
+</li>
+<li><p><strong>Sets</strong>: $\mathbf{X} &#x3D; {\mathbf{x}_1,\cdots, \mathbf{x}_n}$ (sets can be different sizes)</p>
+<ul>
+<li>intersection kernel: $$k(\mathbf{X},\mathbf{X}’) &#x3D; 2^{|\mathbf{X}\cap \mathbf{X}’|}$$<ul>
+<li>$|\mathbf{X}\cap \mathbf{X}’|$ &#x3D; number of common elements.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/sklearn/"># sklearn</a>
+                    
+                        <a href="/tags/scipy/"># scipy</a>
+                    
+                        <a href="/tags/SVM/"># SVM</a>
+                    
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
+                    
+                        <a href="/tags/Kernel/"># Kernel</a>
+                    
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98B/">机器学习-分类问题B</a>
+            
+            
+            <a class="next" rel="next" href="/2023/04/29/ipynb%E5%AF%BC%E5%87%BA%E4%B8%BAmd%E6%96%87%E4%BB%B6/">ipynb文件导出为md文件</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

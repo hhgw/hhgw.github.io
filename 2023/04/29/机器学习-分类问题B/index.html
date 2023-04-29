@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>机器学习-分类问题B | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">机器学习-分类问题B</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-04-29&nbsp;&nbsp;16:55:02</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="机器学习-分类问题B"><a href="#机器学习-分类问题B" class="headerlink" title="机器学习-分类问题B"></a>机器学习-分类问题B</h1><p>数学公式在渲染器中会出现错误，目前还没有解决</p>
+<h2 id="Outline"><a href="#Outline" class="headerlink" title="Outline"></a>Outline</h2><ol>
+<li>Nonlinear classifiers</li>
+<li>Kernel trick and kernel SVM</li>
+<li><strong>Ensemble Methods - Boosting, Random Forests</strong></li>
+<li>Classification Summary</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> matplotlib_inline   <span class="comment"># setup output image format</span></span><br><span class="line">matplotlib_inline.backend_inline.set_matplotlib_formats(<span class="string">&#x27;retina&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.rcParams[<span class="string">&#x27;figure.dpi&#x27;</span>] = <span class="number">100</span>  <span class="comment"># display larger images</span></span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">drawstump</span>(<span class="params">fdim, fthresh, fdir=<span class="string">&#x27;gt&#x27;</span>, poscol=<span class="literal">None</span>, negcol=<span class="literal">None</span>, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span></span>):</span><br><span class="line">    <span class="comment"># fdim = dimension</span></span><br><span class="line">    <span class="comment"># fthresh = threshold</span></span><br><span class="line">    <span class="comment"># fdir = direction (gt, lt)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> fdir == <span class="string">&#x27;lt&#x27;</span>:</span><br><span class="line">        <span class="comment"># swap colors</span></span><br><span class="line">        tmp = poscol</span><br><span class="line">        poscol = negcol</span><br><span class="line">        negcol = tmp</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># assume fdim=0</span></span><br><span class="line">    polyxn = [fthresh, fthresh, -<span class="number">30</span>, -<span class="number">30</span>]</span><br><span class="line">    polyyn = [<span class="number">30</span>, -<span class="number">30</span>, -<span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">    </span><br><span class="line">    polyxp = [fthresh, fthresh, <span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">    polyyp = [<span class="number">30</span>, -<span class="number">30</span>, -<span class="number">30</span>, <span class="number">30</span>]</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># fill positive half-space or neg space</span></span><br><span class="line">    <span class="keyword">if</span> (poscol):</span><br><span class="line">        <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">            plt.fill(polyxp, polyyp, poscol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            plt.fill(polyyp, polyxp, poscol, alpha=<span class="number">0.2</span>)            </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (negcol):</span><br><span class="line">        <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">            plt.fill(polyxn, polyyn, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            plt.fill(polyyn, polyxn, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># plot line</span></span><br><span class="line">    <span class="keyword">if</span> fdim==<span class="number">0</span>:</span><br><span class="line">        plt.plot(polyxp[<span class="number">0</span>:<span class="number">2</span>], polyyp[<span class="number">0</span>:<span class="number">2</span>], ls, lw=lw)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        plt.plot(polyyp[<span class="number">0</span>:<span class="number">2</span>], polyxp[<span class="number">0</span>:<span class="number">2</span>], ls, lw=lw)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">drawplane</span>(<span class="params">w, b=<span class="literal">None</span>, c=<span class="literal">None</span>, wlabel=<span class="literal">None</span>, poscol=<span class="literal">None</span>, negcol=<span class="literal">None</span>, lw=<span class="number">2</span>, ls=<span class="string">&#x27;k-&#x27;</span></span>):</span><br><span class="line">    <span class="comment"># w^Tx + b = 0</span></span><br><span class="line">    <span class="comment"># w0 x0 + w1 x1 + b = 0</span></span><br><span class="line">    <span class="comment"># x1 = -w0/w1 x0 - b / w1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># OR</span></span><br><span class="line">    <span class="comment"># w^T (x-c) = 0 = w^Tx - w^Tc  --&gt; b = -w^Tc</span></span><br><span class="line">    <span class="keyword">if</span> c != <span class="literal">None</span>:</span><br><span class="line">        b = -<span class="built_in">sum</span>(w*c)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># the line</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">abs</span>(w[<span class="number">0</span>])&gt;<span class="built_in">abs</span>(w[<span class="number">1</span>])):   <span class="comment"># vertical line</span></span><br><span class="line">        x0 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x1 = -w[<span class="number">0</span>]/w[<span class="number">1</span>] * x0 - b / w[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">else</span>:                       <span class="comment"># horizontal line</span></span><br><span class="line">        x1 = array([-<span class="number">30</span>,<span class="number">30</span>])</span><br><span class="line">        x0 = -w[<span class="number">1</span>]/w[<span class="number">0</span>] * x1 - b / w[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># fill positive half-space or neg space</span></span><br><span class="line">    <span class="keyword">if</span> (poscol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, poscol, alpha=<span class="number">0.2</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (negcol):</span><br><span class="line">        polyx = [x0[<span class="number">0</span>], x0[-<span class="number">1</span>], x0[<span class="number">0</span>], x0[<span class="number">0</span>]]</span><br><span class="line">        polyy = [x1[<span class="number">0</span>], x1[-<span class="number">1</span>], x1[-<span class="number">1</span>], x1[<span class="number">0</span>]]</span><br><span class="line">        plt.fill(polyx, polyy, negcol, alpha=<span class="number">0.2</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># plot line</span></span><br><span class="line">    lineplt, = plt.plot(x0, x1, ls, lw=lw)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># the w</span></span><br><span class="line">    <span class="keyword">if</span> (wlabel):</span><br><span class="line">        xp = array([<span class="number">0</span>, -b/w[<span class="number">1</span>]])</span><br><span class="line">        xpw = xp+w</span><br><span class="line">        plt.arrow(xp[<span class="number">0</span>], xp[<span class="number">1</span>], w[<span class="number">0</span>], w[<span class="number">1</span>], width=<span class="number">0.01</span>)</span><br><span class="line">        plt.text(xpw[<span class="number">0</span>]-<span class="number">0.5</span>, xpw[<span class="number">1</span>], wlabel)</span><br><span class="line">    <span class="keyword">return</span> lineplt</span><br></pre></td></tr></table></figure>
+
+<h2 id="Ensemble-Classifiers"><a href="#Ensemble-Classifiers" class="headerlink" title="Ensemble Classifiers"></a>Ensemble Classifiers</h2><ul>
+<li><p><em>Why trust only one expert?</em></p>
+<ul>
+<li>In real life, we may consult several experts, or go with the “wisdom of the crowd”  </li>
+<li>In machine learning, <em>why trust only one classifier?</em></li>
+</ul>
+</li>
+<li><p>Ensemble methods aim to combine multiple classifiers together to form a better classifier.</p>
+</li>
+<li><p>Examples:</p>
+<ul>
+<li><strong>boosting</strong> - training multiple classifiers, each focusing on errors made by previous classifiers.</li>
+<li><strong>bagging</strong> - training multiple classifiers from random selection of training data</li>
+</ul>
+</li>
+</ul>
+<h2 id="AdaBoost-Adaptive-Boosting"><a href="#AdaBoost-Adaptive-Boosting" class="headerlink" title="AdaBoost - Adaptive Boosting"></a>AdaBoost - Adaptive Boosting</h2><ul>
+<li>Base classifier is a “weak learner” <ul>
+<li>A simple classifier that can be slightly better than random chance (&gt;50%)</li>
+<li>Example: <em>decision stump classifier</em>  <ul>
+<li>check if feature value is above (or below) a threshold.</li>
+<li>$y &#x3D; h(x) &#x3D; \begin{cases}+1, &amp; x_j \geq T \ -1, &amp; x_j\lt T \end{cases}$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># type three - moons</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"></span><br><span class="line">X3,Y3 = datasets.make_moons(n_samples=<span class="number">100</span>,</span><br><span class="line">                                             noise=<span class="number">0.1</span>, random_state=<span class="number">4487</span>)</span><br><span class="line">mycmap = matplotlib.colors.LinearSegmentedColormap.from_list(<span class="string">&#x27;mycmap&#x27;</span>, [<span class="string">&quot;#FF0000&quot;</span>, <span class="string">&quot;#FFFFFF&quot;</span>, <span class="string">&quot;#00FF00&quot;</span>])</span><br><span class="line"></span><br><span class="line">axbox3 = [-<span class="number">1.5</span>, <span class="number">2.5</span>, -<span class="number">1</span>, <span class="number">1.5</span>]</span><br><span class="line"></span><br><span class="line">wlfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">drawstump(<span class="number">0</span>, <span class="number">0</span>, poscol=<span class="string">&#x27;g&#x27;</span>, negcol=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(axbox3)</span><br><span class="line">plt.title(<span class="string">&#x27;$f(\mathbf&#123;x&#125;) = (x_1&gt;0)$&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">drawstump(<span class="number">1</span>, <span class="number">0.5</span>, fdir=<span class="string">&#x27;lt&#x27;</span>, poscol=<span class="string">&#x27;g&#x27;</span>, negcol=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>); plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.axis(axbox3)</span><br><span class="line">plt.title(<span class="string">&#x27;$f(\mathbf&#123;x&#125;) = (x_2&lt;0.5)$&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wlfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_7_0.png" alt="png"></p>
+<ul>
+<li><strong>Idea:</strong> train weak classifiers sequentially</li>
+<li>In each iteration,<ul>
+<li>Pick a weak learner $h_t(\mathbf{x})$ that best carves out the input space.</li>
+<li>The weak learner should focus on data that is misclassified.<ul>
+<li>Apply weights to each sample in the training data.</li>
+<li>Higher weights give more priority to difficult samples.</li>
+</ul>
+</li>
+<li>Combine all the weak learners into a strong classifier: $f_t(\mathbf{x}) &#x3D; f_{t-1}(\mathbf{x}) + \alpha_t h_t(\mathbf{x})$<ul>
+<li>$\alpha_t$ is a weight for each weak learner.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_boosting</span>(<span class="params">model, axbox, X</span>):</span><br><span class="line"></span><br><span class="line">    <span class="comment"># grid points</span></span><br><span class="line">    xr = [ linspace(axbox[<span class="number">0</span>], axbox[<span class="number">1</span>], <span class="number">200</span>), </span><br><span class="line">           linspace(axbox[<span class="number">2</span>], axbox[<span class="number">3</span>], <span class="number">200</span>) ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># make a grid for calculating the posterior, </span></span><br><span class="line">    <span class="comment">#  then form into a big [N,2] matrix</span></span><br><span class="line">    xgrid0, xgrid1 = meshgrid(xr[<span class="number">0</span>], xr[<span class="number">1</span>])</span><br><span class="line">    allpts = c_[xgrid0.ravel(), xgrid1.ravel()]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># calculate the decision function</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">hasattr</span>(model, <span class="string">&#x27;decision_function&#x27;</span>):</span><br><span class="line">        score = model.decision_function(allpts).reshape(xgrid0.shape)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        score = model.predict_proba(allpts)[:,<span class="number">1</span>].reshape(xgrid0.shape)  </span><br><span class="line">        <span class="comment"># pass through a logit</span></span><br><span class="line">        score = log(score / (<span class="number">1</span>-score))</span><br><span class="line">    maxscore = ceil(<span class="built_in">abs</span>(score).<span class="built_in">max</span>())</span><br><span class="line">    mylevels = linspace(-maxscore, maxscore, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line">    plt.imshow(score, origin=<span class="string">&#x27;lower&#x27;</span>, extent=axbox, alpha=<span class="number">0.30</span>, cmap=mycmap, </span><br><span class="line">               vmin=-maxscore, vmax=maxscore, aspect=<span class="string">&#x27;auto&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#plt.contourf(xr[0], xr[1], score, levels=mylevels, cmap=mycmap, alpha=0.3)</span></span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[<span class="number">0</span>], linestyles=<span class="string">&#x27;solid&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>,</span><br><span class="line">                linewidths=<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line">    plt.axis(axbox); plt.grid(<span class="literal">True</span>)    </span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">plts = &#123;&#125;</span><br><span class="line">ns = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">N = X3.shape[<span class="number">0</span>]</span><br><span class="line">XW = ones(N) / N</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> ensemble</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> ns:</span><br><span class="line">    <span class="comment"># run the discrete Boosting algorithm</span></span><br><span class="line">    clf = ensemble.AdaBoostClassifier(n_estimators=n, random_state=<span class="number">4487</span>, algorithm=<span class="string">&#x27;SAMME&#x27;</span>)</span><br><span class="line">    clf.fit(X3, Y3)</span><br><span class="line"></span><br><span class="line">    plts[n] = plt.figure(figsize=(<span class="number">9</span>,<span class="number">3</span>))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># show the weak learner</span></span><br><span class="line">    wl = clf.estimators_[n-<span class="number">1</span>]</span><br><span class="line">    wlf = wl.tree_.feature[<span class="number">0</span>]</span><br><span class="line">    wlt = wl.tree_.threshold[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> wl.tree_.value[<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>] &gt; wl.tree_.value[<span class="number">2</span>,<span class="number">0</span>,<span class="number">0</span>]:</span><br><span class="line">        wld = <span class="string">&#x27;gt&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        wld = <span class="string">&#x27;lt&#x27;</span></span><br><span class="line">    </span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">    drawstump(wlf, wlt, fdir=wld, poscol=<span class="string">&#x27;g&#x27;</span>, negcol=<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">    mys = <span class="number">20</span>*sqrt(XW*N)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, s=mys, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.axis(axbox3); plt.grid(<span class="literal">True</span>)</span><br><span class="line">    plt.title(<span class="string">&#x27;iter &#x27;</span>+<span class="built_in">str</span>(n) + <span class="string">&quot; weak learner&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">    plot_boosting(clf, axbox3, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>); plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&#x27;iter &#x27;</span>+<span class="built_in">str</span>(n) + <span class="string">&quot; classifier&quot;</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="comment"># calculate updated weights (for AdaBoost)</span></span><br><span class="line">    <span class="comment"># can&#x27;t find these in the sklearn version</span></span><br><span class="line">    tmpY = clf.estimators_[n-<span class="number">1</span>].predict(X3)</span><br><span class="line">    err = <span class="built_in">sum</span>((tmpY != Y3)*XW)</span><br><span class="line">    alpha = <span class="number">0.5</span>*log((<span class="number">1</span>-err) / err)</span><br><span class="line">    scale = <span class="number">2</span>*(tmpY!=Y3)-<span class="number">1</span></span><br><span class="line">    XW = XW * exp(scale*alpha)</span><br><span class="line">    XW = XW / <span class="built_in">sum</span>(XW)</span><br><span class="line">    plt.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="Iteration-1"><a href="#Iteration-1" class="headerlink" title="Iteration 1"></a>Iteration 1</h2><ul>
+<li>Initially, weights for all training samples are equal: $w_i &#x3D; 1&#x2F;N$<ul>
+<li>Pick best weak learner $h_1(\mathbf{x})$.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_12_0.png" alt="png"></p>
+<h2 id="Iteration-2-part-1"><a href="#Iteration-2-part-1" class="headerlink" title="Iteration 2 (part 1)"></a>Iteration 2 (part 1)</h2><ul>
+<li>points are re-weighted based on the previous errors:<ul>
+<li>increase weights for misclassified samples: $w_i &#x3D; w_i e^{\alpha}$</li>
+<li>decrease weights for correctly classified samples: $w_i &#x3D; w_i e^{-\alpha}$</li>
+<li>$\alpha &#x3D; 0.5 \log \frac{1-err}{err}$ is based on the weighted error of the previous weak learner.</li>
+<li>(larger circles indicates higher weight)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_14_0.png" alt="png"></p>
+<h2 id="Iteration-2-part-2"><a href="#Iteration-2-part-2" class="headerlink" title="Iteration 2 (part 2)"></a>Iteration 2 (part 2)</h2><ul>
+<li>using the weighted data, train another weak learner $h_2(\mathbf{x})$.</li>
+<li>the classifier function is the weighted sum of weak learners<ul>
+<li>$f_2(\mathbf{x}) &#x3D;  f_1(\mathbf{x}) + \alpha_2 h_2(\mathbf{x})$</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_16_0.png" alt="png"></p>
+<h2 id="Keep-iterating…"><a href="#Keep-iterating…" class="headerlink" title="Keep iterating…"></a>Keep iterating…</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_18_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_19_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">5</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_20_0.png" alt="png"></p>
+<ul>
+<li>After many iterations…</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ns = [<span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">1000</span>]</span><br><span class="line"></span><br><span class="line">adafig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">7</span>))</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>(ns):</span><br><span class="line">    clf = ensemble.AdaBoostClassifier(n_estimators=n, random_state=<span class="number">4487</span>)</span><br><span class="line">    clf.fit(X3, Y3)</span><br><span class="line">    </span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_boosting(clf, axbox3, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> i&gt;=<span class="number">2</span>:</span><br><span class="line">        plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&#x27;iter &#x27;</span>+<span class="built_in">str</span>(n) + <span class="string">&quot; classifier&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adafig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_23_0.png" alt="png"></p>
+<h2 id="Adaboost-Algorithm"><a href="#Adaboost-Algorithm" class="headerlink" title="Adaboost Algorithm"></a>Adaboost Algorithm</h2><ul>
+<li>Given data ${(\mathbf{x}_i, y_i)}$.</li>
+<li>Initialize data weights, $w_i&#x3D;1&#x2F;N, \forall i$.</li>
+<li>For $t$ &#x3D; 1 to T,<ul>
+<li>choose weak learner $h_t(\mathbf{x})$<ul>
+<li>minimize the weighted classification error: $\epsilon_t &#x3D; \sum_{i&#x3D;1}^N w_i  \mathbb{1}(h_t(\mathbf{x}_i) \neq y_i)$.</li>
+</ul>
+</li>
+<li>Set the weak learner weight: $\alpha_t &#x3D; \frac{1}{2}\log(\frac{1-\epsilon_t}{\epsilon_t})$</li>
+<li>Add to ensemble: $f_t(\mathbf{x}) &#x3D; f_{t-1}(\mathbf{x}) + \alpha_t h_t(\mathbf{x})$.</li>
+<li>Update data weights:<ul>
+<li>for all  $\mathbf{x}_i$ misclassified, increase weight: $w_i \leftarrow w_i e^{\alpha_t}$.</li>
+<li>for all $\mathbf{x}_i$ correctly classified, decrease weight: $w_i \leftarrow w_i e^{-\alpha_t}$.</li>
+<li>normalize weights, so that $\sum_i w_i &#x3D; 1$.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Adaboost-loss-function"><a href="#Adaboost-loss-function" class="headerlink" title="Adaboost loss function"></a>Adaboost loss function</h2><ul>
+<li><p>It can be shown that Adaboost is minimizing:<br>$$\min_f \sum_i e^{-y_i f(\mathbf{x}_i)}$$</p>
+</li>
+<li><p>Thus, it is an exponential loss function</p>
+<ul>
+<li>$L(z_i) &#x3D; e^{-z_i}$<ul>
+<li>$z_i &#x3D; y_i  f(\mathbf{x}_i)$</li>
+</ul>
+</li>
+<li>very sensitive to misclassified outliers.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">z = linspace(-<span class="number">6</span>,<span class="number">6</span>,<span class="number">100</span>)</span><br><span class="line">logloss = log(<span class="number">1</span>+exp(-z))</span><br><span class="line">hingeloss = maximum(<span class="number">0</span>, <span class="number">1</span>-z)</span><br><span class="line">exploss = exp(-z)</span><br><span class="line">lossfig = plt.figure()</span><br><span class="line">plt.plot(z,exploss, <span class="string">&#x27;b-&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.plot([<span class="number">0</span>,<span class="number">0</span>], [<span class="number">0</span>,<span class="number">9</span>], <span class="string">&#x27;k--&#x27;</span>)</span><br><span class="line">plt.text(<span class="number">0</span>,<span class="number">7.5</span>, <span class="string">&quot;incorrectly classified $\\Leftarrow$ &quot;</span>, ha=<span class="string">&#x27;right&#x27;</span>, weight=<span class="string">&#x27;bold&#x27;</span>)</span><br><span class="line">plt.text(<span class="number">0</span>,<span class="number">7.5</span>, <span class="string">&quot; $\Rightarrow$ correctly classified&quot;</span>, ha=<span class="string">&#x27;left&#x27;</span>, weight=<span class="string">&#x27;bold&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.annotate(text=<span class="string">&quot;loss increases\nsignificantly for\nmisclassified\nsamples&quot;</span>, </span><br><span class="line">             xy=(-<span class="number">1.6</span>,<span class="number">5</span>), xytext=(-<span class="number">3.5</span>,<span class="number">2.2</span>),backgroundcolor=<span class="string">&#x27;white&#x27;</span>,</span><br><span class="line">            arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&quot;-&gt;&quot;</span>))</span><br><span class="line">plt.annotate(text=<span class="string">&quot;non-zero loss\nfor samples\nnear margin&quot;</span>, </span><br><span class="line">             xy=(<span class="number">0.5</span>,<span class="number">0.5</span>), xytext=(<span class="number">0.5</span>,<span class="number">3.2</span>), backgroundcolor=<span class="string">&#x27;white&#x27;</span>,</span><br><span class="line">            arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&quot;-&gt;&quot;</span>))</span><br><span class="line">plt.annotate(text=<span class="string">&quot;loss approaches\nzero for correctly\nclassified samples&quot;</span>, </span><br><span class="line">             xy=(<span class="number">3</span>,<span class="number">0.0</span>), xytext=(<span class="number">1.5</span>,<span class="number">1.1</span>), backgroundcolor=<span class="string">&#x27;white&#x27;</span>,</span><br><span class="line">            arrowprops=<span class="built_in">dict</span>(arrowstyle=<span class="string">&quot;-&gt;&quot;</span>))</span><br><span class="line">plt.axis([-<span class="number">4</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">8</span>])</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;$z_i$&#x27;</span>);</span><br><span class="line">plt.ylabel(<span class="string">&#x27;loss&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;exponential loss&#x27;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lossfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_27_0.png" alt="png"></p>
+<h2 id="Example-on-Iris-data"><a href="#Example-on-Iris-data" class="headerlink" title="Example on Iris data"></a>Example on Iris data</h2><ul>
+<li>Too many weak-learners and AdaBoost carves out space for the outliers.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># load iris data each row is (petal length, sepal width, class)</span></span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"></span><br><span class="line">irisdata = load_iris()</span><br><span class="line"></span><br><span class="line">X = irisdata.data[:<span class="number">100</span>,<span class="number">0</span>:<span class="number">2</span>]  <span class="comment"># the first two columns are features (petal length, sepal width)</span></span><br><span class="line">Y = irisdata.target[:<span class="number">100</span>]    <span class="comment"># the third column is the class label (versicolor=1, virginica=2)</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(X.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(100, 2)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># randomly split data into 50% train and 50% test set</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> model_selection</span><br><span class="line">trainX, testX, trainY, testY = \</span><br><span class="line">  model_selection.train_test_split(X, Y, </span><br><span class="line">  train_size=<span class="number">0.5</span>, test_size=<span class="number">0.5</span>, random_state=<span class="number">4487</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(trainX.shape)</span><br><span class="line"><span class="built_in">print</span>(testX.shape)</span><br></pre></td></tr></table></figure>
+
+<pre><code>(50, 2)
+(50, 2)
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> metrics</span><br><span class="line">ns = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">100</span>]</span><br><span class="line"></span><br><span class="line">clf = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>(ns):</span><br><span class="line">    clf[n] = ensemble.AdaBoostClassifier(n_estimators=n, random_state=<span class="number">4487</span>)</span><br><span class="line">    clf[n].fit(trainX, trainY)</span><br><span class="line">    </span><br><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">irisfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>(ns):</span><br><span class="line">    clfx = clf[n]</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_boosting(clfx, axbox, trainX)</span><br><span class="line">    plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> i&gt;=<span class="number">2</span>: </span><br><span class="line">        plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    trainerr = metrics.accuracy_score(trainY, clfx.predict(trainX))</span><br><span class="line">    plt.title(<span class="string">&quot;n=&quot;</span> + <span class="built_in">str</span>(n) + <span class="string">&quot; (train acc=&#123;:.3f&#125;)&quot;</span>.<span class="built_in">format</span>(trainerr))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">irisfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_32_0.png" alt="png"></p>
+<ul>
+<li>Note: sklearn uses Real AdaBoost by default<ul>
+<li>uses class probabilities instead of binary class predictions (usually converges faster and has lower error)</li>
+</ul>
+</li>
+<li>Two hyperparameters regularize boosting:<ol>
+<li>the number of weak learners - how many boosting iterations</li>
+<li>the “learning rate” - a factor for scaling the contribution of each weak-learner</li>
+</ol>
+<ul>
+<li>usually between 0 and 1.</li>
+<li>Also called “shrinkage”.</li>
+</ul>
+</li>
+<li>Smaller learning rates require more weak learners.</li>
+<li>Estimate with cross-validation.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">extract_grid_scores</span>(<span class="params">modelcv, paramgrid</span>):</span><br><span class="line">    <span class="string">&quot;extract CV scores from GridSearchCV and put into a matrix&quot;</span></span><br><span class="line">    <span class="comment"># get parameters</span></span><br><span class="line">    pkeys = <span class="built_in">list</span>(paramgrid.keys())</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># initialize empty score matrix</span></span><br><span class="line">    scoresize = [<span class="built_in">len</span>(paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line">    avgscores = zeros(scoresize)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># fill in the matrix with run for each parameter set</span></span><br><span class="line">    <span class="keyword">for</span> rm,rp <span class="keyword">in</span> <span class="built_in">zip</span>(modelcv.cv_results_[<span class="string">&#x27;mean_test_score&#x27;</span>], modelcv.cv_results_[<span class="string">&#x27;params&#x27;</span>]):</span><br><span class="line">        <span class="comment"># get the index into each of the parameter lists</span></span><br><span class="line">        myind = [where(rp[p] == paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line">        avgscores[<span class="built_in">tuple</span>(myind)] = rm    <span class="comment"># put the score</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># location of best score</span></span><br><span class="line">    bestind = [where(modelcv.best_params_[p] == paramgrid[p]) <span class="keyword">for</span> p <span class="keyword">in</span> pkeys]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> avgscores, pkeys, bestind</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup the list of parameters to try</span></span><br><span class="line">paramgrid = &#123;<span class="string">&#x27;learning_rate&#x27;</span>: logspace(-<span class="number">6</span>,<span class="number">0</span>,<span class="number">20</span>), </span><br><span class="line">             <span class="string">&#x27;n_estimators&#x27;</span>: array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">20</span>, <span class="number">25</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1000</span>])</span><br><span class="line">            &#125;</span><br><span class="line"><span class="built_in">print</span>(paramgrid)</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the cross-validation object</span></span><br><span class="line"><span class="comment"># (<span class="doctag">NOTE:</span> using parallelization in GridSearchCV, not in AdaBoost)</span></span><br><span class="line">adacv = model_selection.GridSearchCV(ensemble.AdaBoostClassifier(random_state=<span class="number">4487</span>),</span><br><span class="line">                                 paramgrid, cv=<span class="number">5</span>, n_jobs=-<span class="number">1</span>) <span class="comment"># n_jobs并行运行的核数; verbose=10可以输出进度</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># run cross-validation (train for each split)</span></span><br><span class="line">adacv.fit(trainX, trainY);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, adacv.best_params_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>&#123;&#39;learning_rate&#39;: array([1.00000000e-06, 2.06913808e-06, 4.28133240e-06, 8.85866790e-06,
+       1.83298071e-05, 3.79269019e-05, 7.84759970e-05, 1.62377674e-04,
+       3.35981829e-04, 6.95192796e-04, 1.43844989e-03, 2.97635144e-03,
+       6.15848211e-03, 1.27427499e-02, 2.63665090e-02, 5.45559478e-02,
+       1.12883789e-01, 2.33572147e-01, 4.83293024e-01, 1.00000000e+00]), &#39;n_estimators&#39;: array([   1,    2,    3,    5,   10,   15,   20,   25,   50,  100,  200,
+        500, 1000])&#125;
+best params: &#123;&#39;learning_rate&#39;: 0.23357214690901212, &#39;n_estimators&#39;: 10&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(avgscores, pnames, bestind) = extract_grid_scores(adacv, paramgrid)</span><br><span class="line">paramfig = plt.figure()</span><br><span class="line">plt.imshow(avgscores, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.plot(bestind[<span class="number">1</span>], bestind[<span class="number">0</span>], <span class="string">&#x27;*w&#x27;</span>, markersize=<span class="number">12</span>)</span><br><span class="line">plt.ylabel(pnames[<span class="number">0</span>] + <span class="string">&#x27; index&#x27;</span>); plt.xlabel(pnames[<span class="number">1</span>] + <span class="string">&#x27; index&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;accuracy for different parameters&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_36_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = adacv.predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
+
+<pre><code>test accuracy = 0.94
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ifig2 = plt.figure(figsize=(<span class="number">8</span>,<span class="number">4</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plot_boosting(adacv.best_estimator_, axbox, trainX)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plot_boosting(adacv.best_estimator_, axbox, trainX)</span><br><span class="line">plt.scatter(testX[:,<span class="number">0</span>], testX[:,<span class="number">1</span>], c=testY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;testing data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifig2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_39_0.png" alt="png"></p>
+<ul>
+<li>Boosting can do feature selection<ul>
+<li>each decision stump classifier looks at one feature</li>
+</ul>
+</li>
+<li>One of the original face detection methods (Viola-Jones) used Boosting.<ul>
+<li>extract a lot of image features from the face</li>
+<li>during training, Boosting learns which ones are the most useful.<br><img src="/imgs/VJ-haar.png"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Gradient-Boosting"><a href="#Gradient-Boosting" class="headerlink" title="Gradient Boosting"></a>Gradient Boosting</h2><ul>
+<li><p>Variant of boosting</p>
+<ul>
+<li>each iteration fits the residual between the current predictions and the true labels.</li>
+<li>the residual is computed as the gradient of the loss function.</li>
+</ul>
+</li>
+<li><p>It’s a gradient descent algorithm</p>
+<ul>
+<li>in each iteration, the weak learner fits the gradient of the loss<ul>
+<li>$h_t(\mathbf{x}) \approx \frac{dL}{d\mathbf{f}}$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>and adds it to the function:</p>
+<ul>
+<li>$f_t(\mathbf{x}) &#x3D; f_{t-1}(\mathbf{x}) - \alpha_t h_t(\mathbf{x}) \approx  f_{t-1}(\mathbf{x}) - \alpha_t \frac{dL}{d\mathbf{f}_{t-1}}$</li>
+</ul>
+</li>
+<li><p>Generalizes boosting to other loss functions.</p>
+</li>
+<li><p>Typically uses decision trees for the weak learner:</p>
+<ul>
+<li>At each node, move down the tree based on that node’s criteria.</li>
+<li>leaf node contains the prediction</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line">ns = [<span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">1000</span>]</span><br><span class="line"></span><br><span class="line">xgbfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">6</span>))</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>(ns):</span><br><span class="line">    clf = xgb.XGBClassifier(objective=<span class="string">&quot;binary:logistic&quot;</span>, eval_metric=<span class="string">&#x27;logloss&#x27;</span>,</span><br><span class="line">                            random_state=<span class="number">42</span>, n_estimators=n, use_label_encoder=<span class="literal">False</span>)</span><br><span class="line">    clf.fit(X3, Y3)</span><br><span class="line">    </span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_boosting(clf, axbox3, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> i&gt;=<span class="number">2</span>: </span><br><span class="line">        plt.xlabel(<span class="string">&#x27;$x_1$&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;$x_2$&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&#x27;iter &#x27;</span>+<span class="built_in">str</span>(n) + <span class="string">&quot; classifier&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+</code></pre>
+<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2><ul>
+<li>more iterations tends to overfit severely<ul>
+<li>because the “weak” classifier is actually strong (decision tree).</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xgbfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_45_0.png" alt="png"></p>
+<h2 id="Cross-validation"><a href="#Cross-validation" class="headerlink" title="Cross-validation"></a>Cross-validation</h2><ul>
+<li>select the best hyperparameters<ul>
+<li>number of estimators</li>
+<li>learning rate (shrinkage term)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># use the XGBoost package, compatible with sklearn</span></span><br><span class="line"><span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb</span><br><span class="line"></span><br><span class="line"><span class="comment"># use &quot;multi:softprob&quot; for multi-class classification</span></span><br><span class="line">xclf = xgb.XGBClassifier(objective=<span class="string">&quot;binary:logistic&quot;</span>, eval_metric=<span class="string">&#x27;logloss&#x27;</span>,</span><br><span class="line">                         random_state=<span class="number">4487</span>, use_label_encoder=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the list of parameters to try</span></span><br><span class="line">paramgrid = &#123;<span class="string">&#x27;learning_rate&#x27;</span>: logspace(-<span class="number">6</span>,<span class="number">0</span>,<span class="number">20</span>), </span><br><span class="line">             <span class="string">&#x27;n_estimators&#x27;</span>: array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>, <span class="number">20</span>, <span class="number">25</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>, <span class="number">500</span>, <span class="number">1000</span>])</span><br><span class="line">            &#125;</span><br><span class="line"><span class="built_in">print</span>(paramgrid)</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the cross-validation object</span></span><br><span class="line">xgbcv = model_selection.GridSearchCV(xclf, paramgrid, cv=<span class="number">5</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># run cross-validation (train for each split)</span></span><br><span class="line">xgbcv.fit(X3, Y3);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, xgbcv.best_params_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>&#123;&#39;learning_rate&#39;: array([1.00000000e-06, 2.06913808e-06, 4.28133240e-06, 8.85866790e-06,
+       1.83298071e-05, 3.79269019e-05, 7.84759970e-05, 1.62377674e-04,
+       3.35981829e-04, 6.95192796e-04, 1.43844989e-03, 2.97635144e-03,
+       6.15848211e-03, 1.27427499e-02, 2.63665090e-02, 5.45559478e-02,
+       1.12883789e-01, 2.33572147e-01, 4.83293024e-01, 1.00000000e+00]), &#39;n_estimators&#39;: array([   1,    2,    3,    5,   10,   15,   20,   25,   50,  100,  200,
+        500, 1000])&#125;
+
+
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+
+
+best params: &#123;&#39;learning_rate&#39;: 0.012742749857031322, &#39;n_estimators&#39;: 1000&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(avgscores, pnames, bestind) = extract_grid_scores(xgbcv, paramgrid)</span><br><span class="line">paramfig = plt.figure()</span><br><span class="line">plt.imshow(avgscores, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.plot(bestind[<span class="number">1</span>], bestind[<span class="number">0</span>], <span class="string">&#x27;*w&#x27;</span>, markersize=<span class="number">12</span>)</span><br><span class="line">plt.ylabel(pnames[<span class="number">0</span>] + <span class="string">&#x27; index&#x27;</span>); plt.xlabel(pnames[<span class="number">1</span>] + <span class="string">&#x27; index&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;accuracy for different parameters&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_48_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ifig2 = plt.figure(figsize=(<span class="number">4</span>,<span class="number">4</span>))</span><br><span class="line">plot_boosting(xgbcv.best_estimator_, axbox3, X3)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifig2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_50_0.png" alt="png"></p>
+<ul>
+<li><p>Since decision trees are used, there are a lot of hyperparameters to tune for the decision tree.</p>
+<ul>
+<li><code>max_depth</code>: maximum depth of the tree</li>
+<li><code>gamma</code>: minimum loss reduction in order to split a leaf.</li>
+<li><code>colsample_bytree</code>: fraction of features to randomly subsample when building a tree.  </li>
+<li><code>subsample</code>: fraction of training data to subsample during each boosting iteration (for each tree).</li>
+</ul>
+</li>
+<li><p><strong>Problem:</strong> Too many parameters to use grid-search!</p>
+</li>
+<li><p><strong>Solution:</strong> use randomized search</p>
+<ul>
+<li>specify probability distributions for the parameters to try<ul>
+<li><code>stats.uniform(a, b)</code> &#x3D; uniform distribution between [a, a+b]</li>
+<li><code>stats.randint(a,b)</code> &#x3D; random integer between [a, b]</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup dictionary of distributions for each parameter</span></span><br><span class="line">paramsampler = &#123;    </span><br><span class="line">    <span class="string">&quot;colsample_bytree&quot;</span>: stats.uniform(<span class="number">0.7</span>, <span class="number">0.3</span>),  <span class="comment"># default=1</span></span><br><span class="line">    <span class="string">&quot;gamma&quot;</span>:            stats.uniform(<span class="number">0</span>, <span class="number">0.5</span>),    <span class="comment"># default=0</span></span><br><span class="line">    <span class="string">&quot;max_depth&quot;</span>:        stats.randint(<span class="number">2</span>, <span class="number">6</span>),      <span class="comment"># default=6</span></span><br><span class="line">    <span class="string">&quot;subsample&quot;</span>:        stats.uniform(<span class="number">0.6</span>, <span class="number">0.4</span>),  <span class="comment"># default=1</span></span><br><span class="line">    <span class="string">&quot;learning_rate&quot;</span>:    stats.uniform(<span class="number">.001</span>,<span class="number">1</span>),    <span class="comment"># default=1 (could also use loguniform)</span></span><br><span class="line">    <span class="string">&quot;n_estimators&quot;</span>:     stats.randint(<span class="number">10</span>, <span class="number">1000</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">xclf = xgb.XGBClassifier(objective=<span class="string">&quot;binary:logistic&quot;</span>, eval_metric=<span class="string">&#x27;logloss&#x27;</span>,</span><br><span class="line">                         random_state=<span class="number">4487</span>, use_label_encoder=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># cross-validation via random search</span></span><br><span class="line"><span class="comment"># n_iter = number of parameter combinations to try</span></span><br><span class="line">xgbrcv = model_selection.RandomizedSearchCV(xclf, param_distributions=paramsampler, </span><br><span class="line">                            random_state=<span class="number">4487</span>, n_iter=<span class="number">200</span>, cv=<span class="number">5</span>, </span><br><span class="line">                            verbose=<span class="number">1</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">xgbrcv.fit(X3, Y3)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, xgbrcv.best_params_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/xgboost/sklearn.py:1395: UserWarning: `use_label_encoder` is deprecated in 1.7.0.
+  warnings.warn(&quot;`use_label_encoder` is deprecated in 1.7.0.&quot;)
+
+
+Fitting 5 folds for each of 200 candidates, totalling 1000 fits
+best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#39;: 0.43411018169657967, &#39;learning_rate&#39;: 0.014847933781299671, &#39;max_depth&#39;: 4, &#39;n_estimators&#39;: 152, &#39;subsample&#39;: 0.6743715045033899&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ifig2 = plt.figure(figsize=(<span class="number">4</span>,<span class="number">4</span>))</span><br><span class="line">plot_boosting(xgbrcv.best_estimator_, axbox3, X3)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifig2</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_55_0.png" alt="png"></p>
+<h2 id="Boosting-Summary"><a href="#Boosting-Summary" class="headerlink" title="Boosting Summary"></a>Boosting Summary</h2><ul>
+<li><p><strong>Ensemble Classifier:</strong></p>
+<ul>
+<li>Combine the outputs of many “weak” classifiers to make a “strong” classifier</li>
+</ul>
+</li>
+<li><p><strong>Training:</strong></p>
+<ul>
+<li>In each iteration, <ul>
+<li>training data is re-weighted based on whether it is correctly classified or not.</li>
+<li>weak classifier focuses on misclassified data from previous iterations.</li>
+</ul>
+</li>
+<li>Use cross-validation to pick number of weak learners.</li>
+</ul>
+</li>
+<li><p><strong>Advantages:</strong></p>
+<ul>
+<li>Good generalization performance</li>
+<li>Built-in features selection - decision stump selects one feature at a time.</li>
+</ul>
+</li>
+<li><p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Sensitive to outliers.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Outline-1"><a href="#Outline-1" class="headerlink" title="Outline"></a>Outline</h2><ol>
+<li>Nonlinear classifiers</li>
+<li>Kernel trick and kernel SVM</li>
+<li><strong>Ensemble Methods - Boosting, Random Forests</strong></li>
+<li>Classification Summary</li>
+</ol>
+<h2 id="Decision-Tree"><a href="#Decision-Tree" class="headerlink" title="Decision Tree"></a>Decision Tree</h2><ul>
+<li>Simple “Rule-based” classifier<ul>
+<li>At each node, move down the tree based on that node’s criteria.</li>
+<li>leaf node contains the prediction</li>
+</ul>
+</li>
+<li><strong>Advantage:</strong> can create complex conjunction of rules</li>
+<li><strong>Disadvantage:</strong> easy to overfit by itself<ul>
+<li>can fix with bagging!</li>
+</ul>
+</li>
+</ul>
+<h2 id="Random-Forest-Classifier"><a href="#Random-Forest-Classifier" class="headerlink" title="Random Forest Classifier"></a>Random Forest Classifier</h2><ul>
+<li>Use <strong>bagging</strong> to make an ensemble of Decision Tree Classifiers<ul>
+<li>for each <em>Decision Tree Classifier</em><ul>
+<li>create a new training set by randomly sampling from the training set</li>
+<li>for each split in a tree, select a random subset of features to use</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>for a test sample, the prediction is aggregated over all trees.</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># learn a RF classifier</span></span><br><span class="line"><span class="comment"># use 4 trees</span></span><br><span class="line">clf = ensemble.RandomForestClassifier(n_estimators=<span class="number">4</span>, random_state=<span class="number">4487</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line">clf.fit(X3, Y3)</span><br></pre></td></tr></table></figure>
+
+
+
+
+<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>RandomForestClassifier(n_estimators=4, n_jobs=-1, random_state=4487)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">RandomForestClassifier</label><div class="sk-toggleable__content"><pre>RandomForestClassifier(n_estimators=4, n_jobs=-1, random_state=4487)</pre></div></div></div></div></div>
+
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_rf</span>(<span class="params">model, axbox, X</span>):</span><br><span class="line">    <span class="comment"># grid points</span></span><br><span class="line">    xr = [ linspace(axbox[<span class="number">0</span>], axbox[<span class="number">1</span>], <span class="number">200</span>), </span><br><span class="line">           linspace(axbox[<span class="number">2</span>], axbox[<span class="number">3</span>], <span class="number">200</span>) ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># make a grid for calculating the posterior, </span></span><br><span class="line">    <span class="comment">#  then form into a big [N,2] matrix</span></span><br><span class="line">    xgrid0, xgrid1 = meshgrid(xr[<span class="number">0</span>], xr[<span class="number">1</span>])</span><br><span class="line">    allpts = c_[xgrid0.ravel(), xgrid1.ravel()]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># calculate the decision function</span></span><br><span class="line">    score = model.predict_proba(allpts)[:,<span class="number">1</span>].reshape(xgrid0.shape)</span><br><span class="line"></span><br><span class="line">    plt.imshow(score, origin=<span class="string">&#x27;lower&#x27;</span>, extent=axbox, alpha=<span class="number">0.30</span>, cmap=mycmap, </span><br><span class="line">               vmin=<span class="number">0</span>, vmax=<span class="number">1</span>, aspect=<span class="string">&#x27;auto&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    plt.contour(xr[<span class="number">0</span>], xr[<span class="number">1</span>], score, levels=[<span class="number">0.5</span>], linestyles=<span class="string">&#x27;solid&#x27;</span>, colors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    </span><br><span class="line">    plt.axis(axbox); plt.grid(<span class="literal">True</span>)    </span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">axbox = [-<span class="number">1.5</span>, <span class="number">2.5</span>, -<span class="number">1</span>, <span class="number">1.5</span>]</span><br><span class="line"></span><br><span class="line">dtfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">7</span>))</span><br><span class="line"><span class="keyword">for</span> i,d <span class="keyword">in</span> <span class="built_in">enumerate</span>(clf.estimators_):</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_rf(d, axbox, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&quot;Decision Tree &quot;</span> + <span class="built_in">str</span>(i+<span class="number">1</span>))</span><br><span class="line">plt.close()</span><br><span class="line"></span><br><span class="line">rffig = plt.figure()</span><br><span class="line">plot_rf(clf, axbox, X3)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Here are the 4 decision trees <ul>
+<li>each uses a different random sampling of original training set</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dtfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_65_0.png" alt="png"></p>
+<ul>
+<li>and the aggregated classifier</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rffig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_67_0.png" alt="png"></p>
+<ul>
+<li>Using more trees</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># learn RF classifiers for different n_estimators</span></span><br><span class="line">rffig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">6</span>))</span><br><span class="line">clfs = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">5</span>, <span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">1000</span>, <span class="number">10000</span>]):</span><br><span class="line">    clfs[n] = ensemble.RandomForestClassifier(n_estimators=n, random_state=<span class="number">4487</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line">    clfs[n].fit(X3, Y3)</span><br><span class="line">        </span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_rf(clfs[n], axbox, X3)</span><br><span class="line">    plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&quot;n=&quot;</span> + <span class="built_in">str</span>(n))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rffig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_70_0.png" alt="png"></p>
+<ul>
+<li>Try on the iris data</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># learn RF classifiers for different n_estimators</span></span><br><span class="line">clfs = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">5</span>, <span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">500</span>, <span class="number">1000</span>]):</span><br><span class="line">    clfs[n] = ensemble.RandomForestClassifier(n_estimators=n, random_state=<span class="number">4487</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line">    clfs[n].fit(trainX, trainY)</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">rfnfig = plt.figure(figsize=(<span class="number">9</span>,<span class="number">6</span>))</span><br><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> i,n <span class="keyword">in</span> <span class="built_in">enumerate</span>([<span class="number">5</span>, <span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">500</span>, <span class="number">1000</span>]):</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">3</span>,i+<span class="number">1</span>)</span><br><span class="line">    plot_rf(clfs[n], axbox, trainX)</span><br><span class="line">    plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">    plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">    plt.title(<span class="string">&quot;n=&quot;</span> + <span class="built_in">str</span>(n))</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rfnfig</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_74_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = clfs[<span class="number">1000</span>].predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
+
+<pre><code>test accuracy = 0.98
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">ifig3 = plt.figure(figsize=(<span class="number">9</span>,<span class="number">4</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plot_rf(clfs[<span class="number">1000</span>], axbox, trainX)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plot_rf(clfs[<span class="number">1000</span>], axbox, trainX)</span><br><span class="line">plt.scatter(testX[:,<span class="number">0</span>], testX[:,<span class="number">1</span>], c=testY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;testing data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># classifier boundary w/ training and test data</span></span><br><span class="line">ifig3</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_77_0.png" alt="png"></p>
+<ul>
+<li>Important parameters for cross-validation<ul>
+<li><code>max_features</code> - maximum number of features used for each split</li>
+<li><code>max_depth</code> - maximum depth of a decision tree</li>
+<li><code>min_samples_split</code> - minimum fraction of samples to split a node.</li>
+<li><code>min_samples_leaf</code> - min fraction of samples in a leaf node.</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># setup the list of parameters to try</span></span><br><span class="line">paramsampler = &#123;<span class="comment">#&#x27;max_features&#x27;: stats.uniform(0,1.0),</span></span><br><span class="line">                 <span class="string">&#x27;max_depth&#x27;</span>:         stats.randint(<span class="number">1</span>,<span class="number">5</span>),</span><br><span class="line">                 <span class="string">&#x27;min_samples_split&#x27;</span>: stats.uniform(<span class="number">0</span>,<span class="number">0.5</span>), </span><br><span class="line">                 <span class="string">&#x27;min_samples_leaf&#x27;</span>:  stats.uniform(<span class="number">0</span>,<span class="number">0.5</span>),</span><br><span class="line">               &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># setup the cross-validation object</span></span><br><span class="line">rfrcv = model_selection.RandomizedSearchCV(</span><br><span class="line">                            ensemble.RandomForestClassifier(n_estimators=<span class="number">100</span>, random_state=<span class="number">4487</span>, n_jobs=-<span class="number">1</span>),</span><br><span class="line">                            param_distributions=paramsampler, </span><br><span class="line">                            random_state=<span class="number">4487</span>, n_iter=<span class="number">1000</span>, cv=<span class="number">5</span>, </span><br><span class="line">                            verbose=<span class="number">1</span>, n_jobs=-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># run cross-validation (train for each split)</span></span><br><span class="line">rfrcv.fit(trainX, trainY);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;best params:&quot;</span>, rfrcv.best_params_)</span><br></pre></td></tr></table></figure>
+
+<pre><code>Fitting 5 folds for each of 1000 candidates, totalling 5000 fits
+best params: &#123;&#39;max_depth&#39;: 4, &#39;min_samples_leaf&#39;: 0.013009207368046005, &#39;min_samples_split&#39;: 0.033821887640189785&#125;
+</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">axbox = [<span class="number">2.5</span>, <span class="number">7</span>, <span class="number">1.5</span>, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">ifig3 = plt.figure(figsize=(<span class="number">9</span>,<span class="number">4</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">plot_rf(rfrcv.best_estimator_, axbox, trainX)</span><br><span class="line">plt.scatter(trainX[:,<span class="number">0</span>], trainX[:,<span class="number">1</span>], c=trainY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">plot_rf(rfrcv.best_estimator_, axbox, trainX)</span><br><span class="line">plt.scatter(testX[:,<span class="number">0</span>], testX[:,<span class="number">1</span>], c=testY, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;petal length&#x27;</span>); plt.ylabel(<span class="string">&#x27;sepal width&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;testing data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Result</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifig3</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_82_0.png" alt="png"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = rfrcv.predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
+
+<pre><code>test accuracy = 0.98
+</code></pre>
+<h2 id="Random-Forest-Summary"><a href="#Random-Forest-Summary" class="headerlink" title="Random Forest Summary"></a>Random Forest Summary</h2><ul>
+<li><strong>Ensemble Classifier &amp; Training:</strong><ul>
+<li>aggregate predictions over several decision trees</li>
+<li>trained using different subsets of data, and different subsets of features.</li>
+</ul>
+</li>
+<li><strong>Advantages</strong><ul>
+<li>non-linear decision boundary. </li>
+<li>can do feature selection.</li>
+<li>good generalization.</li>
+<li>fast.</li>
+</ul>
+</li>
+<li><strong>Disadvantages</strong><ul>
+<li>can be sensitive to outliers</li>
+<li>based on trees – cannot well represent “diagonal” decision boundaries.</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/python/"># python</a>
+                    
+                        <a href="/tags/sklearn/"># sklearn</a>
+                    
+                        <a href="/tags/scipy/"># scipy</a>
+                    
+                        <a href="/tags/SVM/"># SVM</a>
+                    
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
+                    
+                        <a href="/tags/Kernel/"># Kernel</a>
+                    
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                    
+                        <a href="/tags/Boosting/"># Boosting</a>
+                    
+                        <a href="/tags/Random-Forests/"># Random Forests</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
+            
+            
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98A/">机器学习-分类问题A</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
