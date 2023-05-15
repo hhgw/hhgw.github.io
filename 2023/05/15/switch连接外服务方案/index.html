@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>switch连接外服的相关方案 | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">switch连接外服的相关方案</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-05-15&nbsp;&nbsp;18:18:00</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/">科学上网</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id=""><a href="#" class="headerlink" title=""></a></h1><h1 id="swtich连接外服的相关方案"><a href="#swtich连接外服的相关方案" class="headerlink" title="swtich连接外服的相关方案"></a>swtich连接外服的相关方案</h1><h2 id="switch不同版本连接服务器区别"><a href="#switch不同版本连接服务器区别" class="headerlink" title="switch不同版本连接服务器区别"></a>switch不同版本连接服务器区别</h2><p>switch国行版本相当于一个腾讯视频播放器，连接的是腾讯服务器，所以一般都把购买ns国行版本的玩家成为国行烈士。这部分switch连接服务器是不会有问题的，但是联机游戏只能和国行玩家联机，eshop商店内游戏屈指可数，游戏补丁或dlc基本无法下载安装，卡带可以玩国行卡带（市场上买不到）和海外版卡带（比如港版，日版，欧美版）。</p>
+<p>switch非国行版都一样，没有区别，在国内无法连接任天堂服务器，所以需要科学上网，连接任何一个非大陆与俄罗斯的节点均可连接服务器，进行联机，下载游戏、补丁、dlc、新闻等。以下将针对这类机器给出连接服务器的方案。这部分机器可以和全球玩家联机，eshop商店内容取决于账号注册时所选的国家（地区），比如巴西、阿根廷、中国香港等，游戏基本内容一致，游戏均支持英文、日语，大部分支持简体中文，价格方面由于不同国家对不同游戏打折力度不同，一般会注册2-5个账号进行薅羊毛。</p>
+<h2 id="连接服务器的方案"><a href="#连接服务器的方案" class="headerlink" title="连接服务器的方案"></a>连接服务器的方案</h2><h3 id="方案一：国内部分公司提供的加速器"><a href="#方案一：国内部分公司提供的加速器" class="headerlink" title="方案一：国内部分公司提供的加速器"></a>方案一：国内部分公司提供的加速器</h3><ol>
+<li><p>特征：</p>
+<ul>
+<li><p>优点：有操作说明，跟着app说明操作即可。</p>
+</li>
+<li><p>缺点：相同流量下价格更贵；需要其他设备辅助；速度受限；针对不同需求（下载或联机游戏）推出的套餐不同，需要重复购买。</p>
+</li>
+<li><p>适合人群：网络小白、不差钱的土豪、几乎不下载游戏只联机的卡带玩家</p>
+</li>
+</ul>
+</li>
+<li><p>流程：</p>
+<ul>
+<li><p>选择一款加速器</p>
+<p>可以根据喜好自行选择，通常需要对应的设备连接相同网络并保持挂机。</p>
+<p>比如微信（手机）端的加速器：</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/001.png" alt="001"></p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/002.png" alt="002"></p>
+<p>以及电脑端端加速器：</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/003.png" alt="003"></p>
+</li>
+<li><p>根据程序提供的操作说明进行设置</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/004.png" alt="004"></p>
+</li>
+<li><p>付费使用</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/005.png" alt="005"></p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器"><a href="#方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器" class="headerlink" title="方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器"></a>方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器</h2><ol>
+<li><p>特征：</p>
+<ul>
+<li><p>优点：便宜（价格就是订阅科学上网节点的价格），方便设置。</p>
+</li>
+<li><p>缺点：需要其他设备辅助；需要技术门槛（会科学）。</p>
+</li>
+<li><p>适合人群：已经有节点的人；追求性价比的人；对服务器所处国家有细致要求的人。</p>
+</li>
+</ul>
+</li>
+<li><p>流程（以手机为例）：</p>
+<ul>
+<li><p>【此教程不涉及科学上网节点和订阅的教学，相关内容请自行谷歌】</p>
+</li>
+<li><p>将手机连接至Wi-Fi（最好区分 2.4G Wi-Fi和 5G Wi-Fi，日版5G支持频段和中国不同，相关设置可以在路由器后台进行操作），设置中查看手机的IP地址。如图所示，IP地址为192.168.5.161。</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/006.png" alt="006"></p>
+</li>
+<li><p>手机端打开全局代理，在自己的出国软件中打开“代理共享”功能，将IP设置为手机在Wi-Fi中的IP地址，此时为192.168.5.161。端口设置为1000-9999内随意一个整数。</p>
+<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/007.png" alt="007"></p>
+</li>
+<li><p>将switch连接至同一个网络，选择网络–&gt;更改设置–&gt;代理服务器设置“启用”–&gt;服务器写手机的IP地址，端口为上面填的端口，自动验证“不启用”–&gt;保存。此时switch就可以通过手机转发数据的形式进行科学上网。</p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="方案三：软路由全局科学上网，直接连接Wi-Fi即可出国"><a href="#方案三：软路由全局科学上网，直接连接Wi-Fi即可出国" class="headerlink" title="方案三：软路由全局科学上网，直接连接Wi-Fi即可出国"></a>方案三：软路由全局科学上网，直接连接Wi-Fi即可出国</h2><p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/003.png" alt="003"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/switch/"># switch</a>
+                    
+                        <a href="/tags/vpn/"># vpn</a>
+                    
+                        <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"># 科学上网</a>
+                    
+                        <a href="/tags/%E5%87%BA%E5%9B%BD/"># 出国</a>
+                    
+                        <a href="/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"># 软路由</a>
+                    
+                        <a href="/tags/clash/"># clash</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

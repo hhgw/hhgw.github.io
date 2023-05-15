@@ -358,9 +358,21 @@
 
 <p>.ix的使用：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xtfge0915/article/details/52938740">link</a></p>
 <p>对于一个pd.DataFrame，df.head(10)可以返回前10行，df.tail(10)可以返回最后10行。</p>
-<h3 id="一个画图常用的index的设置方法："><a href="#一个画图常用的index的设置方法：" class="headerlink" title="一个画图常用的index的设置方法："></a>一个画图常用的index的设置方法：</h3><p>set_index</p>
+<h3 id="一个画图常用的index的设置方法："><a href="#一个画图常用的index的设置方法：" class="headerlink" title="一个画图常用的index的设置方法："></a>一个画图常用的index的设置方法：</h3><p>1.set_index</p>
 <p>DataFrame可以通过set_index方法，可以设置单索引和复合索引。<br>DataFrame.set_index(keys, drop&#x3D;True, append&#x3D;False, inplace&#x3D;False, verify_integrity&#x3D;False)<br>append添加新索引，drop为False，inplace为True时，索引将会还原为列。</p>
 <p>2.reset_index<br>reset_index可以还原索引，重新变为默认的整型索引<br>DataFrame.reset_index(level&#x3D;None, drop&#x3D;False, inplace&#x3D;False, col_level&#x3D;0, col_fill&#x3D;”)<br>level控制了具体要还原的那个等级的索引<br>drop为False则索引列会被还原为普通列，否则会丢失</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">df7 = pd.DataFrame(&#123;<span class="string">&#x27;a&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>: <span class="number">2</span>&#125;, index=[<span class="number">0</span>])</span><br><span class="line">df7.loc[<span class="number">1</span>] = [<span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="built_in">print</span>(df7)</span><br><span class="line">df7.set_index(<span class="string">&#x27;a&#x27;</span>, inplace=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(df7)</span><br><span class="line">df7.reset_index(inplace=<span class="literal">True</span>)</span><br><span class="line"><span class="built_in">print</span>(df7)</span><br><span class="line"></span><br><span class="line">   a  b</span><br><span class="line"><span class="number">0</span>  <span class="number">1</span>  <span class="number">2</span></span><br><span class="line"><span class="number">1</span>  <span class="number">3</span>  <span class="number">4</span></span><br><span class="line">   b</span><br><span class="line">a   </span><br><span class="line"><span class="number">1</span>  <span class="number">2</span></span><br><span class="line"><span class="number">3</span>  <span class="number">4</span></span><br><span class="line">   a  b</span><br><span class="line"><span class="number">0</span>  <span class="number">1</span>  <span class="number">2</span></span><br><span class="line"><span class="number">1</span>  <span class="number">3</span>  <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>3.reindex</p>
+<p>•使用reindex方法重新排序和指定索引，会根据新索引重排数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>students.reindex(index=[<span class="string">&#x27;1850005&#x27;</span>,<span class="string">&#x27;1850004&#x27;</span>,<span class="string">&#x27;1850002&#x27;</span>,<span class="string">&#x27;1850001&#x27;</span>,  </span><br><span class="line"><span class="string">&#x27;1850003&#x27;</span>],columns=[<span class="string">&#x27;姓名&#x27;</span>,<span class="string">&#x27;性别&#x27;</span>,<span class="string">&#x27;专业&#x27;</span>,<span class="string">&#x27;成绩&#x27;</span>])</span><br><span class="line">          姓名 性别    专业        成绩</span><br><span class="line"><span class="number">1850005</span>   王丹  女    金融学        <span class="number">67</span></span><br><span class="line"><span class="number">1850004</span>   李明  男    交通工程   <span class="number">54</span></span><br><span class="line"><span class="number">1850002</span>   段霞  女    金融学       <span class="number">88</span></span><br><span class="line"><span class="number">1850001</span>   张海  男    交通工程   <span class="number">90</span></span><br><span class="line"><span class="number">1850003</span> 敬卫华  男   土木工程  <span class="number">91</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <h3 id="DF对象的常用属性："><a href="#DF对象的常用属性：" class="headerlink" title="DF对象的常用属性："></a>DF对象的常用属性：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line">a = pd.DataFrame(&#123;<span class="string">&quot;one&quot;</span>: pd.Series([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],index=[<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>]), <span class="string">&quot;two&quot;</span>: [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]&#125;)</span><br><span class="line"><span class="built_in">print</span>(a.T)</span><br><span class="line"><span class="built_in">print</span>(a.index)</span><br><span class="line"><span class="built_in">print</span>(a.columns)</span><br><span class="line"><span class="built_in">print</span>(a.values)</span><br><span class="line"><span class="built_in">print</span>(a.describe())</span><br></pre></td></tr></table></figure>
 
 <p>结果：</p>
@@ -434,32 +446,23 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<h3 id="关于显示输出的问题"><a href="#关于显示输出的问题" class="headerlink" title="关于显示输出的问题"></a>关于显示输出的问题</h3><blockquote>
+<p>import pandas as pd </p>
+<p>*#*<em>显示所有列</em></p>
+<p>pd.set_option(‘display.max_columns’, None)</p>
+<p>*#*<em>显示所有行</em></p>
+<p>pd.set_option(‘display.max_rows’, None)</p>
+<p>None可以写具体的数字，写多少就显示多少,默认是显示100行</p>
+<p>import pandas as pd</p>
+<p>pd.set_option(‘display.height’, 1000)</p>
+<p>pd.set_option(‘display.max_rows’, 500)</p>
+<p>pd.set_option(‘display.max_columns’, 500)</p>
+<p>pd.set_option(‘display.width’, 1000)</p>
+<p>类似的，对于numpy array print后不能完全显示输入下面代码：</p>
+<p>numpy.set_printoptions(threshold &#x3D; np.inf)</p>
+<p><em>#<strong>若想不以科学计数显示</strong>:</em></p>
+<p>numpy.set_printoptions(suppress &#x3D; True)</p>
+</blockquote>
 
         </div>
 
@@ -495,11 +498,11 @@
                     
                         <a href="/tags/python/"># python</a>
                     
+                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                    
                         <a href="/tags/Pandas/"># Pandas</a>
                     
                         <a href="/tags/DataFrame/"># DataFrame</a>
-                    
-                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
                     
                         <a href="/tags/Series/"># Series</a>
                     
