@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="hhgw">
+
+
+
+
+
+<title>自制ChatGPT网页实现无科学环境使用 | hhgw&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">自制ChatGPT网页实现无科学环境使用</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">hhgw</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">2023-07-05&nbsp;&nbsp;11:18:09</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">个人博客搭建</a>
+                            
+                                <a href="/categories/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/IT%E6%8A%98%E8%85%BE/">IT折腾</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="自制ChatGPT网页实现无科学环境使用"><a href="#自制ChatGPT网页实现无科学环境使用" class="headerlink" title="自制ChatGPT网页实现无科学环境使用"></a>自制ChatGPT网页实现无科学环境使用</h1><p>过程非常简单，几乎没有难点。提前需要准备好：</p>
+<blockquote>
+<ul>
+<li>OpenAI API Key</li>
+<li>一个域名</li>
+<li>魔法（访问 Vercel 时需要用到）</li>
+<li>PayPal或visa支付方式（用于购买域名）</li>
+</ul>
+</blockquote>
+<h2 id="1-注册-x2F-关联Vercel账号和GitHub账号"><a href="#1-注册-x2F-关联Vercel账号和GitHub账号" class="headerlink" title="1 注册&#x2F;关联Vercel账号和GitHub账号"></a>1 注册&#x2F;关联Vercel账号和GitHub账号</h2><p><a target="_blank" rel="noopener" href="https://vercel.com/">https://vercel.com</a></p>
+<p>过程中可能用到手机号码验证，输入大陆手机号即可，此号码不会用于账号登陆等，后续也不会收到其他短信。</p>
+<h2 id="2-ChatGPT-Next-Web-项目-一键部署"><a href="#2-ChatGPT-Next-Web-项目-一键部署" class="headerlink" title="2 ChatGPT Next Web 项目 一键部署"></a>2 ChatGPT Next Web 项目 一键部署</h2><blockquote>
+<p>ChatGPT Next Web 项目地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Yidadaa/ChatGPT-Next-Web">https://github.com/Yidadaa/ChatGPT-Next-Web</a></p>
+<p>项目介绍中详细写有一件部署等流程，注意提前准备好ChatGPT的api接口。</p>
+</blockquote>
+<p>一般部署过程需要4-8分钟。</p>
+<p>一键部署后即可通过自动生成的的vercel.app域名进行访问，对默认api接口和密码的修改都需要重新部署。</p>
+<p><img src="/img/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/01.png" alt="pic"></p>
+<blockquote>
+<p>在 Environment Variables 中添加环境变量，然后点击 <strong>Deploy</strong> 按钮。<br>对于个人使用，添加 <code>OPENAI_API_KEY</code> 和 <code>CODE</code> 就足够了。<br><code>CODE</code> 可以设置多个密码，但需以 <code>,</code> 分割。</p>
+</blockquote>
+<h2 id="3-购买域名及绑定以实现墙内浏览"><a href="#3-购买域名及绑定以实现墙内浏览" class="headerlink" title="3 购买域名及绑定以实现墙内浏览"></a>3 购买域名及绑定以实现墙内浏览</h2><blockquote>
+<p>购买自己的域名，您可以选择以下渠道进行购买：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="http://www.namesilo.com/?rid=fe5a225yc">Namesilo</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.godaddy.com/zh-sg/offers/godaddy">Godaddy</a></p>
+</li>
+</ul>
+<p>另外您还可以选择从以下平台获取到免费的域名：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://freenom.com/">Freenom</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/538005306">eu.org</a></p>
+</li>
+<li><ul>
+<li>eu.org是欧盟组织的免费域名；需要英国的用户信息才能注册;</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>本人使用的平台是 <a target="_blank" rel="noopener" href="https://dash.cloudflare.com/">dash.cloudflare.com</a></p>
+<h3 id="Vercel平台配置"><a href="#Vercel平台配置" class="headerlink" title="Vercel平台配置"></a>Vercel平台配置</h3><p>在Vercel平台对应项目的控制面板中找到<code>Setting</code>→<code>Domains</code>→<code>Add</code>，输入域名</p>
+<p><img src="/img/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/02.png" alt="pic"></p>
+<p>add之后设置如下：</p>
+<p><img src="/img/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/03.png" alt="pic"></p>
+<hr>
+<h3 id="域名管理平台配置"><a href="#域名管理平台配置" class="headerlink" title="域名管理平台配置"></a>域名管理平台配置</h3><p>在购买域名的平台配置CNAME解析</p>
+<p><a target="_blank" rel="noopener" href="https://www.tangly1024.com/article/vercel-domain">https://www.tangly1024.com/article/vercel-domain</a></p>
+<blockquote>
+<p>如何将namesilo购买的域名放在cloudflare中托管？可以《<a target="_blank" rel="noopener" href="https://namesiloyouhui.com/cloudflare-dns-settings.html">参考此文</a>》教程说明。</p>
+<p>CF具有Worker.js、全球无限CDN流量、网站防火墙、DDoS等特性，我个人比较喜欢将域名解析交给CloudFlare管理 。</p>
+<p>这里主要用CF举例，打开CloudFlare打开域名控制台 <a target="_blank" rel="noopener" href="https://dash.cloudflare.com/">https://dash.cloudflare.com</a></p>
+<ul>
+<li><p><strong>如果你的域名没有绑定过任何一条A记录，则添加一条域名A记录指向Vercel服务器地址76.76.21.21</strong>，仅限DNS</p>
+</li>
+<li><p>根据需要添加你的一条CNAME记录，值指向Vercel的CNAME服务器：<code>cname-china.vercel-dns.com</code> ;这里设置的网址就是将来访问网页ChatGPT的网址。</p>
+</li>
+<li><p>这里需要在ssl&#x2F;tls配配置开启https加密</p>
+</li>
+</ul>
+</blockquote>
+<p><img src="/img/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/04.png" alt="pic"></p>
+<p>选择如图</p>
+<p><img src="/img/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/05.png" alt="pic"></p>
+<blockquote>
+<h4 id="Vercel域名在国内被墙"><a href="#Vercel域名在国内被墙" class="headerlink" title="Vercel域名在国内被墙"></a>Vercel域名在国内被墙</h4><p>vercel.app因为被大量使用，自然而然被墙掉了，不过好在 Vercel 官方提供了单独的 IP 和 CNAME 地址给大家，对于国内的用户来说，配置一下单独的解析，依然可以享受 Vercel 提供的服务。</p>
+<p>将上述步骤中用到的 ip和 cname地址替换成以下内容即可：</p>
+<p>A记录地址：<code>76.223.126.88</code> 或 <code>76.76.21.98</code> 等</p>
+<p>CNAME 记录地址：<code>cname-china.vercel-dns.com</code></p>
+<h4 id="A记录和CNAME的区别"><a href="#A记录和CNAME的区别" class="headerlink" title="A记录和CNAME的区别"></a>A记录和CNAME的区别</h4><p>A记录就是把一个域名解析到一个IP地址（Address，特指数字IP地址）；</p>
+<p>CNAME记录就是把域名解析到另外一个域名。</p>
+<p>其功能差不多，CNAME将几个主机名指向一个别名，其实跟指向IP地址是一样的，因为这个别名也要做一个A记录的。</p>
+</blockquote>
+<hr>
+<p><u><strong>特别注意：</strong></u></p>
+<p><u><strong>在你并不能确保你访问者会不会正当、适量使用你提供的服务时，请注意不要随意分享你的网站，除非你足够信任 TA。任何一点风吹草动都可能导致你的域名被墙。</strong></u></p>
+<h2 id="4-其他一些知识"><a href="#4-其他一些知识" class="headerlink" title="4 其他一些知识"></a>4 其他一些知识</h2><blockquote>
+<ul>
+<li>在中国大陆境内域名提供商购买的域名，需要实名认证才能开启 DNS 解析。而在国外域名提供商买的域名则不用。</li>
+<li>指向中国大陆内的云服务器的域名提供的网站，必须备案才能正常被访问。但是任何指向国外服务器的域名却可以不受此规则的限制。可以利用这一点，绕过 __ 的限制。</li>
+<li>Vercel 是一个无需云服务器即可快速部署现代 Web 应用程序的平台。</li>
+<li>vercel.app 本身是被墙了的网站，但是它的服务器 IP 却没有被墙。可以利用这点，让你的域名直接指向 Vercel 服务器，从而访问 Vercel 提供的服务。</li>
+</ul>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>hhgw</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>There is no fate but what <strong>we</strong> make.</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
+                    
+                        <a href="/tags/%E6%90%AD%E5%BB%BA%E7%BD%91%E9%A1%B5/"># 搭建网页</a>
+                    
+                        <a href="/tags/vpn/"># vpn</a>
+                    
+                        <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"># 科学上网</a>
+                    
+                        <a href="/tags/%E5%87%BA%E5%9B%BD/"># 出国</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2023/05/15/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D%E5%8A%A1%E6%96%B9%E6%A1%88/">switch连接外服的相关方案</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© hhgw | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
