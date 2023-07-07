@@ -13,7 +13,7 @@
 
 
 
-<title>ipynb文件导出为md文件 | hhgw&#39;s blog</title>
+<title>软路由系列-A | hhgw&#39;s blog</title>
 
 
 
@@ -40,45 +40,6 @@
 
     
     
-        
-            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    "HTML-CSS": {
-        preferredFont: "TeX",
-        availableFonts: ["STIX","TeX"],
-        linebreaks: { automatic:true },
-        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
-    },
-    tex2jax: {
-        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
-        processEscapes: true,
-        ignoreClass: "tex2jax_ignore|dno",
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-        equationNumbers: { autoNumber: "AMS" },
-        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
-        Macros: { href: "{}" }
-    },
-    messageStyle: "none"
-    });
-</script>
-<!-- 给MathJax元素添加has-jax class -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-<!-- 通过连接CDN加载MathJax的js代码 -->
-<script type="text/javascript" async
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
         
     
 
@@ -235,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">ipynb文件导出为md文件</h1>
+            <h1 class="post-title">软路由系列-A</h1>
             
                 <div class="post-meta">
                     
@@ -244,14 +205,16 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-04-29&nbsp;&nbsp;15:30:00</a>
+                        Date: <a href="#">2023-07-07&nbsp;&nbsp;11:18:09</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">个人博客搭建</a>
+                                <a href="/categories/%E8%BD%AF%E8%B7%AF%E7%94%B1/">软路由</a>
+                            
+                                <a href="/categories/%E8%BD%AF%E8%B7%AF%E7%94%B1/IT%E6%8A%98%E8%85%BE/">IT折腾</a>
                             
                         </span>
                     
@@ -260,11 +223,34 @@
         </header>
 
         <div class="post-content">
-            <h1 id="ipynb文件导出为md文件"><a href="#ipynb文件导出为md文件" class="headerlink" title="ipynb文件导出为md文件"></a>ipynb文件导出为md文件</h1><p>命令行依次输入</p>
-<blockquote>
-<p>pip install nbconvert<br>pip install pandoc<br>jupyter nbconvert –to markdown 文件名</p>
-</blockquote>
-<p>到同目录下查看生成的同名md文件与文件夹</p>
+            <h1 id="软路由系列-A"><a href="#软路由系列-A" class="headerlink" title="软路由系列-A"></a>软路由系列-A</h1><h2 id="软路由是什么？"><a href="#软路由是什么？" class="headerlink" title="软路由是什么？"></a>软路由是什么？</h2><h3 id="【ChatGPT】："><a href="#【ChatGPT】：" class="headerlink" title="【ChatGPT】："></a>【ChatGPT】：</h3><p>软路由是指利用通用计算机硬件（如个人电脑）和特定的软件来实现路由器功能的一种解决方案。传统的路由器是专门设计和制造的硬件设备，用于在计算机网络中转发数据包和管理网络流量。而软路由则是通过在通用计算机上安装特定的操作系统和软件来实现路由器的功能。</p>
+<p>软路由的主要特点是灵活性和可定制性。通过使用通用计算机硬件，软路由可以方便地适应不同的需求和网络环境。它可以运行各种不同的路由软件，例如pfSense、OpenWrt、DD-WRT等，这些软件提供了丰富的功能和配置选项，可以满足各种复杂的网络需求。</p>
+<p>软路由可以用于家庭网络、小型企业网络甚至是大型数据中心等场景。它可以提供诸如网络地址转换（NAT）、防火墙、虚拟专用网络（VPN）、负载均衡、流量控制等功能。此外，软路由还可以通过插件或扩展模块添加额外的功能，如广告拦截、内容过滤、入侵检测等。</p>
+<p>总之，软路由是一种基于通用计算机硬件和特定软件实现的灵活、可定制的路由器解决方案，可以提供丰富的网络功能和配置选项。</p>
+<h3 id="软路由的功能："><a href="#软路由的功能：" class="headerlink" title="软路由的功能："></a>软路由的功能：</h3><ul>
+<li>科学上网</li>
+<li>去广告</li>
+<li>流量控制</li>
+</ul>
+<p>等等</p>
+<h3 id="软路由分类："><a href="#软路由分类：" class="headerlink" title="软路由分类："></a>软路由分类：</h3><h4 id="根据常见软路由设备可以分为："><a href="#根据常见软路由设备可以分为：" class="headerlink" title="根据常见软路由设备可以分为："></a>根据常见软路由设备可以分为：</h4><ul>
+<li><strong>硬路由刷的软路由</strong></li>
+<li><strong>x86电脑刷的软路由</strong></li>
+<li>arm芯片小盒子刷的软路由</li>
+</ul>
+<h4 id="根据软路由运行的系统可以分为："><a href="#根据软路由运行的系统可以分为：" class="headerlink" title="根据软路由运行的系统可以分为："></a>根据软路由运行的系统可以分为：</h4><ol>
+<li>pfSense：pfSense是一款基于FreeBSD操作系统的开源软路由解决方案。它提供了广泛的网络功能，包括防火墙、虚拟专用网络（VPN）、负载均衡、流量控制等。pfSense具有友好的用户界面和强大的配置选项，适用于家庭网络和小型企业网络。</li>
+<li><strong>OpenWrt</strong>：OpenWrt是一款基于Linux操作系统的开源软路由系统。它专注于嵌入式设备和无线路由器，并支持大量的硬件平台。OpenWrt具有灵活的软件包管理系统，可以轻松添加各种功能和扩展，如VPN、QoS、无线热点等。</li>
+<li>DD-WRT：DD-WRT是一款基于Linux操作系统的第三方固件，可用于支持多种无线路由器。它提供了许多高级功能，如VPN、QoS、无线信号增强、热点认证等。DD-WRT的用户界面相对简洁，适合有一定技术经验的用户。</li>
+<li>RouterOS：RouterOS是由MikroTik开发的专有软路由操作系统。它适用于MikroTik品牌的硬件设备，并提供了丰富的网络功能，如防火墙、VPN、负载均衡、无线网络管理等。RouterOS具有强大的配置选项和脚本功能，适用于中小型企业和服务提供商网络。</li>
+</ol>
+<p>其中普通玩家最常用的是<strong>openwrt系统</strong>。</p>
+<hr>
+<p>【本文将涉及：x86电脑刷openwrt教程；小米&#x2F;红米AC2100刷openwrt系统软路由系统教程；openwrt相关设置和家庭网络环境配置】</p>
+<p>【强烈建议学习硬路由刷软路由之前，先学习<strong>x86电脑</strong>刷软路由，能极大减少学习成本】</p>
+<p>软件包合集测试：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hhgw/hhgw.github.io/tree/main/some_data/icr-identify-age-related-conditions.zip">https://github.com/hhgw/hhgw.github.io/tree/main/some_data/icr-identify-age-related-conditions.zip</a></p>
+<p>待补充。。。</p>
 
         </div>
 
@@ -298,15 +284,15 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/python/"># python</a>
-                    
-                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
-                    
-                        <a href="/tags/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"># 个人博客</a>
-                    
                         <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
                     
-                        <a href="/tags/%E6%90%AD%E5%BB%BA%E7%BD%91%E9%A1%B5/"># 搭建网页</a>
+                        <a href="/tags/vpn/"># vpn</a>
+                    
+                        <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"># 科学上网</a>
+                    
+                        <a href="/tags/%E5%87%BA%E5%9B%BD/"># 出国</a>
+                    
+                        <a href="/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"># 软路由</a>
                     
                         
                 </span>
@@ -319,10 +305,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98A/">机器学习-分类问题A</a>
             
-            
-            <a class="next" rel="next" href="/2023/04/29/%E8%8B%B9%E6%9E%9C%E8%80%81%E8%AE%BE%E5%A4%87%E9%99%8D%E7%BA%A7%E4%B8%8E%E5%8F%8C%E7%B3%BB%E7%BB%9F/">苹果老设备降级与双系统</a>
+            <a class="next" rel="next" href="/2023/07/05/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">自制ChatGPT网页实现无科学环境使用</a>
             
         </section>
 
