@@ -13,7 +13,7 @@
 
 
 
-<title>苹果老设备降级与双系统 | hhgw&#39;s blog</title>
+<title>Transformer备忘 | hhgw&#39;s blog</title>
 
 
 
@@ -40,45 +40,6 @@
 
     
     
-        
-            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    "HTML-CSS": {
-        preferredFont: "TeX",
-        availableFonts: ["STIX","TeX"],
-        linebreaks: { automatic:true },
-        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
-    },
-    tex2jax: {
-        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
-        processEscapes: true,
-        ignoreClass: "tex2jax_ignore|dno",
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-        equationNumbers: { autoNumber: "AMS" },
-        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
-        Macros: { href: "{}" }
-    },
-    messageStyle: "none"
-    });
-</script>
-<!-- 给MathJax元素添加has-jax class -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-<!-- 通过连接CDN加载MathJax的js代码 -->
-<script type="text/javascript" async
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
         
     
 
@@ -235,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">苹果老设备降级与双系统</h1>
+            <h1 class="post-title">Transformer备忘</h1>
             
                 <div class="post-meta">
                     
@@ -244,14 +205,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-04-29&nbsp;&nbsp;14:30:00</a>
+                        Date: <a href="#">2023-09-05&nbsp;&nbsp;19:30:20</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/iOS%E6%93%8D%E4%BD%9C/">iOS操作</a>
+                                <a href="/categories/python/">python</a>
                             
                         </span>
                     
@@ -260,50 +221,32 @@
         </header>
 
         <div class="post-content">
-            <h1 id="苹果老设备降级与双系统"><a href="#苹果老设备降级与双系统" class="headerlink" title="苹果老设备降级与双系统"></a>苹果老设备降级与双系统</h1><p>2023-04-29 </p>
-<p>本文案例整理自 <a target="_blank" rel="noopener" href="https://tieba.baidu.com/p/5460807904?red_tag=2676432526#/">https://tieba.baidu.com/p/5460807904?red_tag=2676432526#/</a></p>
-<h2 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h2><p>如果你的 iPod touch (第五代)、iPad 2 (包含 2012 年的 32 纳米处理器制程改款)、iPad (第三代)、iPad (第四代)、iPad mini (第一代)、iPhone 4s、iPhone 5 或 iPhone 5c 正在运行 iOS 9.0 至 9.3.5 之间的任意一个 iOS 版本，你可以在无需备份固件签署证书的情况下降级到 iOS 8.4.1，但不能降级到 iOS 7。由于目前没有兼容 iOS 10.3.3 的越狱工具，这一回答暂时不适用于 iOS 10.3.3 的 iOS 设备。当兼容 iOS 10.3.3 的越狱工具推出后，这一回答将同样适用于 iOS 10.3.3。</p>
-<ul>
-<li><p>第一步：在未越狱状态下恢复出厂设置，清除所有东西(后面升级怕有概率的出问题),然后越狱。</p>
-</li>
-<li><p>第二步：重新配置系统版本描述以欺骗软件更新机制 - 打开 Cydia 后，搜索并安装 Filza。- 打开 Filza app，前往 &#x2F;System&#x2F;Library&#x2F;CoreServices。打开 SystemVersion.plist。</p>
-</li>
-<li><p>如果你正在使用 iPod touch (第五代)、iPad 2、iPad (第三代)、iPad (第四代)、iPad mini (第一代)、iPhone 4s 或 iPhone 5，修改 ProductVersion 的对应键值为 6.1.3，ProductBuildVersion 的对应键值为 10B329。</p>
-<p>如果你正在使用 iPhone 5c，修改 ProductVersion 的对应键值为 7.0.2，ProductBuildVersion 的对应键值为 11A501。</p>
-<p>再三仔细检查所做的修改没有错误，随后保存所做的修改。如果在修改错误的情况下继续执行第三步，你可能失去降级的机会，并会被迫更新到 iOS 10。</p>
-</li>
-<li><p>第三步：解除越狱- 前往设置 → 通用 → 还原 → 抹掉所有内容和设置，从而解除越狱。- 完成设备重置后的设置流程并激活你的 iOS 设备。</p>
-</li>
-<li><p>第四步：打开设置 → 通用 → 软件更新ios8.4.1。时间较长用了差不多二十分钟到半小时</p>
-</li>
-<li><p>第五步：再次前往设置 → 通用 → 还原 → 抹掉所有内容和设置。</p>
-</li>
-<li><p>重启 安装 tvOS 测试版系统的描述文件，从而禁用软件更新机制，防止设置 app 上方出现角标。</p>
-</li>
-</ul>
-<h2 id="双系统"><a href="#双系统" class="headerlink" title="双系统"></a>双系统</h2><p>首先，将你的iPad越狱后，在cydia添加coolbooter的源</p>
-<p>之后点那个添加的源一共有两个 我点的第二个 多安装几次才成功</p>
-<p>进入coolbooter，选择install（安装）</p>
-<p>然后选择你要安装的系统 我安装的是7.12我喜欢这个版本最大7G</p>
-<hr>
-<p>下面这个是实验pdf插入到md文本中。</p>
-
-
-	<div class="row">
-    <embed src="/pdf/test.pdf" width="100%" height="550" type="application/pdf">
-	</div>
-
-
-
-
-
-
-
-
-
-
-
-
+            <h1 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h1><p>2017年火于NLP，2021年火于CV</p>
+<h5 id="传统word2vec有何问题？"><a href="#传统word2vec有何问题？" class="headerlink" title="传统word2vec有何问题？"></a>传统word2vec有何问题？</h5><p>不同词在不同语境中表达的意思不同，但是预训练好的词向量vec是不变的。</p>
+<p>词 -&gt; 向量 -&gt; 模型</p>
+<h5 id="Attention是什么？"><a href="#Attention是什么？" class="headerlink" title="Attention是什么？"></a>Attention是什么？</h5><p>不同数据关注点不同，如何让计算机关注到有价值的信息。根据数据（上下文语境）让计算机找到不同的attention机制。</p>
+<h5 id="self-attention"><a href="#self-attention" class="headerlink" title="self-attention"></a>self-attention</h5><p>词不仅仅考虑词，还考虑当前词的上下文特征，融入词向量之中，就是self-attention</p>
+<h6 id="self-attention如何计算"><a href="#self-attention如何计算" class="headerlink" title="self-attention如何计算"></a>self-attention如何计算</h6><p>词x通过W_Q,W_K,W_V矩阵计算获得q,k,v</p>
+<p>Queries  要去查询的</p>
+<p>Keys     被查询的</p>
+<p>Values   实际的特征信息</p>
+<p>q与k分别内积表示相关性，获得分值</p>
+<p>把分值除以向量长度，再放softmax里跑一遍获得百分比，就知道每个词的重要程度，再乘各自value，求和就得到每个词的z</p>
+<p><img src="/img/Transformer%E5%A4%87%E5%BF%98/pic001.png" alt="img"></p>
+<h6 id="multi-headed-机制"><a href="#multi-headed-机制" class="headerlink" title="multi-headed 机制"></a>multi-headed 机制</h6><p>通过不同的head得到多个特征表达</p>
+<p>将所有的特征拼接到一起</p>
+<p>可以通过再加一层全连接层来降维</p>
+<p>一般需要堆叠多层</p>
+<h5 id="Decoder端"><a href="#Decoder端" class="headerlink" title="Decoder端"></a>Decoder端</h5><p>Attention计算不同</p>
+<p>加入了Mask机制</p>
+<h5 id="Transformal"><a href="#Transformal" class="headerlink" title="Transformal"></a>Transformal</h5><p><img src="/img/Transformer%E5%A4%87%E5%BF%98/pic002.png" alt="img"></p>
+<p>Transformal主要就是一个self-attention，其他结构和CNN类似。</p>
+<h5 id="关于BERT"><a href="#关于BERT" class="headerlink" title="关于BERT"></a>关于BERT</h5><p>就是transformer中的一个encoder端。</p>
+<h6 id="Embedding"><a href="#Embedding" class="headerlink" title="Embedding:"></a>Embedding:</h6><p>机器的“兴趣”向量，一般是隐含的。</p>
+<p>用途：近邻搜索，实现内容推荐</p>
+<p>但是当数据量大时，近邻搜索会变得很慢，可以使用Faiss（facebook AI）</p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=ro7AUaCWEZs">https://www.youtube.com/watch?v=ro7AUaCWEZs</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=sKyvsdEv6rk">https://www.youtube.com/watch?v=sKyvsdEv6rk</a></p>
 
         </div>
 
@@ -337,15 +280,9 @@
                 <span class="tag">
                     
                     
+                        <a href="/tags/python/"># python</a>
+                    
                         <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
-                    
-                        <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
-                    
-                        <a href="/tags/iOS/"># iOS</a>
-                    
-                        <a href="/tags/iPhone/"># iPhone</a>
-                    
-                        <a href="/tags/%E9%99%8D%E7%BA%A7/"># 降级</a>
                     
                         
                 </span>
@@ -358,10 +295,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/04/29/ipynb%E5%AF%BC%E5%87%BA%E4%B8%BAmd%E6%96%87%E4%BB%B6/">ipynb文件导出为md文件</a>
             
-            
-            <a class="next" rel="next" href="/2022/09/03/python%E5%8F%AF%E8%A7%86%E5%8C%962-%E5%9F%BA%E4%BA%8Epyecharts%E5%BA%93/">python可视化2——基于pyecharts库</a>
+            <a class="next" rel="next" href="/2023/07/07/%E8%BD%AF%E8%B7%AF%E7%94%B1%E7%B3%BB%E5%88%97A/">软路由系列-A</a>
             
         </section>
 
