@@ -363,6 +363,15 @@
 
 <p>解决方式就是获取token，登录github设置setting-&gt;Developer Settings-&gt;Prosonal access tokens 创建一个新token。然后就可以拿这个token当密码输入了。</p>
 <p>另外，全局科学上网后，可能还会出现连接不成功的情况，系网络问题，多次尝试<code>hexo d</code> 即可。</p>
+<p>重新设置密码：</p>
+<p>在_config.yml中：</p>
+<blockquote>
+<p>deploy:</p>
+<p>  type: git</p>
+<p>  repo: <a target="_blank" rel="noopener" href="https://xxxxxxxxxxxxxxx@github.com/hhgw/hhgw.github.io">https://xxxxxxxxxxxxxxx@github.com/hhgw/hhgw.github.io</a></p>
+<p>  branch: main  </p>
+</blockquote>
+<p>其中xxxxxxx就是token，填充进去即可</p>
 <h3 id="尝试访问"><a href="#尝试访问" class="headerlink" title="尝试访问"></a>尝试访问</h3><p>输入地址即可访问成功：</p>
 <p><a target="_blank" rel="noopener" href="https://hhgw.github.io/">https://hhgw.github.io</a></p>
 <h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p>博客样式太死板，想换成属于自己的风格，没问题我们可以更换博客的主题，来达到我们想要的风格。</p>
