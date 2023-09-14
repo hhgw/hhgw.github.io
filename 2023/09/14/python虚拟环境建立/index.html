@@ -13,7 +13,7 @@
 
 
 
-<title>Transformer备忘 | hhgw&#39;s blog</title>
+<title>python建立虚拟环境(mac) | hhgw&#39;s blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Transformer备忘</h1>
+            <h1 class="post-title">python建立虚拟环境(mac)</h1>
             
                 <div class="post-meta">
                     
@@ -205,7 +205,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-09-05&nbsp;&nbsp;19:30:20</a>
+                        Date: <a href="#">2023-09-14&nbsp;&nbsp;18:01:00</a>
                         </span>
                     
                     
@@ -214,6 +214,8 @@
                             
                                 <a href="/categories/python/">python</a>
                             
+                                <a href="/categories/python/venv/">venv</a>
+                            
                         </span>
                     
                 </div>
@@ -221,32 +223,39 @@
         </header>
 
         <div class="post-content">
-            <h1 id="Transformer"><a href="#Transformer" class="headerlink" title="Transformer"></a>Transformer</h1><p>2017年火于NLP，2021年火于CV</p>
-<h5 id="传统word2vec有何问题？"><a href="#传统word2vec有何问题？" class="headerlink" title="传统word2vec有何问题？"></a>传统word2vec有何问题？</h5><p>不同词在不同语境中表达的意思不同，但是预训练好的词向量vec是不变的。</p>
-<p>词 -&gt; 向量 -&gt; 模型</p>
-<h5 id="Attention是什么？"><a href="#Attention是什么？" class="headerlink" title="Attention是什么？"></a>Attention是什么？</h5><p>不同数据关注点不同，如何让计算机关注到有价值的信息。根据数据（上下文语境）让计算机找到不同的attention机制。</p>
-<h5 id="self-attention"><a href="#self-attention" class="headerlink" title="self-attention"></a>self-attention</h5><p>词不仅仅考虑词，还考虑当前词的上下文特征，融入词向量之中，就是self-attention</p>
-<h6 id="self-attention如何计算"><a href="#self-attention如何计算" class="headerlink" title="self-attention如何计算"></a>self-attention如何计算</h6><p>词x通过W_Q,W_K,W_V矩阵计算获得q,k,v</p>
-<p>Queries  要去查询的</p>
-<p>Keys     被查询的</p>
-<p>Values   实际的特征信息</p>
-<p>q与k分别内积表示相关性，获得分值</p>
-<p>把分值除以向量长度，再放softmax里跑一遍获得百分比，就知道每个词的重要程度，再乘各自value，求和就得到每个词的z</p>
-<p><img src="/img/Transformer%E5%A4%87%E5%BF%98/pic001.png" alt="img"></p>
-<h6 id="multi-headed-机制"><a href="#multi-headed-机制" class="headerlink" title="multi-headed 机制"></a>multi-headed 机制</h6><p>通过不同的head得到多个特征表达</p>
-<p>将所有的特征拼接到一起</p>
-<p>可以通过再加一层全连接层来降维</p>
-<p>一般需要堆叠多层</p>
-<h5 id="Decoder端"><a href="#Decoder端" class="headerlink" title="Decoder端"></a>Decoder端</h5><p>Attention计算不同</p>
-<p>加入了Mask机制</p>
-<h5 id="Transformal"><a href="#Transformal" class="headerlink" title="Transformal"></a>Transformal</h5><p><img src="/img/Transformer%E5%A4%87%E5%BF%98/pic002.png" alt="img"></p>
-<p>Transformal主要就是一个self-attention，其他结构和CNN类似。</p>
-<h5 id="关于BERT"><a href="#关于BERT" class="headerlink" title="关于BERT"></a>关于BERT</h5><p>就是transformer中的一个encoder端。</p>
-<h6 id="Embedding"><a href="#Embedding" class="headerlink" title="Embedding:"></a>Embedding:</h6><p>机器的“兴趣”向量，一般是隐含的。</p>
-<p>用途：近邻搜索，实现内容推荐</p>
-<p>但是当数据量大时，近邻搜索会变得很慢，可以使用Faiss（facebook AI）</p>
-<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=ro7AUaCWEZs">https://www.youtube.com/watch?v=ro7AUaCWEZs</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=sKyvsdEv6rk">https://www.youtube.com/watch?v=sKyvsdEv6rk</a></p>
+            <h1 id="python建立虚拟环境-mac"><a href="#python建立虚拟环境-mac" class="headerlink" title="python建立虚拟环境(mac)"></a>python建立虚拟环境(mac)</h1><p>python-mac</p>
+<p>自带的虚拟环境建立工具使用流程：</p>
+<p>terminal 中, 进入希望建立虚拟环境的文件夹，比如 <code>cd desktop</code></p>
+<p>输入 <code>python3.9 -m venv project_env</code></p>
+<p>即成功创建python3.9的虚拟环境，可以通过ls查看到<code>project_env</code>文件夹。</p>
+<p>接下来需要激活虚拟环境：</p>
+<p><code>source project_env/bin/activate</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hhgw@hhgwmacbookpro14 ~ % cd desktop</span><br><span class="line"></span><br><span class="line">hhgw@hhgwmacbookpro14 desktop % python3.9 -m venv project_env</span><br><span class="line"></span><br><span class="line">hhgw@hhgwmacbookpro14 desktop % source project_env/bin/activate</span><br><span class="line"></span><br><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % pip list</span><br><span class="line"></span><br><span class="line">Package  Version</span><br><span class="line"></span><br><span class="line">---------- -------</span><br><span class="line"></span><br><span class="line">pip    22.0.4</span><br><span class="line"></span><br><span class="line">setuptools 58.1.0</span><br><span class="line"></span><br><span class="line">WARNING: You are using pip version 22.0.4; however, version 23.2.1 is available.</span><br><span class="line"></span><br><span class="line">You should consider upgrading via the &#x27;/Users/hhgw/Desktop/project_env/bin/python3.9 -m pip install --upgrade pip&#x27; command.</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>pip freeze &gt; requirements.txt</code></p>
+<p>自动将pip环境生成requirements文档</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % pip freeze &gt; req.txt</span><br><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % cat req.txt</span><br><span class="line">numpy==1.25.2</span><br><span class="line">pandas==2.1.0</span><br><span class="line">python-dateutil==2.8.2</span><br><span class="line">pytz==2023.3.post1</span><br><span class="line">six==1.16.0</span><br><span class="line">tzdata==2023.3</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>deactivate</code></p>
+<p>关闭环境</p>
+<p><code>rm -rf project_env/</code></p>
+<p>删除环境</p>
+<p>环境也可以建立在项目文档中：</p>
+<p><code>mkdir my_project</code></p>
+<p><code>python3 -m venv my_project/venv</code></p>
+<p><code>source my_project/venv/bin/activate</code></p>
+<p><code>pip install -r requriements.txt</code></p>
+<p>注意，可以把环境建立在项目中，但不要把项目建立在环境中。</p>
+<p>如果希望创建和系统环境相同的虚拟环境：</p>
+<p><code>python3.9 -m venv venv --system-site-packages</code></p>
+<p>在虚拟环境中<strong>后续安装的包</strong> 不会影响到系统环境</p>
+<p>可以查看后续安装的包：</p>
+<p><code>pip list --local</code></p>
+<p><code>pip freeze --local</code></p>
 
         </div>
 
@@ -284,6 +293,8 @@
                     
                         <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
                     
+                        <a href="/tags/mac/"># mac</a>
+                    
                         
                 </span>
             </div>
@@ -295,10 +306,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/09/14/python%E6%9D%82%E4%B9%B1%E7%9F%A5%E8%AF%86%E7%82%B9A/">Python杂乱知识点A</a>
             
-            
-            <a class="next" rel="next" href="/2023/07/07/%E8%BD%AF%E8%B7%AF%E7%94%B1%E7%B3%BB%E5%88%97A/">软路由系列-A</a>
+            <a class="next" rel="next" href="/2023/09/14/python%E6%9D%82%E4%B9%B1%E7%9F%A5%E8%AF%86%E7%82%B9A/">Python杂乱知识点A</a>
             
         </section>
 
