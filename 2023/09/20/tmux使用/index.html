@@ -13,7 +13,7 @@
 
 
 
-<title>python建立虚拟环境(mac) | hhgw&#39;s blog</title>
+<title>tmux使用-解决ssh断开程序中断的问题 | hhgw&#39;s blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">python建立虚拟环境(mac)</h1>
+            <h1 class="post-title">tmux使用-解决ssh断开程序中断的问题</h1>
             
                 <div class="post-meta">
                     
@@ -205,16 +205,16 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-09-14&nbsp;&nbsp;18:01:00</a>
+                        Date: <a href="#">2023-09-20&nbsp;&nbsp;14:58:00</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/python/">python</a>
+                                <a href="/categories/terminal/">terminal</a>
                             
-                                <a href="/categories/python/venv/">venv</a>
+                                <a href="/categories/terminal/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a>
                             
                         </span>
                     
@@ -223,39 +223,223 @@
         </header>
 
         <div class="post-content">
-            <h1 id="python建立虚拟环境-mac"><a href="#python建立虚拟环境-mac" class="headerlink" title="python建立虚拟环境(mac)"></a>python建立虚拟环境(mac)</h1><p>python-mac</p>
-<p>自带的虚拟环境建立工具使用流程：</p>
-<p>terminal 中, 进入希望建立虚拟环境的文件夹，比如 <code>cd desktop</code></p>
-<p>输入 <code>python3.9 -m venv project_env</code></p>
-<p>即成功创建python3.9的虚拟环境，可以通过ls查看到<code>project_env</code>文件夹。</p>
-<p>接下来需要激活虚拟环境：</p>
-<p><code>source project_env/bin/activate</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hhgw@hhgwmacbookpro14 ~ % cd desktop</span><br><span class="line"></span><br><span class="line">hhgw@hhgwmacbookpro14 desktop % python3.9 -m venv project_env</span><br><span class="line"></span><br><span class="line">hhgw@hhgwmacbookpro14 desktop % source project_env/bin/activate</span><br><span class="line"></span><br><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % pip list</span><br><span class="line"></span><br><span class="line">Package  Version</span><br><span class="line"></span><br><span class="line">---------- -------</span><br><span class="line"></span><br><span class="line">pip    22.0.4</span><br><span class="line"></span><br><span class="line">setuptools 58.1.0</span><br><span class="line"></span><br><span class="line">WARNING: You are using pip version 22.0.4; however, version 23.2.1 is available.</span><br><span class="line"></span><br><span class="line">You should consider upgrading via the &#x27;/Users/hhgw/Desktop/project_env/bin/python3.9 -m pip install --upgrade pip&#x27; command.</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>pip freeze &gt; requirements.txt</code></p>
-<p>自动将pip环境生成requirements文档</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % pip freeze &gt; req.txt</span><br><span class="line">(project_env) hhgw@hhgwmacbookpro14 desktop % cat req.txt</span><br><span class="line">numpy==1.25.2</span><br><span class="line">pandas==2.1.0</span><br><span class="line">python-dateutil==2.8.2</span><br><span class="line">pytz==2023.3.post1</span><br><span class="line">six==1.16.0</span><br><span class="line">tzdata==2023.3</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>deactivate</code></p>
-<p>关闭环境</p>
-<p><code>rm -rf project_env/</code></p>
-<p>删除环境</p>
-<p>环境也可以建立在项目文档中：</p>
-<p><code>mkdir my_project</code></p>
-<p><code>python3 -m venv my_project/venv</code></p>
-<p><code>source my_project/venv/bin/activate</code></p>
-<p><code>pip install -r requriements.txt</code></p>
-<p>注意，可以把环境建立在项目中，但不要把项目建立在环境中。</p>
-<p>如果希望创建和系统环境相同的虚拟环境：</p>
-<p><code>python3.9 -m venv venv --system-site-packages</code></p>
-<p>在虚拟环境中<strong>后续安装的包</strong> 不会影响到系统环境</p>
-<p>可以查看后续安装的包：</p>
-<p><code>pip list --local</code></p>
-<p><code>pip freeze --local</code></p>
+            <h1 id="tmux使用-解决ssh断开程序中断的问题"><a href="#tmux使用-解决ssh断开程序中断的问题" class="headerlink" title="tmux使用-解决ssh断开程序中断的问题"></a>tmux使用-解决ssh断开程序中断的问题</h1><p>在远程服务器跑程序时，有时候会因为网络不好而会话中断，这时对应的程序也会中断。这个问题可以被<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=tmux&spm=1001.2101.3001.7020">tmux</a>很好的解决。在远程服务器上安装tmux,可以实现即使会话中断，也能保证程序在后台正常的运行。下面实现简单上手tmux.</p>
+<h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1.安装"></a>1.安装</h2><p>mac可以使用homebrew安装：</p>
+<p><code>brew install tmux</code></p>
+<p>linux安装</p>
+<p><code>sudo apt-get install tmux</code></p>
+<p>有conda的虚拟环境也可以使用</p>
+<p><code>conda install tmux</code></p>
+<h2 id="2-新建和退出"><a href="#2-新建和退出" class="headerlink" title="2.新建和退出"></a>2.新建和退出</h2><p>输入命令：tmux<br>这时会进入新建的tmux会话窗口，一般一开始默认。（左下角）<br>如果要退出tmux会话窗口，输入命令：<code>exit</code>.<br>建立特定名称的tTuX会话商口，输入命令：<code>tmux new -s [新建会话名称]</code></p>
+<h2 id="3-查看、重命名、接入以及转换"><a href="#3-查看、重命名、接入以及转换" class="headerlink" title="3.查看、重命名、接入以及转换"></a>3.查看、重命名、接入以及转换</h2><p>在未进入tmux商口的情况下，输入命令：<code>tmux ls</code>,可以看到全部的tmux会话<br>输入命令：<code>tmux rename-session -t [原会话名称] [新会话名称]</code>，可以实现对tmux会话的重命名 </p>
+<p>输入命令：<code>tmux attach -t [会话名称]</code>，可以进入已有的tmux会话</p>
+<p>进入了tmux会话窗口之后，输入命令：<code>tmux switch -t 会话名称</code>，可以转入对应的tmux会话。</p>
+<h2 id="4-分离和终止"><a href="#4-分离和终止" class="headerlink" title="4.分离和终止"></a>4.分离和终止</h2><p>进入了tmux会话窗口之后，输入命令：<code>tmux detach</code>，会退出当前会话，但当前会话会在后台存在，会话里运行的程序也会相应转到后<br>台，（直接点击右上角x号关闭窗口貌似也可以实现同样效果）<br>未进入tmux窗口的情况下，输入命令：<code>tmux kill-session -t [会话名称]</code>，实现强制终止会话，杀死tmux会话进程。</p>
+<h2 id="快捷键："><a href="#快捷键：" class="headerlink" title="快捷键："></a>快捷键：</h2><h2 id="tmux的常用命令："><a href="#tmux的常用命令：" class="headerlink" title="tmux的常用命令："></a>tmux的常用命令：</h2><ol>
+<li><p>﻿﻿创建新会话：tmux new-session -s sessionname</p>
+</li>
+<li><p>﻿﻿列出会话列表：tmux list-sessions</p>
+</li>
+<li><p>﻿﻿﻿返回到原会话：tmux attach-session -t sessionname</p>
+</li>
+<li><p>﻿﻿﻿离开会话：在tmux会话中按下Ctrl+b，然后松开，再按下d</p>
+<p>【mac是Ctrl】</p>
+</li>
+<li><p>﻿﻿﻿创建新窗口：在tmux会话中按下Ctrl+b，然后松开，再按下c</p>
+</li>
+<li><p>﻿﻿﻿切换窗口：在tmux会话中按下CtrL+b，然后松开，再按下数字键，切换到对应编号的窗</p>
+</li>
+<li><p>﻿﻿﻿水平分割窗口：在tmux会话中按下Ctrl+b，然后松开，再按下%</p>
+</li>
+<li><p>8.垂直分割窗口：在tmux会话中按下Ctrl+b，然后松开，再按下”</p>
+</li>
+<li><p>修改支持鼠标滚轮：Ctrl+b, 按: , 输入<code>set -g mouse on</code></p>
+</li>
+<li><p>﻿﻿切换面板：在tmux会话中按下Ctrl+b，然后松开，再按下方向键进行切换</p>
+</li>
+<li><p>﻿﻿﻿﻿关闭会话：exit</p>
+</li>
+</ol>
+<p><code>ctrl + b</code> 来激活快捷键，开启后可以使用一些特定按键来执行操作。</p>
+<table>
+<thead>
+<tr>
+<th>ctrl + b 来激活快捷键，开启后可以使用一些特定按键来执行操作。</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分类</td>
+<td>快捷键</td>
+<td>功能</td>
+</tr>
+<tr>
+<td>基础</td>
+<td>?</td>
+<td>获取帮助信息</td>
+</tr>
+<tr>
+<td>Session管理</td>
+<td>s</td>
+<td>列出所有会话</td>
+</tr>
+<tr>
+<td></td>
+<td>$</td>
+<td>重命名当前会话</td>
+</tr>
+<tr>
+<td></td>
+<td>d</td>
+<td>断开当前会话</td>
+</tr>
+<tr>
+<td>Window管理</td>
+<td>c</td>
+<td>创建一个新窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>,</td>
+<td>重命名当前窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>w</td>
+<td>列出所有窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>%</td>
+<td>水平分割窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>“</td>
+<td>垂直分割窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>n</td>
+<td>选择下一个窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>p</td>
+<td>选择上一个窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>0~9</td>
+<td>选择0~9对应的窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>l</td>
+<td>在前后两个窗口间切换</td>
+</tr>
+<tr>
+<td></td>
+<td>w</td>
+<td>通过窗口列表切换窗口</td>
+</tr>
+<tr>
+<td></td>
+<td>f</td>
+<td>在所有窗口中查找指定文本</td>
+</tr>
+<tr>
+<td>Pane管理</td>
+<td>%</td>
+<td>创建水平窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>“</td>
+<td>创建一个垂直窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>h</td>
+<td>将光标移入下左侧窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>j</td>
+<td>将光标移入下下方窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>l</td>
+<td>将光标移入下右侧窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>k</td>
+<td>将光标移入下上方窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>q</td>
+<td>显示窗格编号</td>
+</tr>
+<tr>
+<td></td>
+<td>o</td>
+<td>在窗格间切换</td>
+</tr>
+<tr>
+<td></td>
+<td>}</td>
+<td>与下一个窗格交换位置</td>
+</tr>
+<tr>
+<td></td>
+<td>{</td>
+<td>与上一个窗格交换位置</td>
+</tr>
+<tr>
+<td></td>
+<td>!</td>
+<td>在新窗口中显示当前窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>x</td>
+<td>关闭当前窗格</td>
+</tr>
+<tr>
+<td></td>
+<td>SPC</td>
+<td>循环切换窗格布局</td>
+</tr>
+<tr>
+<td></td>
+<td>Alt + o</td>
+<td>逆时针旋转窗格面板</td>
+</tr>
+<tr>
+<td></td>
+<td>Ctrl + o</td>
+<td>顺时针旋转窗格面板</td>
+</tr>
+<tr>
+<td></td>
+<td>方向键</td>
+<td>移动光标选择面板</td>
+</tr>
+<tr>
+<td>其它</td>
+<td>t</td>
+<td>在当前窗格显示时间</td>
+</tr>
+<tr>
+<td></td>
+<td>z</td>
+<td>最大化和最小化当前窗口</td>
+</tr>
+</tbody></table>
 
         </div>
 
@@ -289,11 +473,15 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/python/"># python</a>
+                        <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
                     
-                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                        <a href="/tags/tmux/"># tmux</a>
                     
-                        <a href="/tags/mac/"># mac</a>
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"># 服务器</a>
+                    
+                        <a href="/tags/terminal/"># terminal</a>
+                    
+                        <a href="/tags/ssh/"># ssh</a>
                     
                         
                 </span>
@@ -306,10 +494,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/09/20/tmux%E4%BD%BF%E7%94%A8/">tmux使用-解决ssh断开程序中断的问题</a>
             
-            
-            <a class="next" rel="next" href="/2023/09/14/python%E6%9D%82%E4%B9%B1%E7%9F%A5%E8%AF%86%E7%82%B9A/">Python杂乱知识点A</a>
+            <a class="next" rel="next" href="/2023/09/14/python%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83%E5%BB%BA%E7%AB%8B/">python建立虚拟环境(mac)</a>
             
         </section>
 
