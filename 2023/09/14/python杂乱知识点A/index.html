@@ -392,6 +392,16 @@
 <h2 id="异步编程"><a href="#异步编程" class="headerlink" title="异步编程"></a>异步编程</h2><p>asyncio</p>
 <p><a target="_blank" rel="noopener" href="https://www.gairuo.com/p/python-asynchronous">https://www.gairuo.com/p/python-asynchronous</a></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">do_async_job</span>(<span class="params">fut</span>):</span><br><span class="line">    <span class="keyword">await</span> asyncio.sleep(<span class="number">2</span>)</span><br><span class="line">    fut.set_result(<span class="string">&#x27;Hello future&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    loop = asyncio.get_running_loop()</span><br><span class="line"></span><br><span class="line">    future = loop.create_future()</span><br><span class="line">    loop.create_task(do_async_job(future))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 等到 future 有结果</span></span><br><span class="line">    <span class="keyword">await</span> future</span><br><span class="line">    <span class="built_in">print</span>(future.result())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br><span class="line"><span class="comment"># Hello future</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="LoRA-amp-PETF"><a href="#LoRA-amp-PETF" class="headerlink" title="LoRA &amp; PETF"></a>LoRA &amp; PETF</h2><p>“Low rank adaption” 和 “Parameter efficient fine tuning” 都是与模型训练和优化相关的概念。</p>
+<p>“Low rank adaption” 是指在机器学习中，对于已经训练好的模型，在应对新任务或新数据时进行适应性调整的方法。这种方法通常基于假设，即新任务或新数据与原任务或原数据之间可能存在一定的相关性。这种方法的思想是，通过对原始模型中的某些参数添加一些小的偏移或微调，使得模型能够更好地适应新任务或数据，而无需从头开始训练整个模型。低秩（low rank）指的是对模型参数进行稀疏化的一种方式，以减少模型的参数量，从而降低模型复杂度并提高适应能力。</p>
+<p>“Parameter efficient fine tuning” 是一种针对预训练模型（例如在大规模数据集上训练得到的模型）进行微调的方法。与从头训练整个模型相比，参数高效微调的目标是尽量减少对于模型参数的修改，以节省计算资源和时间。该方法通常是通过在小规模任务或数据集上进一步调整和优化模型参数，以使其适应于新任务或数据。这种参数微调的方法可以通过梯度更新或其他优化技术来实现，以最小化模型在新任务上的损失函数。通过这种方式，可以在相对较少的迭代次数内完成模型的优化和适应，从而实现参数高效微调的目的。</p>
+<p>综上所述，低秩适应和参数高效微调都是根据现有模型进行调整和优化的方法，以提高模型的适应性并在新任务或数据上获得更好的性能。</p>
+
         </div>
 
         

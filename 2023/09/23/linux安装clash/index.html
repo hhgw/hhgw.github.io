@@ -13,7 +13,7 @@
 
 
 
-<title>switch连接外服的相关方案 | hhgw&#39;s blog</title>
+<title>linux安装clash及其使用 | hhgw&#39;s blog</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">switch连接外服的相关方案</h1>
+            <h1 class="post-title">linux安装clash及其使用</h1>
             
                 <div class="post-meta">
                     
@@ -205,14 +205,18 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-05-15&nbsp;&nbsp;18:18:00</a>
+                        Date: <a href="#">2023-09-23&nbsp;&nbsp;15:58:09</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/">科学上网</a>
+                                <a href="/categories/Linux/">Linux</a>
+                            
+                                <a href="/categories/Linux/Clash/">Clash</a>
+                            
+                                <a href="/categories/Linux/Clash/IT%E6%8A%98%E8%85%BE/">IT折腾</a>
                             
                         </span>
                     
@@ -221,85 +225,36 @@
         </header>
 
         <div class="post-content">
-            <h1 id="swtich连接外服的相关方案"><a href="#swtich连接外服的相关方案" class="headerlink" title="swtich连接外服的相关方案"></a>swtich连接外服的相关方案</h1><h2 id="switch不同版本连接服务器区别"><a href="#switch不同版本连接服务器区别" class="headerlink" title="switch不同版本连接服务器区别"></a>switch不同版本连接服务器区别</h2><p>switch国行版本相当于一个腾讯视频播放器，连接的是腾讯服务器，所以一般都把购买ns国行版本的玩家成为国行烈士。这部分switch连接服务器是不会有问题的，但是联机游戏只能和国行玩家联机，eshop商店内游戏屈指可数，游戏补丁或dlc基本无法下载安装，卡带可以玩国行卡带（市场上买不到）和海外版卡带（比如港版，日版，欧美版）。</p>
-<p>switch非国行版都一样，没有区别，在国内无法连接任天堂服务器，所以需要科学上网，连接任何一个非大陆与俄罗斯的节点均可连接服务器，进行联机，下载游戏、补丁、dlc、新闻等。以下将针对这类机器给出连接服务器的方案。这部分机器可以和全球玩家联机，eshop商店内容取决于账号注册时所选的国家（地区），比如巴西、阿根廷、中国香港等，游戏基本内容一致，游戏均支持英文、日语，大部分支持简体中文，价格方面由于不同国家对不同游戏打折力度不同，一般会注册2-5个账号进行薅羊毛。</p>
-<h2 id="连接服务器的方案"><a href="#连接服务器的方案" class="headerlink" title="连接服务器的方案"></a>连接服务器的方案</h2><h3 id="方案一：国内部分公司提供的加速器"><a href="#方案一：国内部分公司提供的加速器" class="headerlink" title="方案一：国内部分公司提供的加速器"></a>方案一：国内部分公司提供的加速器</h3><ol>
-<li><p>特征：</p>
-<ul>
-<li><p>优点：有操作说明，跟着app说明操作即可。</p>
-</li>
-<li><p>缺点：相同流量下价格更贵；需要其他设备辅助；速度受限；针对不同需求（下载或联机游戏）推出的套餐不同，需要重复购买。</p>
-</li>
-<li><p>适合人群：网络小白、不差钱的土豪、几乎不下载游戏只联机的卡带玩家</p>
-</li>
-</ul>
-</li>
-<li><p>流程：</p>
-<ul>
-<li><p>选择一款加速器</p>
-<p>可以根据喜好自行选择，通常需要对应的设备连接相同网络并保持挂机。</p>
-<p>比如微信（手机）端的加速器：</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/001.png" alt="001"></p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/002.png" alt="002"></p>
-<p>以及电脑端端加速器：</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/003.png" alt="003"></p>
-</li>
-<li><p>根据程序提供的操作说明进行设置</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/004.png" alt="004"></p>
-</li>
-<li><p>付费使用</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/005.png" alt="005"></p>
-</li>
-</ul>
-</li>
+            <h1 id="Linux安装clash及其使用"><a href="#Linux安装clash及其使用" class="headerlink" title="Linux安装clash及其使用"></a>Linux安装clash及其使用</h1><h2 id="一、配置："><a href="#一、配置：" class="headerlink" title="一、配置："></a>一、配置：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">curl https://glados.rocks/tools/clash-linux.zip -o clash.zip</span><br><span class="line"></span><br><span class="line">unzip clash.zip</span><br><span class="line"></span><br><span class="line">cd clash</span><br><span class="line"></span><br><span class="line">把.yaml 配置文件传入此文件夹</span><br><span class="line"></span><br><span class="line">chmod +x ./clash-linux-amd64-v1.10.0</span><br><span class="line"></span><br><span class="line">./clash-linux-amd64-v1.10.0 -f 配置文件名.yaml -d .</span><br><span class="line"># 不要忘了最后的空格和点</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>输出以下内容代表配置成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">INFO[0000] Start initial compatible provider ♻️ 自动选择    </span><br><span class="line">INFO[0000] Start initial compatible provider ⛽ 剩余流量:98G </span><br><span class="line">INFO[0000] Start initial compatible provider 🌍 国外媒体     </span><br><span class="line">INFO[0000] Start initial compatible provider 套餐状态       </span><br><span class="line">INFO[0000] Start initial compatible provider 📲 电报信息     </span><br><span class="line">INFO[0000] Start initial compatible provider 📢 谷歌FCM    </span><br><span class="line">INFO[0000] Start initial compatible provider 🛑 全球拦截     </span><br><span class="line">INFO[0000] Start initial compatible provider 🐟 漏网之鱼     </span><br><span class="line">INFO[0000] Start initial compatible provider 🎯 全球直连     </span><br><span class="line">INFO[0000] Start initial compatible provider 📅 到期时间:2024-09-16 </span><br><span class="line">INFO[0000] Start initial compatible provider Ⓜ️ 微软服务    </span><br><span class="line">INFO[0000] Start initial compatible provider 🚀 节点选择     </span><br><span class="line">INFO[0000] Start initial compatible provider 🍎 苹果服务     </span><br><span class="line">INFO[0000] Start initial compatible provider 🍃 应用净化     </span><br><span class="line">INFO[0000] RESTful API listening at: 127.0.0.1:9090     </span><br><span class="line">INFO[0000] Mixed(http+socks) proxy listening at: [::]:7890 </span><br></pre></td></tr></table></figure>
+
+<p>日志提示已经开放了HTTP代理服务端口为7890, SOCK55服务端口为7890</p>
+<p>后面设置其他程序(浏览器&#x2F;GIT等)通过7890&#x2F;7891来代理访问网络就可以了。</p>
+<h2 id="第二步-使用代理"><a href="#第二步-使用代理" class="headerlink" title="第二步: 使用代理"></a>第二步: 使用代理</h2><ol>
+<li>例如 Git:</li>
 </ol>
-<hr>
-<h2 id="方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器"><a href="#方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器" class="headerlink" title="方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器"></a>方案二：手机或电脑作为旁路由转发数据，帮助ns连接服务器</h2><ol>
-<li><p>特征：</p>
-<ul>
-<li><p>优点：便宜（价格就是订阅科学上网节点的价格），方便设置。</p>
-</li>
-<li><p>缺点：需要其他设备辅助；需要技术门槛（会科学）。</p>
-</li>
-<li><p>适合人群：已经有节点的人；追求性价比的人；对服务器所处国家有细致要求的人。</p>
-</li>
-</ul>
-</li>
-<li><p>流程（以手机为例）：</p>
-<ul>
-<li><p>【此教程不涉及科学上网节点和订阅的教学，相关内容请自行谷歌】</p>
-</li>
-<li><p>将手机连接至Wi-Fi（最好区分 2.4G Wi-Fi和 5G Wi-Fi，日版5G支持频段和中国不同，相关设置可以在路由器后台进行操作），设置中查看手机的IP地址。如图所示，IP地址为192.168.5.161。</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/006.png" alt="006"></p>
-</li>
-<li><p>手机端打开全局代理，在自己的出国软件中打开“代理共享”功能，将IP设置为手机在Wi-Fi中的IP地址，此时为192.168.5.161。端口设置为1000-9999内随意一个整数。</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/007.png" alt="007"></p>
-</li>
-<li><p>将switch连接至同一个网络，选择网络–&gt;更改设置–&gt;代理服务器设置“启用”–&gt;服务器写手机的IP地址，端口为上面填的端口，自动验证“不启用”–&gt;保存。此时switch就可以通过手机转发数据的形式进行科学上网。</p>
-</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="方案三：软路由全局科学上网，直接连接Wi-Fi即可出国"><a href="#方案三：软路由全局科学上网，直接连接Wi-Fi即可出国" class="headerlink" title="方案三：软路由全局科学上网，直接连接Wi-Fi即可出国"></a>方案三：软路由全局科学上网，直接连接Wi-Fi即可出国</h2><p>有关软路由的配置可以参考B站，最好是谷歌搜索相关教程。</p>
-<p>软路由设置为主路由后，通过wallpass等插件，实现连接对应Wi-Fi即可出国。</p>
-<p>软路由设置为旁路由后，可以通过类似方案二的方式，通过设置IP代理实现出国。</p>
-<p><img src="/img/switch%E8%BF%9E%E6%8E%A5%E5%A4%96%E6%9C%8D/008.png" alt="008"></p>
-<ol>
-<li><p>特征：</p>
-<ul>
-<li><p>优点：便宜（价格就是订阅科学上网节点的价格），方便到只要连Wi-Fi即出国。</p>
-</li>
-<li><p>缺点：需要较高技术门槛（需要软路由）。</p>
-</li>
-<li><p>适合人群：已经有节点的人；折腾过软路由的人。</p>
-</li>
-</ul>
-</li>
-<li><p>流程：</p>
-<p>没啥要写的，正常连Wi-Fi就好。</p>
-</li>
-</ol>
+<p>新开一个Terminal，输入下面的查看能否正常运行:</p>
+<p><code>git clone https://github.com/twbs/bootstrap.git --config &quot;http.proxy=127.0.0.1:7890&quot;</code></p>
+<p>新终端开始下载后，原来clash的终端打印如下内容（不同的梯子会有不同的节点名称）则说明clash正常运行：</p>
+<p><code>INFO[0279] [TCP] 127.0.0.1:57512 --&gt; github.com:443 match DomainKeyword(github) using 🚀 节点选择[（SS）IEPL-香港19]</code> </p>
+<p>附：</p>
+<p>大陆地区linux服务器连接下载hugging face大型模型文件：</p>
+<p>需要安装git-lfs</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/git-lfs/git-lfs/blob/main/INSTALLING.md">https://github.com/git-lfs/git-lfs/blob/main/INSTALLING.md</a></p>
+<p>对ubuntu而言：</p>
+<p>apt&#x2F;deb repos: </p>
+<p><code>curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash</code></p>
+<p><code>sudo apt-get install git-lfs</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git lfs install</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">git clone https://huggingface.co/nagupv/deberta-v3-large-hf-weights（示例）</span><br><span class="line"></span><br><span class="line">如需翻墙：</span><br><span class="line">git clone https://huggingface.co/nagupv/deberta-v3-large-hf-weights --config &quot;http.proxy=127.0.0.1:7890&quot;（示例）</span><br></pre></td></tr></table></figure>
+
+
+
+<p>终端代理命令：</p>
+<p><code>export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890</code></p>
 
         </div>
 
@@ -333,17 +288,15 @@
                 <span class="tag">
                     
                     
+                        <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
+                    
                         <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"># 科学上网</a>
                     
                         <a href="/tags/vpn/"># vpn</a>
                     
                         <a href="/tags/%E5%87%BA%E5%9B%BD/"># 出国</a>
                     
-                        <a href="/tags/switch/"># switch</a>
-                    
-                        <a href="/tags/%E8%BD%AF%E8%B7%AF%E7%94%B1/"># 软路由</a>
-                    
-                        <a href="/tags/clash/"># clash</a>
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"># 服务器</a>
                     
                         
                 </span>
@@ -356,10 +309,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/07/05/%E8%87%AA%E5%88%B6ChatGPT%E7%BD%91%E9%A1%B5%E5%AE%9E%E7%8E%B0%E6%97%A0%E7%A7%91%E5%AD%A6%E7%8E%AF%E5%A2%83%E4%BD%BF%E7%94%A8/">自制ChatGPT网页实现无科学环境使用</a>
             
-            
-            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
+            <a class="next" rel="next" href="/2023/09/20/tmux%E4%BD%BF%E7%94%A8/">tmux使用-解决ssh断开程序中断的问题</a>
             
         </section>
 
