@@ -17,23 +17,23 @@
 
 
 
-    <link rel="icon" href="/hhgw/favicon.ico">
+    <link rel="icon" href="/favicon.ico">
 
 
 
 
     <!-- stylesheets list from _config.yml -->
     
-    <link rel="stylesheet" href="/hhgw/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     
 
 
 
     <!-- scripts list from _config.yml -->
     
-    <script src="/hhgw/js/script.js"></script>
+    <script src="/js/script.js"></script>
     
-    <script src="/hhgw/js/tocbot.min.js"></script>
+    <script src="/js/tocbot.min.js"></script>
     
 
 
@@ -108,16 +108,16 @@
         <header>
     <nav class="navbar">
         <div class="container">
-            <div class="navbar-header header-logo"><a href="/hhgw/">hhgw&#39;s Blog</a></div>
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
             <div class="menu navbar-right">
                 
-                    <a class="menu-item" href="/hhgw/archives">Posts</a>
+                    <a class="menu-item" href="/archives">Posts</a>
                 
-                    <a class="menu-item" href="/hhgw/category">Categories</a>
+                    <a class="menu-item" href="/category">Categories</a>
                 
-                    <a class="menu-item" href="/hhgw/tag">Tags</a>
+                    <a class="menu-item" href="/tag">Tags</a>
                 
-                    <a class="menu-item" href="/hhgw/about">About</a>
+                    <a class="menu-item" href="/about">About</a>
                 
                 <input id="switch_default" type="checkbox" class="switch_default">
                 <label for="switch_default" class="toggleBtn"></label>
@@ -130,19 +130,19 @@
         <div class="container">
             <div class="navbar-header">
                 <div>
-                    <a href="/hhgw/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
                 </div>
                 <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
             </div>
             <div class="menu" id="mobile-menu">
                 
-                    <a class="menu-item" href="/hhgw/archives">Posts</a>
+                    <a class="menu-item" href="/archives">Posts</a>
                 
-                    <a class="menu-item" href="/hhgw/category">Categories</a>
+                    <a class="menu-item" href="/category">Categories</a>
                 
-                    <a class="menu-item" href="/hhgw/tag">Tags</a>
+                    <a class="menu-item" href="/tag">Tags</a>
                 
-                    <a class="menu-item" href="/hhgw/about">About</a>
+                    <a class="menu-item" href="/about">About</a>
                 
             </div>
         </div>
@@ -251,9 +251,9 @@
                         <span class="post-category">
                     Category:
                             
-                                <a href="/hhgw/categories/python/">python</a>
+                                <a href="/categories/python/">python</a>
                             
-                                <a href="/hhgw/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
                             
                         </span>
                     
@@ -265,7 +265,7 @@
             <h1 id="机器学习-分类问题D"><a href="#机器学习-分类问题D" class="headerlink" title="机器学习-分类问题D"></a>机器学习-分类问题D</h1><p>数学公式在渲染器中会出现错误，目前还没有解决</p>
 <hr>
 <p>数据集：[face.zip]</p>
-<p><a href="https://github.com/hhgw/hhgw.github.io/tree/main/zip">https://github.com/hhgw/hhgw.github.io/tree/main/zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hhgw/hhgw.github.io/tree/main/zip">https://github.com/hhgw/hhgw.github.io/tree/main/zip</a></p>
 <hr>
 <p>In this week you will train a classifier to detect whether there is a face in a small image patch.  This type of face detector is used in your phone and camera whenever you take a picture!</p>
 <p>First we need to initialize Python.  Run the below cell.</p>
@@ -282,12 +282,12 @@
 
 <pre><code>(19, 19)
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_5_1.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_5_1.svg" alt="svg"></p>
 <p>Run the below code to show more images!</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># function to make an image montage</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">image_montage</span>(<span class="params">X, imsize=<span class="literal">None</span>, maxw=<span class="number">10</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;X can be a list of images, or a matrix of vectorized images.</span></span><br><span class="line"><span class="string">      Specify imsize when X is a matrix.&quot;&quot;&quot;</span></span><br><span class="line">    tmp = []</span><br><span class="line">    numimgs = <span class="built_in">len</span>(X)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># create a list of images (reshape if necessary)</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,numimgs):</span><br><span class="line">        <span class="keyword">if</span> imsize != <span class="literal">None</span>:</span><br><span class="line">            tmp.append(X[i].reshape(imsize))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            tmp.append(X[i])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># add blanks</span></span><br><span class="line">    <span class="keyword">if</span> (numimgs &gt; maxw) <span class="keyword">and</span> (mod(numimgs, maxw) &gt; <span class="number">0</span>):</span><br><span class="line">        leftover = maxw - mod(numimgs, maxw)</span><br><span class="line">        meanimg = <span class="number">0.5</span>*(X[<span class="number">0</span>].<span class="built_in">max</span>()+X[<span class="number">0</span>].<span class="built_in">min</span>())</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,leftover):</span><br><span class="line">            tmp.append(ones(tmp[<span class="number">0</span>].shape)*meanimg)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># make the montage</span></span><br><span class="line">    tmp2 = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(tmp),maxw):</span><br><span class="line">        tmp2.append( hstack(tmp[i:i+maxw]) )</span><br><span class="line">    montimg = vstack(tmp2) </span><br><span class="line">    <span class="keyword">return</span> montimg</span><br><span class="line"></span><br><span class="line"><span class="comment"># show a few images</span></span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">plt.imshow(image_montage(imgdata[<span class="string">&#x27;train&#x27;</span>][::<span class="number">20</span>]), cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_7_0.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_7_0.svg" alt="svg"></p>
 <p>Each image is a 2d array, but the classifier algorithms work on 1d vectors. Run the following code to convert all the images into 1d vectors by flattening.  The result should be a matrix where each row is a flattened image.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">trainX = empty((<span class="built_in">len</span>(imgdata[<span class="string">&#x27;train&#x27;</span>]), prod(imgsize)))</span><br><span class="line"><span class="keyword">for</span> i,img <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgdata[<span class="string">&#x27;train&#x27;</span>]):</span><br><span class="line">    trainX[i,:] = ravel(img)</span><br><span class="line">trainY = asarray(classes[<span class="string">&#x27;train&#x27;</span>])  <span class="comment"># convert list to numpy array</span></span><br><span class="line"><span class="built_in">print</span>(trainX.shape)</span><br><span class="line"><span class="built_in">print</span>(trainY.shape)</span><br><span class="line"></span><br><span class="line">testX = empty((<span class="built_in">len</span>(imgdata[<span class="string">&#x27;test&#x27;</span>]), prod(imgsize)))</span><br><span class="line"><span class="keyword">for</span> i,img <span class="keyword">in</span> <span class="built_in">enumerate</span>(imgdata[<span class="string">&#x27;test&#x27;</span>]):</span><br><span class="line">    testX[i,:] = ravel(img)</span><br><span class="line">testY = asarray(classes[<span class="string">&#x27;test&#x27;</span>])  <span class="comment"># convert list to numpy array</span></span><br><span class="line"><span class="built_in">print</span>(testX.shape)</span><br><span class="line"><span class="built_in">print</span>(testY.shape)</span><br></pre></td></tr></table></figure>
 
@@ -565,7 +565,7 @@ FPR= 0.025423728813559324
 
 <pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fc72e9d0&gt;
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_22_1.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_22_1.svg" alt="svg"></p>
 <p>Similarly, we can also look at the important features for xgboost.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># xgboost classifier</span></span><br><span class="line">fi = xgbcv.best_estimator_.feature_importances_.reshape(imgsize)</span><br><span class="line">plt.imshow(fi, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br></pre></td></tr></table></figure>
 
@@ -574,7 +574,7 @@ FPR= 0.025423728813559324
 
 <pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fe059520&gt;
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_24_1.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_24_1.svg" alt="svg"></p>
 <p>Similarly for Random Forests, we can look at the important features.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># random forest classifier</span></span><br><span class="line">fi = rfrcv.best_estimator_.feature_importances_.reshape(imgsize)</span><br><span class="line">plt.imshow(fi, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br></pre></td></tr></table></figure>
 
@@ -583,7 +583,7 @@ FPR= 0.025423728813559324
 
 <pre><code>&lt;matplotlib.colorbar.Colorbar at 0x7ff1fcdcb100&gt;
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_26_1.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_26_1.svg" alt="svg"></p>
 <p>Comment on which features (pixels) that AdaBoost and Random Forests are using</p>
 <hr>
 <ul>
@@ -602,7 +602,7 @@ FPR= 0.025423728813559324
 
 &lt;matplotlib.image.AxesImage at 0x7ff1fce6cb50&gt;
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_29_2.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_29_2.svg" alt="svg"></p>
 <p>Comment on anything you notice about what the SVM finds difficult (i.e., on the decision boundary or within the margin)</p>
 <hr>
 <ul>
@@ -697,8 +697,8 @@ FPR= 0.00211864406779661
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># new features</span></span><br><span class="line">img = imgdata[<span class="string">&#x27;train&#x27;</span>][<span class="number">0</span>]</span><br><span class="line">plt.imshow(img, cmap=<span class="string">&#x27;gray&#x27;</span>, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&quot;image&quot;</span>)</span><br><span class="line">plt.figure(figsize=(<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">extract_features([img], doplot=<span class="literal">True</span>);</span><br></pre></td></tr></table></figure>
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_0.svg" alt="svg"></p>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_1.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_0.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_36_1.svg" alt="svg"></p>
 <p>Now lets extract image features on the training and test sets.  It may take a few seconds.</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">trainXf = extract_features(imgdata[<span class="string">&#x27;train&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(trainXf.shape)</span><br><span class="line">testXf = extract_features(imgdata[<span class="string">&#x27;test&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(testXf.shape)</span><br></pre></td></tr></table></figure>
 
@@ -819,7 +819,7 @@ FPR= 0.023305084745762712
 
 &lt;matplotlib.image.AxesImage at 0x7ff202448580&gt;
 </code></pre>
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_48_2.svg" alt="svg"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_48_2.svg" alt="svg"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># step size for the sliding window</span></span><br><span class="line">step = <span class="number">4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># extract window patches with step size of 4</span></span><br><span class="line">patches = skimage.util.view_as_windows(testimg, (<span class="number">19</span>,<span class="number">19</span>), step=step)</span><br><span class="line">psize = patches.shape</span><br><span class="line"><span class="comment"># collapse the first 2 dimensions</span></span><br><span class="line">patches2 = patches.reshape((psize[<span class="number">0</span>]*psize[<span class="number">1</span>], psize[<span class="number">2</span>], psize[<span class="number">3</span>]))</span><br><span class="line"><span class="built_in">print</span>(patches2.shape )</span><br><span class="line"></span><br><span class="line"><span class="comment"># histogram equalize patches (improves contrast)</span></span><br><span class="line">patches3 = empty(patches2.shape)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(patches2.shape[<span class="number">0</span>]):</span><br><span class="line">    patches3[i,:,:] = skimage.exposure.equalize_hist(patches2[i,:,:])</span><br><span class="line"></span><br><span class="line"><span class="comment"># extract features</span></span><br><span class="line">newXf = extract_features(patches3)</span><br></pre></td></tr></table></figure>
 
 <pre><code>(5568, 19, 19)
@@ -838,7 +838,7 @@ FPR= 0.023305084745762712
 
 <pre><code>(-0.5, 479.5, 209.5, -0.5)
 </code></pre>
-<p>​<br><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_54_1.svg" alt="svg"><br>​    </p>
+<p>​<br><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Tutorial4-test_files/Tutorial4-test_54_1.svg" alt="svg"><br>​    </p>
 <p><em>How did your face detector do?</em></p>
 <hr>
 <ul>
@@ -879,23 +879,23 @@ FPR= 0.023305084745762712
                 <span class="tag">
                     
                     
-                        <a href="/hhgw/tags/python/"># python</a>
+                        <a href="/tags/python/"># python</a>
                     
-                        <a href="/hhgw/tags/sklearn/"># sklearn</a>
+                        <a href="/tags/sklearn/"># sklearn</a>
                     
-                        <a href="/hhgw/tags/scipy/"># scipy</a>
+                        <a href="/tags/scipy/"># scipy</a>
                     
-                        <a href="/hhgw/tags/SVM/"># SVM</a>
+                        <a href="/tags/SVM/"># SVM</a>
                     
-                        <a href="/hhgw/tags/Linear-Classifier/"># Linear Classifier</a>
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
                     
-                        <a href="/hhgw/tags/Kernel/"># Kernel</a>
+                        <a href="/tags/Kernel/"># Kernel</a>
                     
-                        <a href="/hhgw/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
                     
-                        <a href="/hhgw/tags/Boosting/"># Boosting</a>
+                        <a href="/tags/Boosting/"># Boosting</a>
                     
-                        <a href="/hhgw/tags/Random-Forests/"># Random Forests</a>
+                        <a href="/tags/Random-Forests/"># Random Forests</a>
                     
                         
                 </span>
@@ -903,15 +903,15 @@ FPR= 0.023305084745762712
             <div>
                 <a href="javascript:window.history.back();">back</a>
                 <span>· </span>
-                <a href="/hhgw/">home</a>
+                <a href="/">home</a>
             </div>
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/hhgw/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
+                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98C/">机器学习-分类问题C</a>
             
             
-            <a class="next" rel="next" href="/hhgw/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98B/">机器学习-分类问题B</a>
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98B/">机器学习-分类问题B</a>
             
         </section>
 

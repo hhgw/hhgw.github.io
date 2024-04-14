@@ -17,23 +17,23 @@
 
 
 
-    <link rel="icon" href="/hhgw/favicon.ico">
+    <link rel="icon" href="/favicon.ico">
 
 
 
 
     <!-- stylesheets list from _config.yml -->
     
-    <link rel="stylesheet" href="/hhgw/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     
 
 
 
     <!-- scripts list from _config.yml -->
     
-    <script src="/hhgw/js/script.js"></script>
+    <script src="/js/script.js"></script>
     
-    <script src="/hhgw/js/tocbot.min.js"></script>
+    <script src="/js/tocbot.min.js"></script>
     
 
 
@@ -108,16 +108,16 @@
         <header>
     <nav class="navbar">
         <div class="container">
-            <div class="navbar-header header-logo"><a href="/hhgw/">hhgw&#39;s Blog</a></div>
+            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
             <div class="menu navbar-right">
                 
-                    <a class="menu-item" href="/hhgw/archives">Posts</a>
+                    <a class="menu-item" href="/archives">Posts</a>
                 
-                    <a class="menu-item" href="/hhgw/category">Categories</a>
+                    <a class="menu-item" href="/category">Categories</a>
                 
-                    <a class="menu-item" href="/hhgw/tag">Tags</a>
+                    <a class="menu-item" href="/tag">Tags</a>
                 
-                    <a class="menu-item" href="/hhgw/about">About</a>
+                    <a class="menu-item" href="/about">About</a>
                 
                 <input id="switch_default" type="checkbox" class="switch_default">
                 <label for="switch_default" class="toggleBtn"></label>
@@ -130,19 +130,19 @@
         <div class="container">
             <div class="navbar-header">
                 <div>
-                    <a href="/hhgw/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
                 </div>
                 <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
             </div>
             <div class="menu" id="mobile-menu">
                 
-                    <a class="menu-item" href="/hhgw/archives">Posts</a>
+                    <a class="menu-item" href="/archives">Posts</a>
                 
-                    <a class="menu-item" href="/hhgw/category">Categories</a>
+                    <a class="menu-item" href="/category">Categories</a>
                 
-                    <a class="menu-item" href="/hhgw/tag">Tags</a>
+                    <a class="menu-item" href="/tag">Tags</a>
                 
-                    <a class="menu-item" href="/hhgw/about">About</a>
+                    <a class="menu-item" href="/about">About</a>
                 
             </div>
         </div>
@@ -251,9 +251,9 @@
                         <span class="post-category">
                     Category:
                             
-                                <a href="/hhgw/categories/python/">python</a>
+                                <a href="/categories/python/">python</a>
                             
-                                <a href="/hhgw/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+                                <a href="/categories/python/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
                             
                         </span>
                     
@@ -309,7 +309,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_7_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_7_0.png" alt="png"></p>
 <ul>
 <li><strong>Idea:</strong> train weak classifiers sequentially</li>
 <li>In each iteration,<ul>
@@ -342,7 +342,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_12_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_12_0.png" alt="png"></p>
 <h2 id="Iteration-2-part-1"><a href="#Iteration-2-part-1" class="headerlink" title="Iteration 2 (part 1)"></a>Iteration 2 (part 1)</h2><ul>
 <li>points are re-weighted based on the previous errors:<ul>
 <li>increase weights for misclassified samples: $w_i &#x3D; w_i e^{\alpha}$</li>
@@ -357,7 +357,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_14_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_14_0.png" alt="png"></p>
 <h2 id="Iteration-2-part-2"><a href="#Iteration-2-part-2" class="headerlink" title="Iteration 2 (part 2)"></a>Iteration 2 (part 2)</h2><ul>
 <li>using the weighted data, train another weak learner $h_2(\mathbf{x})$.</li>
 <li>the classifier function is the weighted sum of weak learners<ul>
@@ -370,25 +370,25 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_16_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_16_0.png" alt="png"></p>
 <h2 id="Keep-iterating…"><a href="#Keep-iterating…" class="headerlink" title="Keep iterating…"></a>Keep iterating…</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">3</span>]</span><br></pre></td></tr></table></figure>
 
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_18_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_18_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
 
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_19_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_19_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plts[<span class="number">5</span>]</span><br></pre></td></tr></table></figure>
 
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_20_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_20_0.png" alt="png"></p>
 <ul>
 <li>After many iterations…</li>
 </ul>
@@ -400,7 +400,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_23_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_23_0.png" alt="png"></p>
 <h2 id="Adaboost-Algorithm"><a href="#Adaboost-Algorithm" class="headerlink" title="Adaboost Algorithm"></a>Adaboost Algorithm</h2><ul>
 <li>Given data ${(\mathbf{x}_i, y_i)}$.</li>
 <li>Initialize data weights, $w_i&#x3D;1&#x2F;N, \forall i$.</li>
@@ -441,7 +441,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_27_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_27_0.png" alt="png"></p>
 <h2 id="Example-on-Iris-data"><a href="#Example-on-Iris-data" class="headerlink" title="Example on Iris data"></a>Example on Iris data</h2><ul>
 <li>Too many weak-learners and AdaBoost carves out space for the outliers.</li>
 </ul>
@@ -462,7 +462,7 @@
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_32_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_32_0.png" alt="png"></p>
 <ul>
 <li>Note: sklearn uses Real AdaBoost by default<ul>
 <li>uses class probabilities instead of binary class predictions (usually converges faster and has lower error)</li>
@@ -496,7 +496,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.23357214690901212, &#39;n_estimato
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(avgscores, pnames, bestind) = extract_grid_scores(adacv, paramgrid)</span><br><span class="line">paramfig = plt.figure()</span><br><span class="line">plt.imshow(avgscores, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.plot(bestind[<span class="number">1</span>], bestind[<span class="number">0</span>], <span class="string">&#x27;*w&#x27;</span>, markersize=<span class="number">12</span>)</span><br><span class="line">plt.ylabel(pnames[<span class="number">0</span>] + <span class="string">&#x27; index&#x27;</span>); plt.xlabel(pnames[<span class="number">1</span>] + <span class="string">&#x27; index&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;accuracy for different parameters&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_36_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_36_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = adacv.predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
 
 <pre><code>test accuracy = 0.94
@@ -509,7 +509,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.23357214690901212, &#39;n_estimato
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_39_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_39_0.png" alt="png"></p>
 <ul>
 <li>Boosting can do feature selection<ul>
 <li>each decision stump classifier looks at one feature</li>
@@ -517,7 +517,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.23357214690901212, &#39;n_estimato
 </li>
 <li>One of the original face detection methods (Viola-Jones) used Boosting.<ul>
 <li>extract a lot of image features from the face</li>
-<li>during training, Boosting learns which ones are the most useful.<br><img src="/hhgw/imgs/VJ-haar.png"></li>
+<li>during training, Boosting learns which ones are the most useful.<br><img src="/imgs/VJ-haar.png"></li>
 </ul>
 </li>
 </ul>
@@ -566,7 +566,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.23357214690901212, &#39;n_estimato
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_45_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_45_0.png" alt="png"></p>
 <h2 id="Cross-validation"><a href="#Cross-validation" class="headerlink" title="Cross-validation"></a>Cross-validation</h2><ul>
 <li>select the best hyperparameters<ul>
 <li>number of estimators</li>
@@ -595,7 +595,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.012742749857031322, &#39;n_estimat
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(avgscores, pnames, bestind) = extract_grid_scores(xgbcv, paramgrid)</span><br><span class="line">paramfig = plt.figure()</span><br><span class="line">plt.imshow(avgscores, interpolation=<span class="string">&#x27;nearest&#x27;</span>)</span><br><span class="line">plt.plot(bestind[<span class="number">1</span>], bestind[<span class="number">0</span>], <span class="string">&#x27;*w&#x27;</span>, markersize=<span class="number">12</span>)</span><br><span class="line">plt.ylabel(pnames[<span class="number">0</span>] + <span class="string">&#x27; index&#x27;</span>); plt.xlabel(pnames[<span class="number">1</span>] + <span class="string">&#x27; index&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;accuracy for different parameters&#x27;</span>)</span><br><span class="line">plt.colorbar()</span><br><span class="line">plt.axis(<span class="string">&#x27;image&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_48_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_48_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ifig2 = plt.figure(figsize=(<span class="number">4</span>,<span class="number">4</span>))</span><br><span class="line">plot_boosting(xgbcv.best_estimator_, axbox3, X3)</span><br><span class="line">plt.scatter(X3[:,<span class="number">0</span>], X3[:,<span class="number">1</span>], c=Y3, cmap=mycmap, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">plt.gca().xaxis.set_ticklabels([])</span><br><span class="line">plt.gca().yaxis.set_ticklabels([])</span><br><span class="line">plt.title(<span class="string">&quot;training data&quot;</span>)</span><br><span class="line">plt.close()</span><br></pre></td></tr></table></figure>
 
 
@@ -604,7 +604,7 @@ best params: &#123;&#39;learning_rate&#39;: 0.012742749857031322, &#39;n_estimat
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_50_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_50_0.png" alt="png"></p>
 <ul>
 <li><p>Since decision trees are used, there are a lot of hyperparameters to tune for the decision tree.</p>
 <ul>
@@ -645,7 +645,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_55_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_55_0.png" alt="png"></p>
 <h2 id="Boosting-Summary"><a href="#Boosting-Summary" class="headerlink" title="Boosting Summary"></a>Boosting Summary</h2><ul>
 <li><p><strong>Ensemble Classifier:</strong></p>
 <ul>
@@ -729,7 +729,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_65_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_65_0.png" alt="png"></p>
 <ul>
 <li>and the aggregated classifier</li>
 </ul>
@@ -738,7 +738,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_67_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_67_0.png" alt="png"></p>
 <ul>
 <li>Using more trees</li>
 </ul>
@@ -750,7 +750,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_70_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_70_0.png" alt="png"></p>
 <ul>
 <li>Try on the iris data</li>
 </ul>
@@ -765,7 +765,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_74_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_74_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = clfs[<span class="number">1000</span>].predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
 
 <pre><code>test accuracy = 0.98
@@ -778,7 +778,7 @@ best params: &#123;&#39;colsample_bytree&#39;: 0.9682214619643752, &#39;gamma&#3
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_77_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_77_0.png" alt="png"></p>
 <ul>
 <li>Important parameters for cross-validation<ul>
 <li><code>max_features</code> - maximum number of features used for each split</li>
@@ -803,7 +803,7 @@ best params: &#123;&#39;max_depth&#39;: 4, &#39;min_samples_leaf&#39;: 0.0130092
 
 
 
-<p><img src="/hhgw/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_82_0.png" alt="png"></p>
+<p><img src="/img/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0_%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98/Lb_files/Lb_82_0.png" alt="png"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># predict from the model</span></span><br><span class="line">predY = rfrcv.predict(testX)</span><br><span class="line"></span><br><span class="line"><span class="comment"># calculate accuracy</span></span><br><span class="line">acc      = metrics.accuracy_score(testY, predY)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;test accuracy =&quot;</span>, acc)</span><br></pre></td></tr></table></figure>
 
 <pre><code>test accuracy = 0.98
@@ -860,23 +860,23 @@ best params: &#123;&#39;max_depth&#39;: 4, &#39;min_samples_leaf&#39;: 0.0130092
                 <span class="tag">
                     
                     
-                        <a href="/hhgw/tags/python/"># python</a>
+                        <a href="/tags/python/"># python</a>
                     
-                        <a href="/hhgw/tags/sklearn/"># sklearn</a>
+                        <a href="/tags/sklearn/"># sklearn</a>
                     
-                        <a href="/hhgw/tags/scipy/"># scipy</a>
+                        <a href="/tags/scipy/"># scipy</a>
                     
-                        <a href="/hhgw/tags/SVM/"># SVM</a>
+                        <a href="/tags/SVM/"># SVM</a>
                     
-                        <a href="/hhgw/tags/Linear-Classifier/"># Linear Classifier</a>
+                        <a href="/tags/Linear-Classifier/"># Linear Classifier</a>
                     
-                        <a href="/hhgw/tags/Kernel/"># Kernel</a>
+                        <a href="/tags/Kernel/"># Kernel</a>
                     
-                        <a href="/hhgw/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
+                        <a href="/tags/python%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"># python机器学习</a>
                     
-                        <a href="/hhgw/tags/Boosting/"># Boosting</a>
+                        <a href="/tags/Boosting/"># Boosting</a>
                     
-                        <a href="/hhgw/tags/Random-Forests/"># Random Forests</a>
+                        <a href="/tags/Random-Forests/"># Random Forests</a>
                     
                         
                 </span>
@@ -884,15 +884,15 @@ best params: &#123;&#39;max_depth&#39;: 4, &#39;min_samples_leaf&#39;: 0.0130092
             <div>
                 <a href="javascript:window.history.back();">back</a>
                 <span>· </span>
-                <a href="/hhgw/">home</a>
+                <a href="/">home</a>
             </div>
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/hhgw/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98D/">机器学习-分类问题D</a>
+                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98D/">机器学习-分类问题D</a>
             
             
-            <a class="next" rel="next" href="/hhgw/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98A/">机器学习-分类问题A</a>
+            <a class="next" rel="next" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98A/">机器学习-分类问题A</a>
             
         </section>
 
