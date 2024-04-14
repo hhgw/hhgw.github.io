@@ -266,6 +266,24 @@
 <p>本文案例翻译整理自<a target="_blank" rel="noopener" href="https://www.cvxpy.org/index.html">Welcome to CVXPY 1.2 — CVXPY 1.2 documentation</a></p>
 <p>百度翻了翻，发现几乎没有cvxpy的中文入门教程，感觉这个库计算凸优化问题时挺有用的，所以参照文档试着写写入门教程，自己也顺便学习一下，有所纰漏见谅。</p>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>我的mac是直接python3.9 -m pip install cvxpy就行了（我装了好几个python所以需要声明是3.9的pip，一般正常pip3 install *** 就行），安装很顺利，看网上貌似win比较麻烦，我没试过。</p>
+<blockquote>
+<p>如果遇到报错，可能是因为：</p>
+<p>缺少CMake导致无法构建qdldl的wheel，从而导致安装cvxpy失败。在报错信息中可以看到以下关键信息：</p>
+<ol>
+<li><code>RuntimeError: CMake must be installed to build qdldl</code>：缺少CMake导致无法构建qdldl。</li>
+<li><code>FileNotFoundError: [Errno 2] No such file or directory: &#39;cmake&#39;</code>：找不到’CMake’文件或目录。</li>
+</ol>
+<p>解决方法是安装CMake。你可以通过以下步骤解决这个问题：</p>
+<ol>
+<li><p>安装CMake：在终端中运行以下命令安装CMake：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install cmake</span><br></pre></td></tr></table></figure>
+<p>如果你没有Homebrew，请先安装Homebrew，然后再运行上述命令。</p>
+</li>
+<li><p>安装cvxpy：再次尝试运行<code>python3.9 -m pip install cvxpy</code>安装cvxpy。</p>
+</li>
+</ol>
+<p>安装了CMake后，应该能够成功构建qdldl并安装cvxpy了。</p>
+</blockquote>
 <h2 id="CVXPY-1-2"><a href="#CVXPY-1-2" class="headerlink" title="CVXPY 1.2"></a>CVXPY 1.2</h2><p>CVXPY是一种用于凸优化问题的开源Python库。它允许您以自然的方式表达数学问题，而不是以编程求解要求的程序化标准形式表达问题，说白了就是，你可以直接说人话，不用说计算机鸟语。</p>
 <p>例如，以下代码解决了简单界约束的最小二乘问题：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Import packages.</span></span><br><span class="line"><span class="keyword">import</span> cvxpy <span class="keyword">as</span> cp</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># Generate a random non-trivial【非平凡】 linear program.</span></span><br><span class="line">m = <span class="number">15</span></span><br><span class="line">n = <span class="number">10</span></span><br><span class="line">np.random.seed(<span class="number">1</span>)</span><br><span class="line">s0 = np.random.randn(m)</span><br><span class="line">lamb0 = np.maximum(-s0, <span class="number">0</span>)</span><br><span class="line">s0 = np.maximum(s0, <span class="number">0</span>)</span><br><span class="line">x0 = np.random.randn(n)</span><br><span class="line">A = np.random.randn(m, n)</span><br><span class="line">b = A @ x0 + s0</span><br><span class="line">c = -A.T @ lamb0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Define and solve the CVXPY problem.</span></span><br><span class="line">x = cp.Variable(n)</span><br><span class="line">prob = cp.Problem(cp.Minimize(c.T@x),</span><br><span class="line">                 [A @ x &lt;= b])</span><br><span class="line">prob.solve()</span><br><span class="line"></span><br><span class="line"><span class="comment"># Print result.</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nThe optimal value is&quot;</span>, prob.value)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;A solution x is&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(x.value)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;A dual solution is&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(prob.constraints[<span class="number">0</span>].dual_value)</span><br></pre></td></tr></table></figure>
