@@ -17,23 +17,23 @@
 
 
 
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/hhgw/favicon.ico">
 
 
 
 
     <!-- stylesheets list from _config.yml -->
     
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/hhgw/css/style.css">
     
 
 
 
     <!-- scripts list from _config.yml -->
     
-    <script src="/js/script.js"></script>
+    <script src="/hhgw/js/script.js"></script>
     
-    <script src="/js/tocbot.min.js"></script>
+    <script src="/hhgw/js/tocbot.min.js"></script>
     
 
 
@@ -69,16 +69,16 @@
         <header>
     <nav class="navbar">
         <div class="container">
-            <div class="navbar-header header-logo"><a href="/">hhgw&#39;s Blog</a></div>
+            <div class="navbar-header header-logo"><a href="/hhgw/">hhgw&#39;s Blog</a></div>
             <div class="menu navbar-right">
                 
-                    <a class="menu-item" href="/archives">Posts</a>
+                    <a class="menu-item" href="/hhgw/archives">Posts</a>
                 
-                    <a class="menu-item" href="/category">Categories</a>
+                    <a class="menu-item" href="/hhgw/category">Categories</a>
                 
-                    <a class="menu-item" href="/tag">Tags</a>
+                    <a class="menu-item" href="/hhgw/tag">Tags</a>
                 
-                    <a class="menu-item" href="/about">About</a>
+                    <a class="menu-item" href="/hhgw/about">About</a>
                 
                 <input id="switch_default" type="checkbox" class="switch_default">
                 <label for="switch_default" class="toggleBtn"></label>
@@ -91,19 +91,19 @@
         <div class="container">
             <div class="navbar-header">
                 <div>
-                    <a href="/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                    <a href="/hhgw/">hhgw&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
                 </div>
                 <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
             </div>
             <div class="menu" id="mobile-menu">
                 
-                    <a class="menu-item" href="/archives">Posts</a>
+                    <a class="menu-item" href="/hhgw/archives">Posts</a>
                 
-                    <a class="menu-item" href="/category">Categories</a>
+                    <a class="menu-item" href="/hhgw/category">Categories</a>
                 
-                    <a class="menu-item" href="/tag">Tags</a>
+                    <a class="menu-item" href="/hhgw/tag">Tags</a>
                 
-                    <a class="menu-item" href="/about">About</a>
+                    <a class="menu-item" href="/hhgw/about">About</a>
                 
             </div>
         </div>
@@ -212,9 +212,9 @@
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/python/">python</a>
+                                <a href="/hhgw/categories/python/">python</a>
                             
-                                <a href="/categories/python/python%E5%8F%AF%E8%A7%86%E5%8C%96/">python可视化</a>
+                                <a href="/hhgw/categories/python/python%E5%8F%AF%E8%A7%86%E5%8C%96/">python可视化</a>
                             
                         </span>
                     
@@ -238,7 +238,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"><span class="keyword">from</span> pyecharts.<span class="built_in">globals</span> <span class="keyword">import</span> ThemeType</span><br><span class="line"></span><br><span class="line">bar=Bar(init_opts=opts.InitOpts(theme=ThemeType.LIGHT)) <span class="comment">#设置柱状图的显示风格</span></span><br><span class="line"></span><br><span class="line">bar.add_xaxis([<span class="string">&#x27;语文&#x27;</span>,<span class="string">&#x27;数学&#x27;</span>,<span class="string">&#x27;英语&#x27;</span>,<span class="string">&#x27;计算机&#x27;</span>,<span class="string">&#x27;物理&#x27;</span>,<span class="string">&#x27;化学&#x27;</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;宋丽英&#x27;</span>,[<span class="number">86</span>,<span class="number">64</span>,<span class="number">85</span>,<span class="number">85</span>,<span class="number">90</span>,<span class="number">55</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;王大伟&#x27;</span>,[<span class="number">92</span>,<span class="number">99</span>,<span class="number">95</span>,<span class="number">94</span>,<span class="number">92</span>,<span class="number">94</span>])</span><br><span class="line">bar.add_yaxis(<span class="string">&#x27;张  珍&#x27;</span>,[<span class="number">98</span>,<span class="number">96</span>,<span class="number">98</span>,<span class="number">98</span>,<span class="number">87</span>,<span class="number">96</span>])</span><br><span class="line"></span><br><span class="line">bar.set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&#x27;学生成绩表&#x27;</span>))</span><br><span class="line">bar.render(<span class="string">&#x27;testBar.html&#x27;</span>) <span class="comment"># 输出到指定的文件，若为空，则默认为render.html</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>输出为一个html文件，打开后如下：</p>
-<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/002.png" alt="002"></p>
+<p><img src="/hhgw/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/002.png" alt="002"></p>
 <hr>
 <p>—-注意到—-</p>
 <h4 id="InitOpts：初始化配置项"><a href="#InitOpts：初始化配置项" class="headerlink" title="InitOpts：初始化配置项"></a><a target="_blank" rel="noopener" href="https://pyecharts.org/#/zh-cn/global_options?id=initopts%EF%BC%9A%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E9%A1%B9">InitOpts：初始化配置项</a></h4><blockquote>
@@ -284,7 +284,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"></span><br><span class="line">attr=[<span class="string">&quot;服装&quot;</span>,<span class="string">&quot;玩具&quot;</span>,<span class="string">&quot;电器&quot;</span>,<span class="string">&quot;首饰&quot;</span>]</span><br><span class="line">v1=[<span class="number">1000</span>,<span class="number">2300</span>,<span class="number">500</span>,<span class="number">5020</span>]</span><br><span class="line">v2=[<span class="number">1200</span>,<span class="number">2500</span>,<span class="number">620</span>,<span class="number">2030</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bar1</span>() -&gt; Bar:     <span class="comment"># 链式书写</span></span><br><span class="line">    c=(</span><br><span class="line">        Bar()</span><br><span class="line">        .add_xaxis(attr)           <span class="comment"># 设置分类轴</span></span><br><span class="line">        .add_yaxis(<span class="string">&#x27;商家A&#x27;</span>,v1)      <span class="comment"># 设置数值轴</span></span><br><span class="line">        .add_yaxis(<span class="string">&#x27;商家B&#x27;</span>,v2)</span><br><span class="line">        .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&#x27;商品销售&#x27;</span>))</span><br><span class="line">        .set_series_opts(</span><br><span class="line">            label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">            markpoint_opts=opts.MarkPointOpts(</span><br><span class="line">                data=[</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;max&#x27;</span>,name=<span class="string">&#x27;最大值&#x27;</span>),</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;min&#x27;</span>,name=<span class="string">&#x27;最小值&#x27;</span>),</span><br><span class="line">                    opts.MarkPointItem(type_=<span class="string">&#x27;average&#x27;</span>,name=<span class="string">&#x27;平均值&#x27;</span>),</span><br><span class="line">                ]</span><br><span class="line">            ),</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line">bar1().render()</span><br></pre></td></tr></table></figure>
 
 <p>输出结果：</p>
-<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/003.png" alt="003"></p>
+<p><img src="/hhgw/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/003.png" alt="003"></p>
 <p>将鼠标移动到图标上可以显示详细信息：</p>
 <p> <a href="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/li1_2.html">li1_2.html</a> </p>
 <h3 id="输出图片格式的两种方法"><a href="#输出图片格式的两种方法" class="headerlink" title="输出图片格式的两种方法"></a>输出图片格式的两种方法</h3><h4 id="chromedrive"><a href="#chromedrive" class="headerlink" title="chromedrive"></a>chromedrive</h4><p>一般截图就好了，如果要批量输出或者自动化输出图片格式，需要用<strong>pyecharts-snapshot</strong>插件。还需要配合Chrome浏览器对应的<strong>chromedriver</strong>。（爬虫我记得也用到了这个)</p>
@@ -331,7 +331,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyecharts.render <span class="keyword">import</span> make_snapshot</span><br><span class="line"><span class="keyword">from</span> snapshot_selenium <span class="keyword">import</span> snapshot</span><br><span class="line"></span><br><span class="line">make_snapshot(snapshot, bar1().render(),<span class="string">&quot;li1_2.png&quot;</span>)</span><br></pre></td></tr></table></figure>
 
 <p>输出结果：</p>
-<p><img src="/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/li1_2.png" alt="li1_2"></p>
+<p><img src="/hhgw/img/python%E5%8F%AF%E8%A7%86%E5%8C%962/li1_2.png" alt="li1_2"></p>
 <h4 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h4><p>还有第二种方法，大致流程（win）如下（我没有试过）：</p>
 <blockquote>
 <p>第一步:下载并安装Node.js</p>
@@ -384,15 +384,15 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/python/"># python</a>
+                        <a href="/hhgw/tags/python/"># python</a>
                     
-                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
+                        <a href="/hhgw/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
                     
-                        <a href="/tags/python%E5%8F%AF%E8%A7%86%E5%8C%96/"># python可视化</a>
+                        <a href="/hhgw/tags/python%E5%8F%AF%E8%A7%86%E5%8C%96/"># python可视化</a>
                     
-                        <a href="/tags/pyecharts/"># pyecharts</a>
+                        <a href="/hhgw/tags/pyecharts/"># pyecharts</a>
                     
-                        <a href="/tags/echarts/"># echarts</a>
+                        <a href="/hhgw/tags/echarts/"># echarts</a>
                     
                         
                 </span>
@@ -400,15 +400,15 @@
             <div>
                 <a href="javascript:window.history.back();">back</a>
                 <span>· </span>
-                <a href="/">home</a>
+                <a href="/hhgw/">home</a>
             </div>
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/04/29/%E8%8B%B9%E6%9E%9C%E8%80%81%E8%AE%BE%E5%A4%87%E9%99%8D%E7%BA%A7%E4%B8%8E%E5%8F%8C%E7%B3%BB%E7%BB%9F/">苹果老设备降级与双系统</a>
+                <a class="prev" rel="prev" href="/hhgw/2023/04/29/%E8%8B%B9%E6%9E%9C%E8%80%81%E8%AE%BE%E5%A4%87%E9%99%8D%E7%BA%A7%E4%B8%8E%E5%8F%8C%E7%B3%BB%E7%BB%9F/">苹果老设备降级与双系统</a>
             
             
-            <a class="next" rel="next" href="/2022/08/26/iphone%E7%BB%95ID%E9%94%81/">iPhone绕ID锁及激活</a>
+            <a class="next" rel="next" href="/hhgw/2022/08/26/iphone%E7%BB%95ID%E9%94%81/">iPhone绕ID锁及激活</a>
             
         </section>
 
