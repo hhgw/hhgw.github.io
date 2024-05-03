@@ -231,7 +231,7 @@
 <p>有conda的虚拟环境也可以使用</p>
 <p><code>conda install tmux</code></p>
 <h2 id="2-新建和退出"><a href="#2-新建和退出" class="headerlink" title="2.新建和退出"></a>2.新建和退出</h2><p>输入命令：tmux<br>这时会进入新建的tmux会话窗口，一般一开始默认。（左下角）<br>如果要退出tmux会话窗口，输入命令：<code>exit</code>.<br>建立特定名称的tTuX会话商口，输入命令：<code>tmux new -s [新建会话名称]</code></p>
-<h2 id="3-查看、重命名、接入以及转换"><a href="#3-查看、重命名、接入以及转换" class="headerlink" title="3.查看、重命名、接入以及转换"></a>3.查看、重命名、接入以及转换</h2><p>在未进入tmux商口的情况下，输入命令：<code>tmux ls</code>,可以看到全部的tmux会话<br>输入命令：<code>tmux rename-session -t [原会话名称] [新会话名称]</code>，可以实现对tmux会话的重命名 </p>
+<h2 id="3-查看、重命名、接入以及转换"><a href="#3-查看、重命名、接入以及转换" class="headerlink" title="3.查看、重命名、接入以及转换"></a>3.查看、重命名、接入以及转换</h2><p>在未进入tmux窗口的情况下，输入命令：<code>tmux ls</code>,可以看到全部的tmux会话<br>输入命令：<code>tmux rename-session -t [原会话名称] [新会话名称]</code>，可以实现对tmux会话的重命名 </p>
 <p>输入命令：<code>tmux attach -t [会话名称]</code>，可以进入已有的tmux会话</p>
 <p>进入了tmux会话窗口之后，输入命令：<code>tmux switch -t 会话名称</code>，可以转入对应的tmux会话。</p>
 <h2 id="4-分离和终止"><a href="#4-分离和终止" class="headerlink" title="4.分离和终止"></a>4.分离和终止</h2><p>进入了tmux会话窗口之后，输入命令：<code>tmux detach</code>，会退出当前会话，但当前会话会在后台存在，会话里运行的程序也会相应转到后<br>台，（直接点击右上角x号关闭窗口貌似也可以实现同样效果）<br>未进入tmux窗口的情况下，输入命令：<code>tmux kill-session -t [会话名称]</code>，实现强制终止会话，杀死tmux会话进程。</p>
@@ -440,6 +440,34 @@
 <td>最大化和最小化当前窗口</td>
 </tr>
 </tbody></table>
+<blockquote>
+<p>【from GPT4】</p>
+<p>另外：</p>
+<p>使用 <code>tmux</code> 是个不错的选择！这里有一个简单的步骤指南，帮助你通过 <code>tmux</code> 保持你的 <code>abc.ipynb</code> 笔记本在服务器上继续运行：</p>
+<ol>
+<li><p><strong>连接到你的服务器</strong>：<br>使用 SSH 或其他远程连接工具登录到你的服务器。</p>
+</li>
+<li><p><strong>启动一个新的 <code>tmux</code> 会话</strong>：<br>在终端输入以下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s mysession</span><br></pre></td></tr></table></figure>
+<p>这里 <code>mysession</code> 是你给会话命名的名称，你可以根据需要更改它。</p>
+</li>
+<li><p><strong>在 <code>tmux</code> 会话中启动 Jupyter Notebook</strong>：<br>确保你在启动 Jupyter Notebook 之前处于你笔记本文件的正确目录。然后运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jupyter notebook</span><br></pre></td></tr></table></figure>
+<p>或者如果你需要通过特定端口访问，或者需要其他启动选项，可以添加相应的参数。</p>
+</li>
+<li><p><strong>断开 <code>tmux</code> 会话</strong>：<br>当你启动了 Jupyter Notebook 并且确认一切正常运行后，你可以安全地断开 <code>tmux</code> 会话而不会终止运行中的程序。按下 <code>Ctrl+B</code> 然后立即按 <code>D</code>，这会将你从当前会话中分离出来并返回到普通的终端会话。</p>
+</li>
+<li><p><strong>重新连接到 <code>tmux</code> 会话</strong>：<br>如果你需要回到你的 Jupyter Notebook 或查看输出，可以随时重新连接到你的 <code>tmux</code> 会话：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux attach -t mysession</span><br></pre></td></tr></table></figure>
+<p>确保使用你之前命名的会话名称。</p>
+</li>
+<li><p><strong>关闭 <code>tmux</code> 会话</strong>：<br>当你完成工作并不再需要保持笔记本运行时，可以关闭 <code>tmux</code> 会话。首先，重新连接到会话，然后可以直接在 <code>tmux</code> 里关闭 Jupyter Notebook，之后输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+<p>这会结束 <code>tmux</code> 会话并关闭所有相关的进程。</p>
+</li>
+</ol>
+<p>这样，你就可以确保即使在远程连接断开后，你的笔记本仍能继续运行。希望这能帮到你！如果有其他问题或需要进一步的帮助，请随时告诉我。</p>
+</blockquote>
 
         </div>
 
