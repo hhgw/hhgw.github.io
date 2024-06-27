@@ -13,7 +13,7 @@
 
 
 
-<title>ipynb文件导出为md文件 | hhgw&#39;s blog</title>
+<title>Linux安装miniconda | hhgw&#39;s blog</title>
 
 
 
@@ -40,45 +40,6 @@
 
     
     
-        
-            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    "HTML-CSS": {
-        preferredFont: "TeX",
-        availableFonts: ["STIX","TeX"],
-        linebreaks: { automatic:true },
-        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
-    },
-    tex2jax: {
-        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
-        processEscapes: true,
-        ignoreClass: "tex2jax_ignore|dno",
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-        equationNumbers: { autoNumber: "AMS" },
-        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
-        Macros: { href: "{}" }
-    },
-    messageStyle: "none"
-    });
-</script>
-<!-- 给MathJax元素添加has-jax class -->
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-<!-- 通过连接CDN加载MathJax的js代码 -->
-<script type="text/javascript" async
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
         
     
 
@@ -235,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">ipynb文件导出为md文件</h1>
+            <h1 class="post-title">Linux安装miniconda</h1>
             
                 <div class="post-meta">
                     
@@ -244,14 +205,18 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">2023-04-29&nbsp;&nbsp;15:30:00</a>
+                        Date: <a href="#">2024-06-27&nbsp;&nbsp;11:01:00</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/">个人博客搭建</a>
+                                <a href="/categories/python/">python</a>
+                            
+                                <a href="/categories/python/Linux/">Linux</a>
+                            
+                                <a href="/categories/python/Linux/miniconda/">miniconda</a>
                             
                         </span>
                     
@@ -260,11 +225,72 @@
         </header>
 
         <div class="post-content">
-            <h1 id="ipynb文件导出为md文件"><a href="#ipynb文件导出为md文件" class="headerlink" title="ipynb文件导出为md文件"></a>ipynb文件导出为md文件</h1><p>命令行依次输入</p>
-<blockquote>
-<p>pip install nbconvert<br>pip install pandoc<br>jupyter nbconvert –to markdown 文件名</p>
-</blockquote>
-<p>到同目录下查看生成的同名md文件与文件夹</p>
+            <h1 id="Linux安装miniconda"><a href="#Linux安装miniconda" class="headerlink" title="Linux安装miniconda"></a>Linux安装miniconda</h1><p>相关pdf及zip：</p>
+<p>[Miniconda3-latest-Linux-x86_64.zip]</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hhgw/hhgw.github.io/tree/main/zip">https://github.com/hhgw/hhgw.github.io/tree/main/zip</a></p>
+<p>要在Linux系统中使用Miniconda3-latest-Linux-x86_64.sh文件安装并配置Python环境，请按照以下步骤操作：</p>
+<ol>
+<li><p><strong>下载Miniconda</strong>:</p>
+<ul>
+<li>首先，从Miniconda官方网站下载Miniconda安装脚本文件Miniconda3-latest-Linux-x86_64.sh。你可以使用wget命令从终端下载，也可以在浏览器中下载并将文件移动到你的Linux系统中。</li>
+</ul>
+</li>
+<li><p><strong>安装Miniconda</strong>:</p>
+<ul>
+<li>打开终端，导航到包含Miniconda安装脚本的目录。</li>
+<li>运行以下命令安装Miniconda：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash Miniconda3-latest-Linux-x86_64.sh</span><br></pre></td></tr></table></figure></li>
+<li>接受许可协议，选择安装路径，以及是否将conda初始化加入到你的.bashrc&#x2F;.bash_profile文件中。</li>
+</ul>
+</li>
+<li><p><strong>安装Miniconda到指定目录</strong>:</p>
+<p>如果需要安装到指定目录：</p>
+<ul>
+<li><p>打开终端，导航到包含Miniconda安装脚本的目录。</p>
+</li>
+<li><p>运行以下命令以安装Miniconda到指定目录（例如：&#x2F;home&#x2F;myfile&#x2F;）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash Miniconda3-latest-Linux-x86_64.sh -b -p /home/myfile/miniconda</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这将在&#x2F;home&#x2F;myfile&#x2F;目录下安装Miniconda。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>激活Miniconda</strong>:</p>
+<ul>
+<li>安装完成后，你需要重新打开终端或者运行以下命令来使conda生效：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure></li>
+<li>或者<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>指定文件的激活</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /home/myfile/miniconda/bin/activate</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>source</code>命令在你的shell中不可用，你可以使用以下命令来激活安装在指定目录下的Miniconda：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/myfile/miniconda/bin/activate</span><br></pre></td></tr></table></figure>
+
+<p>这将激活安装在指定目录下的Miniconda。现在你可以开始在这个Miniconda环境中使用conda命令来管理你的Python环境和软件包。</p>
+</li>
+<li><p>conda命令添加到PATH</p>
+<p>如果无法直接执行<code>conda</code>命令。这可能是因为<code>conda</code>并没有添加到你的<code>PATH</code>环境变量中。</p>
+<p>你可以尝试使用完整路径来运行<code>conda</code>命令，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/alan_student_kejun/miniconda/bin/conda</span><br></pre></td></tr></table></figure>
+
+<p>这将直接指向Miniconda安装目录下的<code>conda</code>命令。如果你希望能够直接在终端中运行<code>conda</code>命令而不需要输入完整路径，你可以将Miniconda的<code>bin</code>目录添加到你的<code>PATH</code>环境变量中。你可以通过运行以下命令来实现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;/home/alan_student_kejun/miniconda/bin:<span class="variable">$PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这将临时将Miniconda的<code>bin</code>目录添加到你的<code>PATH</code>中。如果你希望永久性地将Miniconda添加到你的<code>PATH</code>中，你可以将上述命令添加到你的shell配置文件（例如<code>.bashrc</code>或<code>.bash_profile</code>）中。</p>
+</li>
+<li><p><strong>使用conda</strong>:</p>
+<ul>
+<li>现在你可以使用conda命令来管理Python环境。例如，你可以创建一个新的Python环境：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda create --name myenv python=3.8</span><br></pre></td></tr></table></figure></li>
+<li>激活这个新环境：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda activate myenv</span><br></pre></td></tr></table></figure></li>
+<li>安装Python包：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install package_name</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>配置Python环境</strong>:</p>
+<ul>
+<li>你可以使用conda安装所需的Python包，并管理不同的环境，以满足你的需求。你还可以通过conda配置各种环境变量和依赖项。</li>
+</ul>
+</li>
+</ol>
 
         </div>
 
@@ -300,13 +326,9 @@
                     
                         <a href="/tags/%E6%95%99%E7%A8%8B/"># 教程</a>
                     
-                        <a href="/tags/python/"># python</a>
+                        <a href="/tags/Linux/"># Linux</a>
                     
-                        <a href="/tags/%E5%A4%87%E5%BF%98/"># 备忘</a>
-                    
-                        <a href="/tags/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/"># 个人博客</a>
-                    
-                        <a href="/tags/%E6%90%AD%E5%BB%BA%E7%BD%91%E9%A1%B5/"># 搭建网页</a>
+                        <a href="/tags/miniconda/"># miniconda</a>
                     
                         
                 </span>
@@ -319,10 +341,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/04/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E9%97%AE%E9%A2%98A/">机器学习-分类问题A</a>
+                <a class="prev" rel="prev" href="/2024/06/27/ChatGLM3%E6%9C%AC%E5%9C%B0%E5%AE%89%E8%A3%85/">ChatGLM3本地安装</a>
             
             
-            <a class="next" rel="next" href="/2023/04/29/%E8%8B%B9%E6%9E%9C%E8%80%81%E8%AE%BE%E5%A4%87%E9%99%8D%E7%BA%A7%E4%B8%8E%E5%8F%8C%E7%B3%BB%E7%BB%9F/">苹果老设备降级与双系统</a>
+            <a class="next" rel="next" href="/2023/10/10/python%E6%9D%82%E4%B9%B1%E7%9F%A5%E8%AF%86%E7%82%B9A/">Python杂乱知识点A</a>
             
         </section>
 
