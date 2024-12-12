@@ -259,6 +259,7 @@
 <li>安装完成后，你需要重新打开终端或者运行以下命令来使conda生效：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure></li>
 <li>或者<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bash_profile</span><br></pre></td></tr></table></figure></li>
 </ul>
+<p>我的macos使用：<br><code>source ~/miniconda3/bin/activate</code></p>
 </li>
 <li><p>指定文件的激活</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /home/myfile/miniconda/bin/activate</span><br></pre></td></tr></table></figure>
@@ -284,6 +285,15 @@
 <li>激活这个新环境：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda activate myenv</span><br></pre></td></tr></table></figure></li>
 <li>安装Python包：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install package_name</span><br></pre></td></tr></table></figure></li>
 </ul>
+</li>
+<li><p>conda查询现有环境</p>
+<p> 要查询现有的 Conda 环境，你可以在命令行中使用以下命令：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda <span class="built_in">env</span> list</span><br></pre></td></tr></table></figure>
+
+<p> 或者：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda info --envs</span><br></pre></td></tr></table></figure>
+
+<p> 这两条命令都会列出所有已创建的 Conda 环境及其路径。</p>
 </li>
 <li><p><strong>配置Python环境</strong>:</p>
 <ul>
